@@ -24,9 +24,9 @@ export class UserController{
         const masterRegex = /^(51|52|53|54|55)\d{14}$/;
         const visaRegex = /^(4539|4556|4916|4532|4929|4485|4716)\d{12}$/;
 
-        if (dinersRegex.test(cardNumber)) return "Diners";
-        if (masterRegex.test(cardNumber)) return "MasterCard";
-        if (visaRegex.test(cardNumber)) return "Visa";
+        if (dinersRegex.test(cleaned)) return "Diners";
+        if (masterRegex.test(cleaned)) return "MasterCard";
+        if (visaRegex.test(cleaned)) return "Visa";
         return "Invalid";
     }
 
@@ -54,9 +54,14 @@ export class UserController{
     register = (req: express.Request, res: express.Response) => {
 
         let password = req.body.password
+        let creditCardNumber = req.body.creditCardNumber;
+
+        const cardType = this.validateCreditCard(creditCardNumber || '')
 
         if (!this.validatePassword(password)) {
             res.json({ message: "Password does not meet complexity requirements" })
+        } else if (cardType === "Invalid"){
+            res.json({ message: "Invalid credit card number" })
         } else {
 
             const saltRounds = 10
@@ -70,13 +75,6 @@ export class UserController{
             let address = req.body.address;
             let phone = req.body.phone;
             let email = req.body.email;
-            let creditCardNumber = req.body.creditCardNumber;
-
-            const cardType = this.validateCreditCard(creditCardNumber || '')
-            if (cardType === "Invalid") {
-                res.json({ message: "Invalid credit card number" })
-                return
-            }
 
             this.userAlredyExists(username, email).then(existingUser => {
                 if (existingUser) {

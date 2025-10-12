@@ -24,8 +24,13 @@ class UserController {
         };
         this.register = (req, res) => {
             let password = req.body.password;
+            let creditCardNumber = req.body.creditCardNumber;
+            const cardType = this.validateCreditCard(creditCardNumber || '');
             if (!this.validatePassword(password)) {
                 res.json({ message: "Password does not meet complexity requirements" });
+            }
+            else if (cardType === "Invalid") {
+                res.json({ message: "Invalid credit card number" });
             }
             else {
                 const saltRounds = 10;
@@ -38,12 +43,6 @@ class UserController {
                 let address = req.body.address;
                 let phone = req.body.phone;
                 let email = req.body.email;
-                let creditCardNumber = req.body.creditCardNumber;
-                const cardType = this.validateCreditCard(creditCardNumber || '');
-                if (cardType === "Invalid") {
-                    res.json({ message: "Invalid credit card number" });
-                    return;
-                }
                 this.userAlredyExists(username, email).then(existingUser => {
                     if (existingUser) {
                         res.json({ message: "Username or email already exists" });
@@ -89,11 +88,11 @@ class UserController {
         const dinersRegex = /^(300|301|302|303|36|38)\d{12}$/;
         const masterRegex = /^(51|52|53|54|55)\d{14}$/;
         const visaRegex = /^(4539|4556|4916|4532|4929|4485|4716)\d{12}$/;
-        if (dinersRegex.test(cardNumber))
+        if (dinersRegex.test(cleaned))
             return "Diners";
-        if (masterRegex.test(cardNumber))
+        if (masterRegex.test(cleaned))
             return "MasterCard";
-        if (visaRegex.test(cardNumber))
+        if (visaRegex.test(cleaned))
             return "Visa";
         return "Invalid";
     }
