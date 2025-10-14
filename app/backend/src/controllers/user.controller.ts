@@ -2,6 +2,7 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 
 import UserModel from '../models/user.model'
+import userModel from '../models/user.model'
 
 export class UserController{
 
@@ -69,8 +70,8 @@ export class UserController{
 
             let username = req.body.username;
             let userType = req.body.userType;
-            let firstname = req.body.name;
-            let lastname = req.body.surname;
+            let firstname = req.body.firstname;
+            let lastname = req.body.lastname;
             let gender = req.body.gender;
             let address = req.body.address;
             let phone = req.body.phone;
@@ -105,5 +106,29 @@ export class UserController{
                 res.json({ message: "fail register" })
             })
         }
+    }
+
+    updateFirstname = (req: express.Request, res: express.Response)=>{
+        userModel.updateOne(
+            {username: req.body.username},
+            {$set: {firstname: req.body.firstname}}
+        ).then(currUser=>{
+            res.json({message: "User updated"})
+        }).catch((err)=>{
+            console.log(err)
+            res.json({message: "Fail"})
+        })
+    }
+
+    updateLastname = (req: express.Request, res: express.Response)=>{
+        userModel.updateOne(
+            {username: req.body.username},
+            {$set: {lastname: req.body.lastname}}
+        ).then(currUser=>{
+            res.json({message: "User updated"})
+        }).catch((err)=>{
+            console.log(err)
+            res.json({message: "Fail"})
+        })
     }
 }

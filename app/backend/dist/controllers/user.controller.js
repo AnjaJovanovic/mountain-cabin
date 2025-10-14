@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const user_model_1 = __importDefault(require("../models/user.model"));
+const user_model_2 = __importDefault(require("../models/user.model"));
 class UserController {
     constructor() {
         // Check user registration------------
@@ -37,8 +38,8 @@ class UserController {
                 const hashedPassword = bcrypt_1.default.hashSync(password, saltRounds);
                 let username = req.body.username;
                 let userType = req.body.userType;
-                let firstname = req.body.name;
-                let lastname = req.body.surname;
+                let firstname = req.body.firstname;
+                let lastname = req.body.lastname;
                 let gender = req.body.gender;
                 let address = req.body.address;
                 let phone = req.body.phone;
@@ -72,6 +73,22 @@ class UserController {
                     res.json({ message: "fail register" });
                 });
             }
+        };
+        this.updateFirstname = (req, res) => {
+            user_model_2.default.updateOne({ username: req.body.username }, { $set: { firstname: req.body.firstname } }).then(currUser => {
+                res.json({ message: "User updated" });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Fail" });
+            });
+        };
+        this.updateLastname = (req, res) => {
+            user_model_2.default.updateOne({ username: req.body.username }, { $set: { lastname: req.body.lastname } }).then(currUser => {
+                res.json({ message: "User updated" });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Fail" });
+            });
         };
     }
     userAlredyExists(username, email) {
