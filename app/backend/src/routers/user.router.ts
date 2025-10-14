@@ -19,4 +19,17 @@ userRouter.route("/updateLastname").post(
     (request, response) => new UserController().updateLastname(request, response)
 )
 
+userRouter.route("/updateAddress").post(
+    (request, response) => new UserController().updateAddress(request, response)
+)
+userRouter.route("/updateEmail").post(
+    (request, response) => new UserController().updateEmail(request, response)
+)
+userRouter.route("/updatePhone").post(
+    (request, response) => new UserController().updatePhone(request, response)
+)
+userRouter.route("/updateCreditCard").post(
+    (request, response) => new UserController().updateCreditCard(request, response)
+)
+
 export default userRouter;

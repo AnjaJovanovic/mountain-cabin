@@ -90,6 +90,39 @@ class UserController {
                 res.json({ message: "Fail" });
             });
         };
+        this.updateAddress = (req, res) => {
+            user_model_2.default.updateOne({ username: req.body.username }, { $set: { address: req.body.address } }).then(currUser => {
+                res.json({ message: "User updated" });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Fail" });
+            });
+        };
+        this.updateEmail = (req, res) => {
+            user_model_2.default.updateOne({ username: req.body.username }, { $set: { email: req.body.email } }).then(currUser => {
+                res.json({ message: "User updated" });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Fail" });
+            });
+        };
+        this.updatePhone = (req, res) => {
+            user_model_2.default.updateOne({ username: req.body.username }, { $set: { phone: req.body.phone } }).then(currUser => {
+                res.json({ message: "User updated" });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Fail" });
+            });
+        };
+        this.updateCreditCard = (req, res) => {
+            console.log(req.body.username + " " + req.body.creditCardNumber);
+            user_model_2.default.updateOne({ username: req.body.username }, { $set: { creditCardNumber: req.body.creditCardNumber } }).then(currUser => {
+                res.json({ message: "User updated" });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Fail" });
+            });
+        };
     }
     userAlredyExists(username, email) {
         return user_model_1.default.findOne({

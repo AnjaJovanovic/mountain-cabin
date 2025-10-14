@@ -131,4 +131,53 @@ export class UserController{
             res.json({message: "Fail"})
         })
     }
+
+    updateAddress = (req: express.Request, res: express.Response)=>{
+        userModel.updateOne(
+            {username: req.body.username},
+            {$set: {address: req.body.address}}
+        ).then(currUser=>{
+            res.json({message: "User updated"})
+        }).catch((err)=>{
+            console.log(err)
+            res.json({message: "Fail"})
+        })
+    }
+
+    updateEmail = (req: express.Request, res: express.Response)=>{
+        userModel.updateOne(
+            {username: req.body.username},
+            {$set: {email: req.body.email}}
+        ).then(currUser=>{
+            res.json({message: "User updated"})
+        }).catch((err)=>{
+            console.log(err)
+            res.json({message: "Fail"})
+        })
+    }
+
+    updatePhone = (req: express.Request, res: express.Response)=>{
+        userModel.updateOne(
+            {username: req.body.username},
+            {$set: {phone: req.body.phone}}
+        ).then(currUser=>{
+            res.json({message: "User updated"})
+        }).catch((err)=>{
+            console.log(err)
+            res.json({message: "Fail"})
+        })
+    }
+
+    updateCreditCard = (req: express.Request, res: express.Response)=>{
+        console.log(req.body.username + " " + req.body.creditCardNumber)
+        userModel.updateOne(
+            {username: req.body.username},
+            {$set: {creditCardNumber: req.body.creditCardNumber}}
+        ).then(currUser=>{
+            res.json({message: "User updated"})
+        }).catch((err)=>{
+            console.log(err)
+            res.json({message: "Fail"})
+        })
+    }
 }
