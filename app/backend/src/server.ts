@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import userRouter from './routers/user.router'
+import vikendicaRouter from './routers/vikendica.router'
 
 const app = express()
 app.use(cors())
@@ -15,6 +16,7 @@ conn.once('open', ()=>{
 
 const router = express.Router()
 router.use("/users", userRouter)
+router.use("/vikendice", vikendicaRouter)
 
 app.use('/', router)
 app.listen(4000, ()=>console.log('Express running on port 4000'))
