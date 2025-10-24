@@ -1,0 +1,19 @@
+<div class="layout">
+  <aside class="sidebar">
+    <h2 class="logo">Turista</h2>
+
+    <nav>
+      <ul>
+        <li><a routerLink="/touristProfile" routerLinkActive="active">Profil</a></li>
+        <li><a routerLink="/touristVikendica" routerLinkActive="active">Vikendice</a></li>
+        <li><a routerLink="/touristReservation" routerLinkActive="active">Rezervacije</a></li>
+      </ul>
+    </nav>
+
+    <button class="sidebar-btn" (click)="logout()">Odjavi se</button>
+  </aside>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

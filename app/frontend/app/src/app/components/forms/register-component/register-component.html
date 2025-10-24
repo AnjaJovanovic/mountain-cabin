@@ -1,0 +1,74 @@
+<div class="register-wrapper">
+  <div class="register-card">
+    <h2 class="title">🏕️ Mountain Cabin</h2>
+    <h3 class="subtitle">Registracija korisnika</h3>
+
+    <div class="form-group">
+      <label>Korisničko ime</label>
+      <input type="text" [(ngModel)]="user.username" placeholder="Unesite korisničko ime">
+    </div>
+
+    <div class="form-group">
+      <label>Lozinka</label>
+      <input type="password" [(ngModel)]="user.password" placeholder="Unesite lozinku">
+    </div>
+
+    <div class="form-group">
+      <label>Ime</label>
+      <input type="text" [(ngModel)]="user.firstname" placeholder="Unesite ime">
+    </div>
+
+    <div class="form-group">
+      <label>Prezime</label>
+      <input type="text" [(ngModel)]="user.lastname" placeholder="Unesite prezime">
+    </div>
+
+    <div class="form-group">
+      <label>Adresa</label>
+      <input type="text" [(ngModel)]="user.address" placeholder="Unesite adresu">
+    </div>
+
+    <div class="form-group">
+      <label>Telefon</label>
+      <input type="text" [(ngModel)]="user.phone" placeholder="Unesite broj telefona">
+    </div>
+
+    <div class="form-group">
+      <label>E-mail</label>
+      <input type="text" [(ngModel)]="user.email" placeholder="Unesite e-mail adresu">
+    </div>
+
+    <div class="form-group">
+      <label>Broj kreditne kartice</label>
+      <input type="text" [(ngModel)]="user.creditCardNumber" (input)="checkCardType()" placeholder="Unesite broj kartice">
+      @if (cardType === 'visa') {
+        <img src="visa.png" alt="Visa" width="50">
+      } @else if (cardType === 'mastercard') {
+        <img src="mastercard.png" alt="MasterCard" width="50">
+      } @else if (cardType === 'diners') {
+        <img src="diners.png" alt="Diners" width="50">
+      }
+    </div>
+
+    <div class="radio-section">
+      <h4>Pol</h4>
+      <label><input type="radio" name="gender" [(ngModel)]="user.gender" value="male"> Muški</label>
+      <label><input type="radio" name="gender" [(ngModel)]="user.gender" value="female"> Ženski</label>
+    </div>
+
+    <div class="radio-section">
+      <h4>Tip korisnika</h4>
+      <label><input type="radio" name="type" [(ngModel)]="user.userType" value="owner"> Vlasnik</label>
+      <label><input type="radio" name="type" [(ngModel)]="user.userType" value="tourist"> Turista</label>
+      <label><input type="radio" name="type" [(ngModel)]="user.userType" value="administrator"> Administrator</label>
+    </div>
+
+    <button class="register-btn" (click)="register()">Registruj se</button>
+
+    <span class="message">{{message}}</span>
+
+    <div class="back-link">
+      <a routerLink="">Nazad na prijavu</a>
+    </div>
+  </div>
+</div>

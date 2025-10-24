@@ -1,0 +1,55 @@
+<div class="profile-wrapper">
+  <div class="profile-card">
+    <h2 class="title">🌿 Tourist Profile</h2>
+    <p class="subtitle">Ažurirajte svoje podatke</p>
+    <hr>
+
+    <div class="info-section">
+      <label>Ime:</label>
+      <p class="current">{{currentFirstname}}</p>
+      <input type="text" [(ngModel)]="newFirstname" placeholder="Unesite novo ime">
+      <button (click)="updateFirstname()">Izmeni ime</button>
+      <p class="message">{{messageFirstname}}</p>
+    </div>
+
+    <div class="info-section">
+      <label>Prezime:</label>
+      <p class="current">{{currentLastname}}</p>
+      <input type="text" [(ngModel)]="newLastname" placeholder="Unesite novo prezime">
+      <button (click)="updateLastname()">Izmeni prezime</button>
+      <p class="message">{{messageLastname}}</p>
+    </div>
+
+    <div class="info-section">
+      <label>Adresa:</label>
+      <p class="current">{{currentAddress}}</p>
+      <input type="text" [(ngModel)]="newAddress" placeholder="Unesite novu adresu">
+      <button (click)="updateAddress()">Izmeni adresu</button>
+      <p class="message">{{messageAddress}}</p>
+    </div>
+
+    <div class="info-section">
+      <label>Email:</label>
+      <p class="current">{{currentEmail}}</p>
+      <input type="text" [(ngModel)]="newEmail" placeholder="Unesite novi email">
+      <button (click)="updateEmail()">Izmeni email</button>
+      <p class="message">{{messageEmail}}</p>
+    </div>
+
+    <div class="info-section">
+      <label>Telefon:</label>
+      <p class="current">{{currentPhone}}</p>
+      <input type="text" [(ngModel)]="newPhone" placeholder="Unesite novi broj telefona">
+      <button (click)="updatePhone()">Izmeni broj telefona</button>
+      <p class="message">{{messagePhone}}</p>
+    </div>
+
+    <div class="info-section">
+      <label>Kreditna kartica:</label>
+      <p class="current">{{currentCardNumber}}</p>
+      <input type="text" [(ngModel)]="newCreditCardNumber" placeholder="Unesite novi broj kartice">
+      <button (click)="updateCreditCard()">Izmeni broj kartice</button>
+      <p class="message">{{messageCreditCard}}</p>
+    </div>
+  </div>
+</div>

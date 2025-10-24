@@ -1,0 +1,137 @@
+.register-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(180deg, #eaf4ea, #f9fff8);
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+/* 🪶 Animirana kartica */
+.register-card {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 35px;
+  width: 400px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid #d3e5d6;
+  text-align: center;
+  max-height: 90vh;
+  overflow-y: auto;
+  
+  /* animacija */
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeInUp 0.9s ease-out forwards;
+}
+
+/* 🌿 Efekat pojavljivanja */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Naslovi */
+.title {
+  font-size: 26px;
+  color: #295e37;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #5c7c63;
+  margin-bottom: 25px;
+}
+
+/* Polja i radio sekcije — ostaju iste */
+.form-group {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  color: #3c5a44;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bcd2b9;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  border-color: #5d9f66;
+}
+
+.radio-section {
+  margin: 20px 0;
+  text-align: left;
+  color: #3c5a44;
+}
+
+.radio-section h4 {
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #295e37;
+}
+
+.radio-section label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Dugme */
+.register-btn {
+  width: 100%;
+  background-color: #5d9f66;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.register-btn:hover {
+  background-color: #4c8756;
+  transform: translateY(-1px);
+}
+
+.message {
+  display: block;
+  margin-top: 10px;
+  color: #b04b4b;
+  font-weight: 500;
+}
+
+.back-link {
+  margin-top: 20px;
+}
+
+.back-link a {
+  color: #4f9960;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
+}

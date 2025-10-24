@@ -1,0 +1,30 @@
+<h2>Lista vikendica</h2>
+
+<table border="1" cellspacing="0" cellpadding="8">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Naziv</th>
+      <th>Mesto</th>
+      <th>Telefon</th>
+      <th>Cena (letnja)</th>
+      <th>Cena (zimska)</th>
+      <th>Zauzeta</th>
+      <th>Usluge</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (v of allVikendice; track v.idVikendice) {
+      <tr>
+        <td>{{ v.idVikendice }}</td>
+        <td>{{ v.naziv }}</td>
+        <td>{{ v.mesto }}</td>
+        <td>{{ v.telefon }}</td>
+        <td>{{ v.cenaNocenjaLetnja }}</td>
+        <td>{{ v.cenaNocenjaZimska }}</td>
+        <td>{{ v.zauzeta ? 'Da' : 'Ne' }}</td>
+        <td>{{ v.usluge }}</td>
+      </tr>
+    }
+  </tbody>
+</table>
