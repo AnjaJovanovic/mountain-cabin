@@ -6,10 +6,12 @@ import { OProfileComponent } from './components/o-profile-component/o-profile-co
 import { TVikendicaComponent } from './components/tourist/t-vikendica-component/t-vikendica-component';
 import { LayoutComponent } from './components/layout-component/layout-component';
 import { TReservationsComponent } from './components/tourist/t-reservations-component/t-reservations-component';
+import { NotRegisterUsrComponent } from './components/not-register-usr-component/not-register-usr-component';
 
 export const routes: Routes = [
     {path: "", component: LoginComponent},
     {path: "register", component: RegisterComponent},
+    {path: "notRegisterUsr", component: NotRegisterUsrComponent},
 
     //{path: "touristProfile", component: TProfileComponent},
     //{path: "touristVikendica", component: TVikendicaComponent},

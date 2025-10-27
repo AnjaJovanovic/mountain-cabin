@@ -123,6 +123,13 @@ class UserController {
                 res.json({ message: "Fail" });
             });
         };
+        this.getAll = (req, res) => {
+            user_model_1.default.find({}).then(users => {
+                res.json(users);
+            }).catch((err) => {
+                console.log(err);
+            });
+        };
     }
     userAlredyExists(username, email) {
         return user_model_1.default.findOne({

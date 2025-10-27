@@ -180,4 +180,12 @@ export class UserController{
             res.json({message: "Fail"})
         })
     }
+
+    getAll = (req: express.Request, res: express.Response)=>{
+        UserModel.find({}).then(users=>{
+            res.json(users)
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
 }

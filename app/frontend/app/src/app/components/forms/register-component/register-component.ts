@@ -3,7 +3,7 @@ import { User } from '../../../models/user.model';
 import { UserService } from '../../../services/User/user-service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register-component',
@@ -13,6 +13,7 @@ import { RouterLink } from '@angular/router';
 })
 export class RegisterComponent {
   private userService = inject(UserService)
+  private router = inject(Router)
 
   user: User = new User()
   message = ""
@@ -21,6 +22,8 @@ export class RegisterComponent {
     this.userService.register(this.user).subscribe(data=>{
       this.message = data.message
     })
+    this.router.navigate(['touristProfile'])
+
   }
 
   cardNumber = '';

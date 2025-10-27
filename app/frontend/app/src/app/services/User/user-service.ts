@@ -47,4 +47,8 @@ export class UserService {
   updateCreditCard(username: string, creditCardNumber: string){
       return this.httpClient.post<Message>(`${this.backendUrl}/users/updateCreditCard`,{username: username, creditCardNumber: creditCardNumber});
   }
+
+  getAllUsers(){
+    return this.httpClient.get<User[]>("http://localhost:4000/users/getAllUsers")
+  }
 }

@@ -1,0 +1,36 @@
+<p>not-register-usr-component works!</p>
+
+Broj vikendica: {{numVikendice}} <br>
+Broj vlasnika: {{numOwners}} <br>
+Broj turista: {{numTourists}} <br>
+
+<hr>
+<table border="1" cellspacing="0" cellpadding="8">
+  <thead>
+    <tr>
+      <th (click)="sort('naziv')">
+        Naziv
+        @if (sortColumn === 'naziv') {
+          <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        }
+      </th>
+      <th (click)="sort('mesto')">
+        Mesto
+        @if (sortColumn === 'mesto') {
+          <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        }
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (v of allVikendice; track v.idVikendice) {
+      <tr>
+        <td>{{ v.naziv }}</td>
+        <td>{{ v.mesto }}</td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+

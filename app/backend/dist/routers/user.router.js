@@ -14,4 +14,5 @@ userRouter.route("/updateAddress").post((request, response) => new user_controll
 userRouter.route("/updateEmail").post((request, response) => new user_controller_1.UserController().updateEmail(request, response));
 userRouter.route("/updatePhone").post((request, response) => new user_controller_1.UserController().updatePhone(request, response));
 userRouter.route("/updateCreditCard").post((request, response) => new user_controller_1.UserController().updateCreditCard(request, response));
+userRouter.route("/getAllUsers").get((req, res) => new user_controller_1.UserController().getAll(req, res));
 exports.default = userRouter;

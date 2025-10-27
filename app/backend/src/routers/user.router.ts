@@ -31,5 +31,8 @@ userRouter.route("/updatePhone").post(
 userRouter.route("/updateCreditCard").post(
     (request, response) => new UserController().updateCreditCard(request, response)
 )
+userRouter.route("/getAllUsers").get(
+    (req, res) => new UserController().getAll(req, res)
+)
 
 export default userRouter;
