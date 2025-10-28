@@ -20,15 +20,8 @@ export class LoginComponent {
   login(){
     this.userService.login(this.username, this.password).subscribe(data=>{
       if(data){
-        localStorage.setItem("loggedUserUsername", data.username)
-        localStorage.setItem("loggedUserFirstname", data.firstname)
-        localStorage.setItem("loggedUserLastname", data.lastname)
-        localStorage.setItem("loggedUserAddress", data.address)
-        localStorage.setItem("loggedUserEmail", data.email)
-        localStorage.setItem("loggedUserPhone", data.phone)
-        localStorage.setItem("loggedUserCardNumber", data.creditCardNumber)
+        localStorage.setItem("loggedUser", JSON.stringify(data));
         this.message = "ulogovan korisnik" + this.username
-
         if(data.userType == "tourist"){
           this.router.navigate(['touristProfile'])
           console.log("Turista sam")

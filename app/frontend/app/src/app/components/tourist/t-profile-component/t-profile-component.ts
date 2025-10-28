@@ -14,24 +14,11 @@ export class TProfileComponent {
 
   private userService = inject(UserService)
 
-  user: User = new User
-
-  currentUsername: string | null = null
-  currentFirstname: string | null = null
-  currentLastname: string | null = null
-  currentAddress: string | null = null
-  currentEmail: string | null = null
-  currentPhone: string | null = null
-  currentCardNumber: string | null = null
+  user: User = new User()
 
   ngOnInit() {
-    this.currentUsername = localStorage.getItem("loggedUserUsername")
-    this.currentFirstname = localStorage.getItem("loggedUserFirstname")
-    this.currentLastname = localStorage.getItem("loggedUserLastname")
-    this.currentAddress = localStorage.getItem("loggedUserAddress")
-    this.currentEmail = localStorage.getItem("loggedUserEmail")
-    this.currentPhone = localStorage.getItem("loggedUserPhone")
-    this.currentCardNumber = localStorage.getItem("loggedUserCardNumber")
+    let userString = localStorage.getItem("loggedUser");
+    this.user = JSON.parse(userString!)
   }
 
   newFirstname = ""
@@ -49,8 +36,7 @@ export class TProfileComponent {
   messageCreditCard = ""
 
   updateFirstname(){
-    this.currentUsername = localStorage.getItem("loggedUserUsername")
-    this.userService.updateFirstName(this.currentUsername!, this.newFirstname).subscribe(
+    this.userService.updateFirstName(this.user.username!, this.newFirstname).subscribe(
       data=>{
         this.messageFirstname = data.message
         console.log("usao sam")
@@ -59,8 +45,7 @@ export class TProfileComponent {
   }
 
   updateLastname(){
-    this.currentUsername = localStorage.getItem("loggedUserUsername")
-    this.userService.updateLastName(this.currentUsername!, this.newLastname).subscribe(
+    this.userService.updateLastName(this.user.username!!, this.newLastname).subscribe(
       data=>{
         this.messageLastname = data.message
       }
@@ -68,8 +53,7 @@ export class TProfileComponent {
   }
 
   updateAddress(){
-    this.currentUsername = localStorage.getItem("loggedUserUsername")
-    this.userService.updateAddress(this.currentUsername!, this.newAddress).subscribe(
+    this.userService.updateAddress(this.user.username!, this.newAddress).subscribe(
       data=>{
         this.messageAddress = data.message
       }
@@ -77,8 +61,7 @@ export class TProfileComponent {
   }
 
   updatePhone(){
-    this.currentUsername = localStorage.getItem("loggedUserUsername")
-    this.userService.updatePhone(this.currentUsername!, this.newPhone).subscribe(
+    this.userService.updatePhone(this.user.username!, this.newPhone).subscribe(
       data=>{
         this.messagePhone = data.message
       }
@@ -86,8 +69,7 @@ export class TProfileComponent {
   }
 
   updateEmail(){
-    this.currentUsername = localStorage.getItem("loggedUserUsername")
-    this.userService.updateEmail(this.currentUsername!, this.newEmail).subscribe(
+    this.userService.updateEmail(this.user.username!, this.newEmail).subscribe(
       data=>{
         this.messageEmail = data.message
       }
@@ -95,9 +77,8 @@ export class TProfileComponent {
   }
 
   updateCreditCard(){
-    this.currentUsername = localStorage.getItem("loggedUserUsername")
     console.log(this.newCreditCardNumber)
-    this.userService.updateCreditCard(this.currentUsername!, this.newCreditCardNumber).subscribe(
+    this.userService.updateCreditCard(this.user.username!, this.newCreditCardNumber).subscribe(
       data=>{
         this.messageCreditCard = data.message
       }

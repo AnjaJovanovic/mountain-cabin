@@ -1,12 +1,17 @@
 <div class="profile-wrapper">
   <div class="profile-card">
+
+    <div class="profile-image">
+      <img [src]="user.profilePicture" alt="Profilna slika korisnika">
+    </div>
+
     <h2 class="title">🌿 Tourist Profile</h2>
     <p class="subtitle">Ažurirajte svoje podatke</p>
     <hr>
 
     <div class="info-section">
       <label>Ime:</label>
-      <p class="current">{{currentFirstname}}</p>
+      <p class="current">{{user.firstname}}</p>
       <input type="text" [(ngModel)]="newFirstname" placeholder="Unesite novo ime">
       <button (click)="updateFirstname()">Izmeni ime</button>
       <p class="message">{{messageFirstname}}</p>
@@ -14,7 +19,7 @@
 
     <div class="info-section">
       <label>Prezime:</label>
-      <p class="current">{{currentLastname}}</p>
+      <p class="current">{{user.lastname}}</p>
       <input type="text" [(ngModel)]="newLastname" placeholder="Unesite novo prezime">
       <button (click)="updateLastname()">Izmeni prezime</button>
       <p class="message">{{messageLastname}}</p>
@@ -22,7 +27,7 @@
 
     <div class="info-section">
       <label>Adresa:</label>
-      <p class="current">{{currentAddress}}</p>
+      <p class="current">{{user.address}}</p>
       <input type="text" [(ngModel)]="newAddress" placeholder="Unesite novu adresu">
       <button (click)="updateAddress()">Izmeni adresu</button>
       <p class="message">{{messageAddress}}</p>
@@ -30,7 +35,7 @@
 
     <div class="info-section">
       <label>Email:</label>
-      <p class="current">{{currentEmail}}</p>
+      <p class="current">{{user.email}}</p>
       <input type="text" [(ngModel)]="newEmail" placeholder="Unesite novi email">
       <button (click)="updateEmail()">Izmeni email</button>
       <p class="message">{{messageEmail}}</p>
@@ -38,7 +43,7 @@
 
     <div class="info-section">
       <label>Telefon:</label>
-      <p class="current">{{currentPhone}}</p>
+      <p class="current">{{user.phone}}</p>
       <input type="text" [(ngModel)]="newPhone" placeholder="Unesite novi broj telefona">
       <button (click)="updatePhone()">Izmeni broj telefona</button>
       <p class="message">{{messagePhone}}</p>
@@ -46,7 +51,7 @@
 
     <div class="info-section">
       <label>Kreditna kartica:</label>
-      <p class="current">{{currentCardNumber}}</p>
+      <p class="current">{{user.creditCardNumber}}</p>
       <input type="text" [(ngModel)]="newCreditCardNumber" placeholder="Unesite novi broj kartice">
       <button (click)="updateCreditCard()">Izmeni broj kartice</button>
       <p class="message">{{messageCreditCard}}</p>

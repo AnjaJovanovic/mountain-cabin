@@ -24,6 +24,13 @@ class UserController {
             }).catch((error) => console.log(error));
         };
         this.register = (req, res) => {
+            let profilePicture = '';
+            if (req.file) {
+                profilePicture = 'uploads/' + req.file.filename;
+            }
+            else {
+                profilePicture = 'uploads/default.png';
+            }
             let password = req.body.password;
             let creditCardNumber = req.body.creditCardNumber;
             const cardType = this.validateCreditCard(creditCardNumber || '');
@@ -59,7 +66,8 @@ class UserController {
                             address: address,
                             phone: phone,
                             email: email,
-                            creditCardNumber: creditCardNumber
+                            creditCardNumber: creditCardNumber,
+                            profilePicture: profilePicture
                         };
                         new user_model_1.default(user).save().then(ok => {
                             res.json({ message: "ok" });
@@ -124,7 +132,7 @@ class UserController {
             });
         };
         this.getAll = (req, res) => {
-            user_model_1.default.find({}).then(users => {
+            user_model_1.default.find({}).sort({ Ime: 1 }).then(users => {
                 res.json(users);
             }).catch((err) => {
                 console.log(err);
@@ -138,6 +146,7 @@ class UserController {
     }
     validatePassword(password) {
         const passwordRegex = /^(?=[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z].*[a-z].*[a-z]).{6,10}$/;
+        //const passwordRegex = /^A/
         return passwordRegex.test(password);
     }
     validateCreditCard(cardNumber) {

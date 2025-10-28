@@ -13,7 +13,8 @@ const vikendicaSchema = new mongoose_1.default.Schema({
     cenaNocenjaZimska: Number,
     galerijaSlika: [String],
     zauzeta: Boolean,
-    usluge: String
+    usluge: String,
+    datumRezervacije: Date
 }, {
     versionKey: false
 });

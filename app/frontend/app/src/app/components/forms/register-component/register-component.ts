@@ -18,13 +18,72 @@ export class RegisterComponent {
   user: User = new User()
   message = ""
 
-  register(){
-    this.userService.register(this.user).subscribe(data=>{
-      this.message = data.message
-    })
-    this.router.navigate(['touristProfile'])
+  selectedFile: File | null = null
+  messageImage = ""
+  imagePreview: string | null = null
 
+  onFileSelected(event: any) {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    const img = new Image()
+
+    reader.onload = (e: any) => {
+      img.src = e.target.result
+    }
+
+    img.onload = () => {
+      const w = img.width
+      const h = img.height
+
+      if (w < 100 || h < 100) {
+        this.messageImage = "Slika je premala. Minimalno 100×100 px."
+        this.selectedFile = null
+        this.imagePreview = null
+        return
+      }
+
+      if (w > 300 || h > 300) {
+        this.messageImage = "Slika je prevelika. Maksimalno 300×300 px."
+        this.selectedFile = null
+        this.imagePreview = null
+        return
+      }
+
+      this.selectedFile = file
+      this.imagePreview = img.src
+      this.messageImage = "Slika je odgovarajuće veličine."
+    }
+
+    reader.readAsDataURL(file)
   }
+
+register() {
+  const formData = new FormData()
+
+  formData.append('username', this.user.username)
+  formData.append('password', this.user.password)
+  formData.append('email', this.user.email)
+  formData.append('userType', this.user.userType)
+  formData.append('firstname', this.user.firstname)
+  formData.append('lastname', this.user.lastname)
+  formData.append('gender', this.user.gender)
+  formData.append('address', this.user.address)
+  formData.append('phone', this.user.phone)
+  formData.append('creditCardNumber', this.user.creditCardNumber)
+
+  if (this.selectedFile) {
+    formData.append('profilePicture', this.selectedFile)
+  }
+
+  this.userService.register(formData).subscribe(data => {
+    this.message = data.message
+    if (data.message === 'ok') {
+      this.router.navigate([''])
+    }
+  })
+}
 
   cardNumber = '';
   cardType = '';

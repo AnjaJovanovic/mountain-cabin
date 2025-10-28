@@ -1,14 +1,41 @@
 import express from 'express'
 import { UserController } from '../controllers/user.controller'
 
+import multer from 'multer'
+import path from 'path'
+import fs from 'fs'
+
+// Kreiraj folder ako ne postoji
+const uploadDir = path.join(__dirname, '../../../frontend/app/public/uploads')
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true })
+
+// Konfiguracija za multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9)
+    cb(null, unique + path.extname(file.originalname))
+  }
+})
+
+const fileFilter = (req: any, file: any, cb: any) => {
+  const allowed = /jpeg|jpg|png/
+  if (allowed.test(file.mimetype)) cb(null, true)
+  else cb(new Error('Dozvoljene su samo JPG/PNG slike!'))
+}
+
+const upload = multer({ storage, fileFilter })
+
 const userRouter = express.Router()
 
 userRouter.route('/login').post(
     (req, res)=>new UserController().login(req, res)
 )
 
-userRouter.route("/register").post(
-    (request, response) => new UserController().register(request, response)
+userRouter.post(
+  "/register",
+  upload.single("profilePicture"),
+  (request, response) => new UserController().register(request, response)
 )
 
 userRouter.route("/updateFirstname").post(

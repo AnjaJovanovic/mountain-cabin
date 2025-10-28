@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import UserModel from '../models/user.model'
 import userModel from '../models/user.model'
 
+
 export class UserController{
 
     // Check user registration------------
@@ -16,6 +17,7 @@ export class UserController{
 
     validatePassword(password: string): boolean {
         const passwordRegex = /^(?=[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.*[a-z].*[a-z].*[a-z]).{6,10}$/
+        //const passwordRegex = /^A/
         return passwordRegex.test(password)
     }
 
@@ -54,6 +56,13 @@ export class UserController{
 
     register = (req: express.Request, res: express.Response) => {
 
+        let profilePicture = ''
+        if (req.file) {
+            profilePicture = 'uploads/' + req.file.filename
+        } else {
+            profilePicture = 'uploads/default.png'
+        }
+
         let password = req.body.password
         let creditCardNumber = req.body.creditCardNumber;
 
@@ -91,7 +100,8 @@ export class UserController{
                         address: address,
                         phone: phone,
                         email: email,
-                        creditCardNumber: creditCardNumber
+                        creditCardNumber: creditCardNumber,
+                        profilePicture: profilePicture
                     }
 
                     new UserModel(user).save().then(ok => {
@@ -182,7 +192,7 @@ export class UserController{
     }
 
     getAll = (req: express.Request, res: express.Response)=>{
-        UserModel.find({}).then(users=>{
+        UserModel.find({}).sort({Ime: 1}).then(users=>{
             res.json(users)
         }).catch((err)=>{
             console.log(err)

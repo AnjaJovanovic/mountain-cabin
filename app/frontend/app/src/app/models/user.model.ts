@@ -8,6 +8,6 @@ export class User {
     address: string = ""
     phone: string = ""
     email: string = ""
-    profilePicturePath: string = ""
+    profilePicture: string = ""
     creditCardNumber: string = "" 
 }
