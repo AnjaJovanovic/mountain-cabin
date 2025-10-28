@@ -138,6 +138,26 @@ class UserController {
                 console.log(err);
             });
         };
+        this.updateProfilePicture = (req, res) => {
+            const username = req.body.username;
+            if (!username) {
+                res.json({ message: 'No username provided' });
+                return;
+            }
+            if (!req.file) {
+                res.json({ message: 'No file uploaded' });
+                return;
+            }
+            const newPicture = 'uploads/' + req.file.filename;
+            user_model_1.default.updateOne({ username }, { $set: { profilePicture: newPicture } })
+                .then(() => {
+                res.json({ message: 'Profile picture updated', path: newPicture });
+            })
+                .catch(err => {
+                console.log(err);
+                res.json({ message: 'Error updating picture' });
+            });
+        };
     }
     userAlredyExists(username, email) {
         return user_model_1.default.findOne({

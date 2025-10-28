@@ -3,6 +3,7 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import userRouter from './routers/user.router'
 import vikendicaRouter from './routers/vikendica.router'
+import path from 'path'
 
 const app = express()
 app.use(cors())
@@ -19,4 +20,5 @@ router.use("/users", userRouter)
 router.use("/vikendice", vikendicaRouter)
 
 app.use('/', router)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.listen(4000, ()=>console.log('Express running on port 4000'))

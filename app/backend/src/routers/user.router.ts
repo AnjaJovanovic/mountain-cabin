@@ -38,6 +38,12 @@ userRouter.post(
   (request, response) => new UserController().register(request, response)
 )
 
+userRouter.post(
+  "/updateProfilePicture",
+  upload.single("profilePicture"),
+  (request, response) => new UserController().updateProfilePicture(request, response)
+)
+
 userRouter.route("/updateFirstname").post(
     (request, response) => new UserController().updateFirstname(request, response)
 )

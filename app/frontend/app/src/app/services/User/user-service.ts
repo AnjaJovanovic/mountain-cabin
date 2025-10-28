@@ -20,11 +20,17 @@ export class UserService {
     return this.httpClient.post<User>(`${this.backendUrl}/users/login`, data)
   }
 
-register(formData: FormData) {
-  return this.httpClient.post<any>(`${this.backendUrl}/users/register`, formData)
-}
+  register(formData: FormData) {
+    return this.httpClient.post<any>(`${this.backendUrl}/users/register`, formData)
+  }
 
-  
+  updateProfilePicture(username: string, file: File) {
+    const formData = new FormData()
+    formData.append('username', username)
+    formData.append('profilePicture', file)
+    return this.httpClient.post<any>(`${this.backendUrl}/users/updateProfilePicture`, formData)
+  }
+
   updateFirstName(username: string, firstname: string){
       return this.httpClient.post<Message>(`${this.backendUrl}/users/updateFirstname`,{username: username, firstname: firstname});
   }

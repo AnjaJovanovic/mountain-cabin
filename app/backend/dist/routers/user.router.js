@@ -31,6 +31,7 @@ const upload = (0, multer_1.default)({ storage, fileFilter });
 const userRouter = express_1.default.Router();
 userRouter.route('/login').post((req, res) => new user_controller_1.UserController().login(req, res));
 userRouter.post("/register", upload.single("profilePicture"), (request, response) => new user_controller_1.UserController().register(request, response));
+userRouter.post("/updateProfilePicture", upload.single("profilePicture"), (req, res) => new user_controller_1.UserController().updateProfilePicture(req, res));
 userRouter.route("/updateFirstname").post((request, response) => new user_controller_1.UserController().updateFirstname(request, response));
 userRouter.route("/updateLastname").post((request, response) => new user_controller_1.UserController().updateLastname(request, response));
 userRouter.route("/updateAddress").post((request, response) => new user_controller_1.UserController().updateAddress(request, response));
