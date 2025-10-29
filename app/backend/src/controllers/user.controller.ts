@@ -129,6 +129,58 @@ export class UserController{
         }
     }
 
+    changePassword = (req: express.Request, res: express.Response) => {
+        const username: string = req.body.username
+        const oldPassword: string = req.body.oldPassword
+        const newPassword: string = req.body.newPassword
+        const confirmNewPassword: string = req.body.confirmNewPassword
+
+        if (!username || !oldPassword || !newPassword || !confirmNewPassword) {
+            res.json({ message: 'Nepotpuni podaci' })
+            return
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            res.json({ message: 'Nova lozinka i potvrda se ne poklapaju' })
+            return
+        }
+
+        if (oldPassword === newPassword) {
+            res.json({ message: 'Stara i nova lozinka ne smeju biti iste' })
+            return
+        }
+
+        if (!this.validatePassword(newPassword)) {
+            res.json({ message: 'Nova lozinka nije u ispravnom formatu' })
+            return
+        }
+
+        UserModel.findOne({ username: username }).then(user => {
+            if (!user) {
+                res.json({ message: 'Korisnik nije pronađen' })
+                return
+            }
+
+            if (!bcrypt.compareSync(oldPassword, user.password!)) {
+                res.json({ message: 'Stara lozinka nije ispravna' })
+                return
+            }
+
+            const saltRounds = 10
+            const hashed = bcrypt.hashSync(newPassword, saltRounds)
+
+            UserModel.updateOne({ username }, { $set: { password: hashed } })
+                .then(() => res.json({ message: 'Lozinka uspešno promenjena' }))
+                .catch(err => {
+                    console.log(err)
+                    res.json({ message: 'Greška pri promeni lozinke' })
+                })
+        }).catch(err => {
+            console.log(err)
+            res.json({ message: 'Greška' })
+        })
+    }
+
     updateFirstname = (req: express.Request, res: express.Response)=>{
         userModel.updateOne(
             {username: req.body.username},

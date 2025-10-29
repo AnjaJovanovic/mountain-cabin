@@ -58,4 +58,13 @@ export class UserService {
   getAllUsers(){
     return this.httpClient.get<User[]>("http://localhost:4000/users/getAllUsers")
   }
+
+  changePassword(username: string, oldPassword: string, newPassword: string, confirmNewPassword: string){
+      return this.httpClient.post<Message>(`${this.backendUrl}/users/changePassword`,{
+        username,
+        oldPassword,
+        newPassword,
+        confirmNewPassword
+      })
+  }
 }

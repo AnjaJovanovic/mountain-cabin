@@ -89,6 +89,49 @@ class UserController {
                 });
             }
         };
+        this.changePassword = (req, res) => {
+            const username = req.body.username;
+            const oldPassword = req.body.oldPassword;
+            const newPassword = req.body.newPassword;
+            const confirmNewPassword = req.body.confirmNewPassword;
+            if (!username || !oldPassword || !newPassword || !confirmNewPassword) {
+                res.json({ message: 'Непотпуни подаци' });
+                return;
+            }
+            if (newPassword !== confirmNewPassword) {
+                res.json({ message: 'Нова лозинка и потврда се не поклапају' });
+                return;
+            }
+            if (oldPassword === newPassword) {
+                res.json({ message: 'Стара и нова лозинка не смеју бити исте' });
+                return;
+            }
+            if (!this.validatePassword(newPassword)) {
+                res.json({ message: 'Нова лозинка није у исправном формату' });
+                return;
+            }
+            user_model_1.default.findOne({ username: username }).then(user => {
+                if (!user) {
+                    res.json({ message: 'Корисник није пронађен' });
+                    return;
+                }
+                if (!bcrypt_1.default.compareSync(oldPassword, user.password)) {
+                    res.json({ message: 'Стара лозинка није исправна' });
+                    return;
+                }
+                const saltRounds = 10;
+                const hashed = bcrypt_1.default.hashSync(newPassword, saltRounds);
+                user_model_1.default.updateOne({ username }, { $set: { password: hashed } })
+                    .then(() => res.json({ message: 'Лозинка успешно промењена' }))
+                    .catch(err => {
+                    console.log(err);
+                    res.json({ message: 'Грешка при промени лозинке' });
+                });
+            }).catch(err => {
+                console.log(err);
+                res.json({ message: 'Грешка' });
+            });
+        };
         this.updateFirstname = (req, res) => {
             user_model_2.default.updateOne({ username: req.body.username }, { $set: { firstname: req.body.firstname } }).then(currUser => {
                 res.json({ message: "User updated" });

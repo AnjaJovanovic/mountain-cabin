@@ -9,6 +9,7 @@ import { TReservationsComponent } from './components/tourist/t-reservations-comp
 import { NotRegisterUsrComponent } from './components/not-register-usr-component/not-register-usr-component';
 import { AdminLoginComponent } from './components/forms/admin-login-component/admin-login-component';
 import { AdminComponent } from './components/admin/admin-component/admin-component';
+import { ChangePasswordComponent } from './components/forms/change-password-component/change-password-component';
 
 export const routes: Routes = [
     {path: "login", component: LoginComponent},
@@ -16,6 +17,7 @@ export const routes: Routes = [
     {path: "", component: NotRegisterUsrComponent},
     {path: "adminLogin", component: AdminLoginComponent},
     {path: "admin", component: AdminComponent},
+    {path: "changePassword", component: ChangePasswordComponent},
 
     //{path: "touristProfile", component: TProfileComponent},
     //{path: "touristVikendica", component: TVikendicaComponent},
