@@ -14,8 +14,10 @@ import { CommonModule } from '@angular/common';
 export class TProfileComponent {
 
   private userService = inject(UserService)
+  private backendUrl = "http://localhost:4000"
 
   user: User = new User()
+  cacheBuster: number = Date.now()
 
   ngOnInit() {
     let userString = localStorage.getItem("loggedUser");
@@ -149,14 +151,27 @@ export class TProfileComponent {
       if (data.path) {
         this.user.profilePicture = data.path
         console.log(data.path)
-        //this.imagePreview = data.path
-        this.imagePreview = `http://localhost:4000/${data.path}?${Date.now()}`;
-
+        this.cacheBuster = Date.now()
         localStorage.setItem('loggedUser', JSON.stringify(this.user))
         this.selectedFile = null
-        window.location.reload();
-
       }
     })
+  }
+
+  get imageUrl(): string {
+    const path = this.user?.profilePicture || ''
+    const finalPath = path ? path : 'uploads/default.png'
+    const normalized = finalPath.startsWith('http') ? finalPath : `${this.backendUrl}/${finalPath.replace(/^\//, '')}`
+    return `${normalized}?${this.cacheBuster}`
+  }
+
+  onImgError(evt: any) {
+    const el: HTMLImageElement = evt?.target
+    if (el) {
+      if ((el as any).dataset && (el as any).dataset.fallbackApplied === '1') return
+      el.onerror = null
+      if ((el as any).dataset) (el as any).dataset.fallbackApplied = '1'
+      el.src = `${this.backendUrl}/uploads/default.png?${Date.now()}`
+    }
   }
 }

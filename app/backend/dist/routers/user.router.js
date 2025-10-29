@@ -8,8 +8,10 @@ const user_controller_1 = require("../controllers/user.controller");
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-// Kreiraj folder ako ne postoji
-const uploadDir = path_1.default.join(__dirname, '../../../frontend/app/public/uploads');
+// Kreiraj folder ako ne postoji (u backend-u)
+// Napomena: nakon kompilacije __dirname je backend/dist/routers,
+// pa '../../uploads' pokazuje na backend/uploads — isto kao static ruta u server.ts
+const uploadDir = path_1.default.join(__dirname, '../../uploads');
 if (!fs_1.default.existsSync(uploadDir))
     fs_1.default.mkdirSync(uploadDir, { recursive: true });
 // Konfiguracija za multer

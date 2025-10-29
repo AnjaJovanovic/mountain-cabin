@@ -4,7 +4,7 @@
 
     <div class="profile-image">
       <div class="image-wrapper">
-        <img src="{{user.profilePicture}}" alt="Profilna slika korisnika">
+        <img [src]="imageUrl" (error)="onImgError($event)" alt="Profilna slika korisnika">
 
         <label for="fileInput" class="edit-icon">
           <img src="edit.png" alt="Edit slika">

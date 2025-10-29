@@ -5,8 +5,10 @@ import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
 
-// Kreiraj folder ako ne postoji
-const uploadDir = path.join(__dirname, '../../../frontend/app/public/uploads')
+// Kreiraj folder ako ne postoji (u backend-u)
+// Napomena: nakon kompilacije __dirname je backend/dist/routers,
+// pa '../../uploads' pokazuje na backend/uploads — isto kao static ruta u server.ts
+const uploadDir = path.join(__dirname, '../../uploads')
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true })
 
 // Konfiguracija za multer
