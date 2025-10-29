@@ -17,7 +17,7 @@ export class UserService {
       username: username,
       password: password
     }
-    return this.httpClient.post<User>(`${this.backendUrl}/users/login`, data)
+    return this.httpClient.post<any>(`${this.backendUrl}/users/login`, data)
   }
 
   register(formData: FormData) {

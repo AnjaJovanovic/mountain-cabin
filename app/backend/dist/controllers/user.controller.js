@@ -15,12 +15,19 @@ class UserController {
             user_model_1.default.findOne({
                 username: request.body.username,
             }).then((user) => {
-                if (user != null && bcrypt_1.default.compareSync(request.body.password, user.password)) {
-                    response.json(user);
-                }
-                else {
+                if (user == null || !bcrypt_1.default.compareSync(request.body.password, user.password)) {
                     response.json(null);
+                    return;
                 }
+                if (user.isBlocked) {
+                    response.json({ message: 'Blokiran' });
+                    return;
+                }
+                if (!user.isActive) {
+                    response.json({ message: 'Nalog nije aktiviran' });
+                    return;
+                }
+                response.json(user);
             }).catch((error) => console.log(error));
         };
         this.register = (req, res) => {

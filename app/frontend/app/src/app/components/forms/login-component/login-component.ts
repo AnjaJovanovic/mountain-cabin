@@ -19,6 +19,10 @@ export class LoginComponent {
 
   login(){
     this.userService.login(this.username, this.password).subscribe(data=>{
+      if(data && (data as any).message){
+        this.message = (data as any).message
+        return
+      }
       if(data){
         localStorage.setItem("loggedUser", JSON.stringify(data));
         this.message = "ulogovan korisnik" + this.username
