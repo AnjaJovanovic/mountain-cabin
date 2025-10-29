@@ -29,13 +29,12 @@ export class NotRegisterUsrComponent {
         this.allVikendice = data
         this.numVikendice = this.allVikendice.length
     })
-  this.userService.getAllUsers().subscribe(data => {
-    this.allUsers = data
-    // filtriramo samo one koji imaju userType === 'vlasnik'
-    this.numOwners = this.allUsers.filter(user => user.userType === 'owner').length
-    this.numTourists = this.allUsers.filter(user => user.userType === 'tourist').length
-
-  })
+    this.userService.getAllUsers().subscribe(data => {
+      this.allUsers = data
+      // filtriramo samo one koji imaju userType === 'vlasnik'
+      this.numOwners = this.allUsers.filter(user => user.userType === 'owner').length
+      this.numTourists = this.allUsers.filter(user => user.userType === 'tourist').length
+    })
   }
 
 sortColumn: string = ''

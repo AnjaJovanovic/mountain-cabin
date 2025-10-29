@@ -13,6 +13,9 @@ const userSchema = new mongoose.Schema(
         email: String,
         profilePicture: String,
         creditCardNumber: String,
+
+        isActive: Boolean,
+        isBlocked: Boolean
     },
     {
         versionKey: false

@@ -15,8 +15,6 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   border: 1px solid #d3e5d6;
   text-align: center;
-
-  /* Animacija pojavljivanja */
   opacity: 0;
   transform: translateY(40px);
   animation: fadeInUp 0.8s ease-out forwards;
@@ -51,7 +49,7 @@ hr {
   margin-bottom: 25px;
 }
 
-/* --- Sekcija za svako polje --- */
+/* Sekcije */
 .info-section {
   margin-bottom: 25px;
   text-align: left;
@@ -109,32 +107,12 @@ button:hover {
   margin-top: 6px;
 }
 
-.profile-image {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.profile-image img {
-  width: 150px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 4px solid #d8e7d3;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.profile-image img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-}
-
+/* --- Slika i olovčica --- */
 .profile-image {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .image-wrapper {
@@ -146,7 +124,7 @@ button:hover {
   width: 150px;
   height: 150px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 50%;
   border: 3px solid #d3e5d6;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
@@ -156,23 +134,27 @@ button:hover {
   display: none;
 }
 
-/* Olovčica za izmenu slike */
+/* Olovčica – gornji desni ugao */
 .edit-icon {
   position: absolute;
-  bottom: 6px;
-  right: 6px;
-  width: 28px;
-  height: 28px;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  opacity: 0.85;
+  box-shadow: 0 0 5px rgba(0,0,0,0.15);
   transition: transform 0.2s ease, opacity 0.3s ease;
 }
 
 .edit-icon img {
-  width: 100%;
-  height: 100%;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
-  border-radius: 5px;
 }
 
 .edit-icon:hover {
@@ -182,6 +164,7 @@ button:hover {
 
 /* Dugme za potvrdu izmene slike */
 .confirm-btn {
+  margin-top: 15px;
   background-color: #5d9f66;
   color: white;
   border: none;
@@ -189,17 +172,9 @@ button:hover {
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  margin-top: 10px;
   transition: background-color 0.3s;
 }
 
 .confirm-btn:hover {
   background-color: #4c8756;
-}
-
-.message {
-  margin-top: 8px;
-  color: #b04b4b;
-  font-weight: 500;
-  font-size: 14px;
 }

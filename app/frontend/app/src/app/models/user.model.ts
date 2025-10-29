@@ -10,4 +10,7 @@ export class User {
     email: string = ""
     profilePicture: string = ""
     creditCardNumber: string = "" 
+
+    isActive: boolean = false
+    isBlocked: boolean = false
 }

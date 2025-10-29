@@ -1,20 +1,20 @@
 <div class="profile-wrapper">
   <div class="profile-card">
     {{messageImage}}
+
     <div class="profile-image">
       <div class="image-wrapper">
-      <img src= {{user.profilePicture}} alt="Profilna slika korisnika">
-{{user.profilePicture}}
+        <img src="{{user.profilePicture}}" alt="Profilna slika korisnika">
+
         <label for="fileInput" class="edit-icon">
           <img src="edit.png" alt="Edit slika">
         </label>
 
         <input id="fileInput" type="file" (change)="onFileSelected($event)" accept="image/*">
-        <button class="confirm-btn" (click)="updateProfilePicture()"> Potvrdi izmenu slike </button>
       </div>
+
+      <button class="confirm-btn" (click)="updateProfilePicture()">Potvrdi izmenu slike</button>
     </div>
-
-
 
     <h2 class="title">Tourist Profile</h2>
     <p class="subtitle">Ažurirajte svoje podatke</p>

@@ -1,9 +1,12 @@
 import express from 'express'
 import cors from 'cors'
 import mongoose from 'mongoose'
+import path from 'path'
+
 import userRouter from './routers/user.router'
 import vikendicaRouter from './routers/vikendica.router'
-import path from 'path'
+import adminRouter from './routers/admin.router'
+
 
 const app = express()
 app.use(cors())
@@ -18,6 +21,7 @@ conn.once('open', ()=>{
 const router = express.Router()
 router.use("/users", userRouter)
 router.use("/vikendice", vikendicaRouter)
+router.use("/admin", adminRouter)
 
 app.use('/', router)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

@@ -1,0 +1,35 @@
+<div class="admin-wrapper">
+  <h2>👑 Admin panel – upravljanje korisnicima</h2>
+  <p class="message">{{ message }}</p>
+
+  <table class="user-table">
+    <tr>
+      <th>Korisničko ime</th>
+      <th>Aktivan</th>
+      <th>Blokiran</th>
+      <th>Akcije</th>
+    </tr>
+
+    @for (u of allUsers; track u.username) {
+      <tr>
+        <td>{{ u.username }}</td>
+        <td>
+          <span [class.active]="u.isActive" [class.inactive]="!u.isActive">
+            {{ u.isActive ? 'Da' : 'Ne' }}
+          </span>
+        </td>
+        <td>
+          <span [class.blocked]="u.isBlocked" [class.unblocked]="!u.isBlocked">
+            {{ u.isBlocked ? 'Da' : 'Ne' }}
+          </span>
+        </td>
+        <td class="actions">
+          <button (click)="activateUser(u.username)" [disabled]="u.isActive">Aktiviraj</button>
+          <button (click)="deactivateUser(u.username)" [disabled]="!u.isActive">Deaktiviraj</button>
+          <button (click)="blockUser(u.username)" [disabled]="u.isBlocked">Blokiraj</button>
+          <button (click)="unblockUser(u.username)" [disabled]="!u.isBlocked">Odblokiraj</button>
+        </td>
+      </tr>
+    }
+  </table>
+</div>
