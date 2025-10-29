@@ -2,12 +2,13 @@ import { Component, inject } from '@angular/core';
 import { Vikendica } from '../../models/vikendica.model';
 import { VikendicaService } from '../../services/vikendica/vikendica-service';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { User } from '../../models/user.model';
 import { UserService } from '../../services/User/user-service';
 
 @Component({
   selector: 'app-not-register-usr-component',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './not-register-usr-component.html',
   styleUrl: './not-register-usr-component.css'
 })

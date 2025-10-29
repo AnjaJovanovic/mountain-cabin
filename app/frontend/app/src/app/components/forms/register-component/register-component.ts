@@ -80,7 +80,7 @@ register() {
   this.userService.register(formData).subscribe(data => {
     this.message = data.message
     if (data.message === 'ok') {
-      this.router.navigate([''])
+      this.router.navigate(['login'])
     }
   })
 }
