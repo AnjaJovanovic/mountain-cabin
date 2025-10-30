@@ -23,6 +23,15 @@ class VikendicaController {
                 console.log(err);
             });
         };
+        this.getByOwner = (req, res) => {
+            const ownerUsername = String(req.params.username);
+            vikendica_model_1.default.find({ ownerUsername }).sort({ idVikendice: 1 }).then(vikendice => {
+                res.json(vikendice);
+            }).catch((err) => {
+                console.log(err);
+                res.status(500).json({ message: 'Greška' });
+            });
+        };
         this.delete = (req, res) => {
             vikendica_model_1.default.deleteOne({ idVikendice: req.body.idVikendice }).then(vikendice => {
                 res.json({ message: "Vikendica obrisana" });
@@ -67,6 +76,7 @@ class VikendicaController {
                     galerijaSlika: Array.isArray(req.body.galerijaSlika) ? req.body.galerijaSlika : [],
                     zauzeta: false,
                     usluge: req.body.usluge,
+                    ownerUsername: req.body.ownerUsername,
                     lat: req.body.lat,
                     lng: req.body.lng
                 });

@@ -29,6 +29,7 @@ const fileFilter = (req, file, cb) => {
 };
 const upload = (0, multer_1.default)({ storage, fileFilter });
 vikendicaRouter.route("/getAll").get((req, res) => new vikendica_controller_1.VikendicaController().getAll(req, res));
+vikendicaRouter.route("/byOwner/:username").get((req, res) => new vikendica_controller_1.VikendicaController().getByOwner(req, res));
 vikendicaRouter.route("/delete").post((req, res) => new vikendica_controller_1.VikendicaController().delete(req, res));
 vikendicaRouter.route("/update").post((req, res) => new vikendica_controller_1.VikendicaController().update(req, res));
 vikendicaRouter.route("/create").post((req, res) => new vikendica_controller_1.VikendicaController().create(req, res));

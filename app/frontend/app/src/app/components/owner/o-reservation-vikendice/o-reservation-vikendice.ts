@@ -19,13 +19,21 @@ export class OReservationVikendice {
   jsonError: string = ''
   selectedImagesPreview: string[] = []
   selectedFiles: File[] = []
+  editMode: boolean = false
+  editingId: number | null = null
 
   ngOnInit(){
     this.load()
   }
 
   load(){
-    this.vikendicaService.getAll().subscribe(data=>{ this.vikendice = data })
+    const uStr = localStorage.getItem('loggedUser')
+    const username = uStr ? JSON.parse(uStr).username : ''
+    if(username){
+      this.vikendicaService.getByOwner(username).subscribe(data=>{ this.vikendice = data })
+    }else{
+      this.vikendicaService.getAll().subscribe(data=>{ this.vikendice = data })
+    }
   }
 
   onJsonSelected(event: any){
@@ -76,18 +84,85 @@ export class OReservationVikendice {
 
   create(){
     const err = this.validate(); if(err){ this.message = err; return }
-    // prvo kreiramo vikendicu bez slika
-    this.vikendicaService.create(this.form).subscribe((resp:any)=>{
-      this.message = resp?.message || 'Kreirano.'
-      const newId = resp?.idVikendice
-      if(newId && this.selectedFiles.length>0){
-        this.vikendicaService.uploadImages(newId, this.selectedFiles).subscribe(()=>{
-          this.form = new Vikendica(); this.selectedFiles = []; this.selectedImagesPreview = []
+    if(this.editMode && this.editingId){
+      // update postojeće vikendice
+      const payload: Vikendica = { ...this.form, idVikendice: this.editingId }
+      this.vikendicaService.update(payload).subscribe((resp:any)=>{
+        this.message = resp?.message || 'Ažurirano.'
+        const idForImages = this.editingId as number
+        if(this.selectedFiles.length>0){
+          this.vikendicaService.uploadImages(idForImages, this.selectedFiles).subscribe(()=>{
+            this.resetForm()
+            this.load()
+          })
+        } else {
+          this.resetForm()
           this.load()
-        })
-      } else {
-        this.form = new Vikendica(); this.selectedFiles = []; this.selectedImagesPreview = []
-        this.load()
+        }
+      })
+    } else {
+      // prvo kreiramo vikendicu bez slika
+      const uStr = localStorage.getItem('loggedUser')
+      const username = uStr ? JSON.parse(uStr).username : ''
+      const payload: Vikendica = { ...this.form, ownerUsername: username } as any
+      this.vikendicaService.create(payload).subscribe((resp:any)=>{
+        this.message = resp?.message || 'Kreirano.'
+        const newId = resp?.idVikendice
+        if(newId && this.selectedFiles.length>0){
+          this.vikendicaService.uploadImages(newId, this.selectedFiles).subscribe(()=>{
+            this.resetForm()
+            this.load()
+          })
+        } else {
+          this.resetForm()
+          this.load()
+        }
+      })
+    }
+  }
+
+  edit(v: Vikendica){
+    this.editMode = true
+    this.editingId = v.idVikendice
+    this.form = {
+      idVikendice: v.idVikendice,
+      naziv: v.naziv,
+      mesto: v.mesto,
+      telefon: v.telefon,
+      cenaNocenjaLetnja: v.cenaNocenjaLetnja,
+      cenaNocenjaZimska: v.cenaNocenjaZimska,
+      galerijaSlika: [...(v.galerijaSlika || [])],
+      zauzeta: v.zauzeta,
+      usluge: v.usluge,
+      prosecnaOcena: v.prosecnaOcena,
+      ownerUsername: v.ownerUsername,
+      lat: v.lat,
+      lng: v.lng
+    }
+    this.message = ''
+    this.selectedFiles = []
+    this.selectedImagesPreview = []
+  }
+
+  cancelEdit(){
+    this.resetForm()
+  }
+
+  resetForm(){
+    this.form = new Vikendica()
+    this.selectedFiles = []
+    this.selectedImagesPreview = []
+    this.editMode = false
+    this.editingId = null
+  }
+
+  remove(v: Vikendica){
+    if(!confirm(`Obrisati vikendicu "${v.naziv}"?`)) return
+    this.vikendicaService.delete(v).subscribe((resp:any)=>{
+      this.message = resp?.message || 'Obrisano.'
+      this.load()
+      if(this.editMode && this.editingId === v.idVikendice){
+        this.resetForm()
       }
     })
   }

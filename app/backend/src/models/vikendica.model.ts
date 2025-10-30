@@ -12,6 +12,7 @@ const vikendicaSchema = new mongoose.Schema(
         zauzeta: Boolean,
         usluge: String,
         datumRezervacije: Date,
+        ownerUsername: String,
         lat: Number,
         lng: Number
     },

@@ -15,6 +15,7 @@ const vikendicaSchema = new mongoose_1.default.Schema({
     zauzeta: Boolean,
     usluge: String,
     datumRezervacije: Date,
+    ownerUsername: String,
     lat: Number,
     lng: Number
 }, {

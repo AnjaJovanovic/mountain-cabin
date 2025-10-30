@@ -6,6 +6,7 @@ import path from 'path'
 import userRouter from './routers/user.router'
 import vikendicaRouter from './routers/vikendica.router'
 import adminRouter from './routers/admin.router'
+import rezervacijaRouter from './routers/rezervacija.router'
 
 
 const app = express()
@@ -22,6 +23,7 @@ const router = express.Router()
 router.use("/users", userRouter)
 router.use("/vikendice", vikendicaRouter)
 router.use("/admin", adminRouter)
+router.use("/rezervacije", rezervacijaRouter)
 
 app.use('/', router)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

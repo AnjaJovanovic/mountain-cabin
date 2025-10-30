@@ -1,6 +1,6 @@
 <div class="vik-wrap">
   <div class="form-card">
-    <h3>Dodaj novu vikendicu</h3>
+    <h3>@if (editMode) { Uredi vikendicu } @else { Dodaj novu vikendicu }</h3>
     <div class="row">
       <label>Naziv</label>
       <input type="text" [(ngModel)]="form.naziv" placeholder="Naziv vikendice">
@@ -50,7 +50,12 @@
       <input type="file" (change)="onJsonSelected($event)" accept="application/json">
       <div class="error" *ngIf="jsonError">{{jsonError}}</div>
     </div>
-    <button (click)="create()">Sačuvaj</button>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button (click)="create()">@if (editMode) { Sačuvaj izmene } @else { Sačuvaj }</button>
+      @if (editMode) {
+        <button (click)="cancelEdit()" type="button">Otkaži</button>
+      }
+    </div>
     <div class="msg">{{message}}</div>
   </div>
 
@@ -59,7 +64,7 @@
     <table>
       <thead>
         <tr>
-          <th>ID</th><th>Naziv</th><th>Mesto</th><th>Letnja</th><th>Zimska</th>
+          <th>ID</th><th>Naziv</th><th>Mesto</th><th>Letnja</th><th>Zimska</th><th>Akcije</th>
         </tr>
       </thead>
       <tbody>
@@ -69,6 +74,10 @@
           <td>{{v.mesto}}</td>
           <td>{{v.cenaNocenjaLetnja}}</td>
           <td>{{v.cenaNocenjaZimska}}</td>
+          <td>
+            <button (click)="edit(v)">Uredi</button>
+            <button (click)="remove(v)" style="margin-left:6px;">Obriši</button>
+          </td>
         </tr>
       </tbody>
     </table>

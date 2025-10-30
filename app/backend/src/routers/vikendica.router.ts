@@ -30,6 +30,10 @@ vikendicaRouter.route("/getAll").get(
     (req, res) => new VikendicaController().getAll(req, res)
 )
 
+vikendicaRouter.route("/byOwner/:username").get(
+    (req, res) => new VikendicaController().getByOwner(req, res)
+)
+
 vikendicaRouter.route("/delete").post(
     (req, res) => new VikendicaController().delete(req, res)
 )

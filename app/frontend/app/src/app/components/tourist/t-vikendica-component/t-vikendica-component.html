@@ -27,6 +27,60 @@
           </div>
         </div>
       }
+      @if (selectedVikendica.lat !== undefined && selectedVikendica.lng !== undefined) {
+        <div style="margin-top: 16px;">
+          <strong>Lokacija:</strong>
+          <div id="vik-map" style="height: 320px; border: 1px solid #ddd; border-radius: 8px; margin-top:8px;"></div>
+        </div>
+      }
+
+      <div style="margin-top: 20px; padding-top:12px; border-top:1px solid #eee;">
+        <h3>Rezervišite boravak</h3>
+        @if (step === 1) {
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-width: 700px;">
+            <div>
+              <label>Početak (od 14:00)</label>
+              <input type="datetime-local" [(ngModel)]="startISO">
+            </div>
+            <div>
+              <label>Kraj (do 10:00)</label>
+              <input type="datetime-local" [(ngModel)]="endISO">
+            </div>
+            <div>
+              <label>Broj odraslih</label>
+              <input type="number" min="1" [(ngModel)]="adults">
+            </div>
+            <div>
+              <label>Broj dece</label>
+              <input type="number" min="0" [(ngModel)]="children">
+            </div>
+          </div>
+          <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+            <button (click)="proceedToPayment()">Nastavi</button>
+            <span style="color:#b00;">{{reservationMessage}}</span>
+          </div>
+        } @else {
+          <div style="max-width: 700px;">
+            <p><strong>Vikendica:</strong> {{ selectedVikendica.naziv }}</p>
+            <p><strong>Period:</strong> {{ formatDateTime(startISO) }} — {{ formatDateTime(endISO) }}</p>
+            <p><strong>Gosti:</strong> Odraslih {{adults}}, Dece {{children}}</p>
+            <p><strong>Cena:</strong> {{ formatEur(calculatedPrice) }}</p>
+            <div style="margin: 8px 0;">
+              <label>Napomena (opciono, do 500 karaktera)</label>
+              <textarea [(ngModel)]="note" rows="3" maxlength="500" style="width:100%;"></textarea>
+            </div>
+            <div style="margin: 8px 0;">
+              <label>Kartica</label>
+              <input type="text" [(ngModel)]="cardNumber" placeholder="**** **** **** ****" style="width: 300px;">
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button (click)="confirmReservation()">Potvrdi i plati</button>
+              <button (click)="backToStep1()" type="button">Nazad</button>
+              <span style="color:#b00;">{{reservationMessage}}</span>
+            </div>
+          </div>
+        }
+      </div>
     </div>
   </div>
 } @else {

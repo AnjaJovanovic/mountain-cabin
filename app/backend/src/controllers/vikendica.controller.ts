@@ -10,6 +10,16 @@ export class VikendicaController{
         })
     }
 
+    getByOwner = (req: express.Request, res: express.Response)=>{
+        const ownerUsername = String(req.params.username)
+        VikendicaModel.find({ ownerUsername }).sort({idVikendice: 1}).then(vikendice=>{
+            res.json(vikendice)
+        }).catch((err)=>{
+            console.log(err)
+            res.status(500).json({message:'Greška'})
+        })
+    }
+
     delete = (req: express.Request, res: express.Response)=>{
         VikendicaModel.deleteOne({idVikendice: req.body.idVikendice}).then(vikendice=>{
             res.json({message: "Vikendica obrisana"})
@@ -57,6 +67,7 @@ export class VikendicaController{
                 galerijaSlika: Array.isArray(req.body.galerijaSlika) ? req.body.galerijaSlika : [],
                 zauzeta: false,
                 usluge: req.body.usluge,
+                ownerUsername: req.body.ownerUsername,
                 lat: req.body.lat,
                 lng: req.body.lng
             })

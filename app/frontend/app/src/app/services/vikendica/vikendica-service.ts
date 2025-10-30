@@ -15,6 +15,10 @@ export class VikendicaService {
       return this.httpClient.get<Vikendica[]>("http://localhost:4000/vikendice/getAll")
     }
 
+  getByOwner(username: string){
+    return this.httpClient.get<Vikendica[]>(`http://localhost:4000/vikendice/byOwner/${username}`)
+  }
+
     delete(vikendica: Vikendica){
       return this.httpClient.post<Message>("http://localhost:4000/vikendice/delete",{idVikendice: vikendica.idVikendice});
     }
