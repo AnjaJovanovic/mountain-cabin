@@ -1,16 +1,23 @@
-<div class="register-wrapper">
-  <div class="register-card">
-    <h2 class="title">🏕️ Mountain Cabin</h2>
-    <h3 class="subtitle">Registracija korisnika</h3>
+<div class="register-container">
+  <div class="left-panel">
+    <img src="uploads/logo.png" alt="Mountain Cabin logo" class="logo">
+    <h2>Dobrodošli u Mountain Cabin</h2>
+    <p>Pridružite se zajednici ljubitelja prirode.</p>
+  </div>
+
+  <div class="right-panel">
+    <h3 class="form-title">Registracija korisnika</h3>
 
     <div class="upload-section">
       <label>Profilna slika</label>
       <input type="file" (change)="onFileSelected($event)" accept="image/*">
-      <p class="message">{{messageImage}}</p>
+      <p class="message">{{ messageImage }}</p>
 
-      <div class="image-preview" *ngIf="imagePreview">
-        <img [src]="imagePreview" alt="Profilna slika">
-      </div>
+      @if (imagePreview) {
+        <div class="image-preview">
+          <img [src]="imagePreview" alt="Profilna slika">
+        </div>
+      }
     </div>
 
     <div class="form-group">
@@ -51,6 +58,7 @@
     <div class="form-group">
       <label>Broj kreditne kartice</label>
       <input type="text" [(ngModel)]="user.creditCardNumber" (input)="checkCardType()" placeholder="Unesite broj kartice">
+
       @if (cardType === 'visa') {
         <img src="visa.png" alt="Visa" width="50">
       } @else if (cardType === 'mastercard') {
@@ -74,7 +82,7 @@
     </div>
 
     <button class="register-btn" (click)="register()">Registruj se</button>
-    <span class="message">{{message}}</span>
+    <p class="message">{{ message }}</p>
 
     <div class="back-link">
       <a routerLink="../login">Nazad na prijavu</a>

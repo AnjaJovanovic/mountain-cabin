@@ -36,7 +36,7 @@ export class LoginComponent {
         console.log("PODACI KOJE DOBIJAM IZ LOGIN BACKENDA:", data)
       }
       else{
-        this.message = "Error"
+        this.message = "Uneli ste pogrešne podatke"
       }
     })
   }

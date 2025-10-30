@@ -1,55 +1,61 @@
-<p>not-register-usr-component works!</p>
+<div class="home-wrapper">
+  <header class="hero">
+    <img src="uploads/logo.png" alt="Mountain Cabin logo" class="hero-logo" />
 
-Broj vikendica: {{numVikendice}} <br>
-Broj vlasnika: {{numOwners}} <br>
-Broj turista: {{numTourists}} <br>
+    <div class="hero-buttons">
+      <button routerLink="/login">Prijava korisnika</button>
+      <button routerLink="/register" class="secondary">Registracija</button>
+      <button routerLink="/adminLogin" class="outline">Prijava administratora</button>
+    </div>
+  </header>
 
-<div style="margin: 12px 0; display: flex; gap: 12px;">
-  <button routerLink="/login">User login</button>
-  <button routerLink="/register">Register</button>
-  <button routerLink="/adminLogin">Admin login</button>
+  <section class="stats-section">
+    <div class="stats-card">
+      <h3>{{numVikendice}}</h3>
+      <p>Vikendica</p>
+    </div>
+    <div class="stats-card">
+      <h3>{{numOwners}}</h3>
+      <p>Vlasnika</p>
+    </div>
+    <div class="stats-card">
+      <h3>{{numTourists}}</h3>
+      <p>Turista</p>
+    </div>
+  </section>
+
+  <section class="filter-section">
+    <h2>Pretraga vikendica</h2>
+
+    <div class="filters">
+      <input type="text" [(ngModel)]="searchNaziv" (input)="applyFilter()" placeholder="Pretraga po nazivu">
+      <input type="text" [(ngModel)]="searchMesto" (input)="applyFilter()" placeholder="Pretraga po mestu">
+      <button class="clear-btn" (click)="clearFilter()">Očisti</button>
+    </div>
+
+    <p class="results">Pronađeno: {{filteredVikendice.length}}</p>
+
+    <div class="table-wrapper">
+      <table class="vikendice-table">
+        <thead>
+          <tr>
+            <th (click)="sort('naziv')">Naziv</th>
+            <th (click)="sort('mesto')">Mesto</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (v of filteredVikendice; track v.idVikendice) {
+            <tr>
+              <td>{{v.naziv}}</td>
+              <td>{{v.mesto}}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2025 Mountain Cabin</p>
+  </footer>
 </div>
-
-<hr>
-<div style="margin: 12px 0; display:flex; gap:12px; align-items: end;">
-  <div>
-    <label>Naziv</label>
-    <input type="text" [(ngModel)]="searchNaziv" (input)="applyFilter()" placeholder="Pretraga po nazivu">
-  </div>
-  <div>
-    <label>Mesto</label>
-    <input type="text" [(ngModel)]="searchMesto" (input)="applyFilter()" placeholder="Pretraga po mestu">
-  </div>
-  <button (click)="clearFilter()">Očisti</button>
-  <span style="margin-left:auto;">Pronađeno: {{filteredVikendice.length}}</span>
-  </div>
-
-<table border="1" cellspacing="0" cellpadding="8">
-  <thead>
-    <tr>
-      <th (click)="sort('naziv')">
-        Naziv
-        @if (sortColumn === 'naziv') {
-          <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
-        }
-      </th>
-      <th (click)="sort('mesto')">
-        Mesto
-        @if (sortColumn === 'mesto') {
-          <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
-        }
-      </th>
-    </tr>
-  </thead>
-
-  <tbody>
-    @for (v of filteredVikendice; track v.idVikendice) {
-      <tr>
-        <td>{{ v.naziv }}</td>
-        <td>{{ v.mesto }}</td>
-      </tr>
-    }
-  </tbody>
-</table>
-
-

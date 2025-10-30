@@ -1,0 +1,155 @@
+.admin-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8faf9, #eaf4ec);
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  padding: 20px 60px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-bottom: 3px solid #1f6837;
+}
+
+.admin-header .logo {
+  height: 120px;
+}
+
+.admin-header h2 {
+  color: #1f6837;
+  font-weight: 600;
+}
+
+.logout-btn {
+  background-color: #1f6837;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #14512b;
+}
+
+.admin-content {
+  flex: 1;
+  padding: 40px 60px;
+}
+
+.admin-content h3 {
+  color: #1f6837;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.message {
+  color: #c62828;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.table-container {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th {
+  background-color: #1f6837;
+  color: white;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.user-table td {
+  padding: 14px;
+  border-bottom: 1px solid #e3e8e3;
+  font-size: 15px;
+}
+
+.user-table tr:hover {
+  background-color: #f4faf5;
+}
+
+/* STATUS LABELS */
+.status {
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.status.active,
+.status.unblocked {
+  color: #1f6837;
+  background-color: #eaf4ec;
+}
+
+.status.inactive,
+.status.blocked {
+  color: #a33d3d;
+  background-color: #fbeaea;
+}
+
+/* BUTTONS */
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actions button {
+  background-color: transparent;
+  border: 1px solid #1f6837;
+  color: #1f6837;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.actions button:hover:not(:disabled) {
+  background-color: #1f6837;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .admin-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+  }
+
+  .admin-content {
+    padding: 25px 20px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+}

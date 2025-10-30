@@ -1,0 +1,203 @@
+/* Glavni okvir */
+.home-wrapper {
+  font-family: 'Poppins', sans-serif;
+  background-color: #ffffff;
+  color: #1f6837;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* HERO sekcija */
+.hero {
+  background-color: #ffffff;
+  text-align: center;
+  padding: 60px 20px 40px;
+  border-bottom: 2px solid #e6efe8;
+}
+
+.hero-logo {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  margin: 0 auto 30px;
+  display: block;
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+button {
+  padding: 10px 26px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  border: none;
+  transition: 0.25s ease;
+  letter-spacing: 0.3px;
+}
+
+/* Dugmad */
+button:not(.secondary):not(.outline) {
+  background-color: #1f6837;
+  color: #ffffff;
+}
+
+button.secondary {
+  background-color: #3b8754;
+  color: #ffffff;
+}
+
+button.outline {
+  background-color: transparent;
+  border: 2px solid #1f6837;
+  color: #1f6837;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:not(.outline):hover {
+  background-color: #14512b;
+}
+
+button.outline:hover {
+  background-color: #1f6837;
+  color: white;
+}
+
+/* Sekcija sa statistikama */
+.stats-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  margin: 40px auto;
+  padding: 20px;
+  width: 90%;
+  max-width: 900px;
+  border-radius: 16px;
+  background-color: #f8f9f7;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.stats-card {
+  text-align: center;
+  flex: 1;
+}
+
+.stats-card h3 {
+  color: #1f6837;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.stats-card p {
+  color: #5a7a60;
+  font-weight: 500;
+}
+
+/* Filter sekcija */
+.filter-section {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.filter-section h2 {
+  color: #1f6837;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+.filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.filters input {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #dfe4de;
+  min-width: 220px;
+  background-color: #ffffff;
+  transition: 0.2s;
+}
+
+.filters input:focus {
+  border-color: #1f6837;
+  box-shadow: 0 0 5px rgba(31, 104, 55, 0.25);
+  outline: none;
+}
+
+.clear-btn {
+  background-color: #1f6837;
+  color: white;
+  font-weight: 500;
+}
+
+.clear-btn:hover {
+  background-color: #14512b;
+}
+
+.results {
+  margin-top: 12px;
+  font-weight: 600;
+  color: #1f6837;
+}
+
+.table-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+  width: 100%;
+}
+
+.vikendice-table {
+  width: 80%;
+  max-width: 800px;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  background-color: #ffffff;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.vikendice-table th {
+  background-color: #1f6837;
+  color: #ffffff;
+  padding: 12px 14px;
+  text-align: center;
+  font-weight: 800;
+}
+
+.vikendice-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.vikendice-table tr:hover {
+  background-color: #f6faf6;
+}
+
+/* Footer */
+.footer {
+  background-color: #f5f5f5;
+  color: #1f6837;
+  text-align: center;
+  padding: 18px 10px;
+  margin-top: auto;
+  font-size: 14px;
+  border-top: 1px solid #e3e3e3;
+}

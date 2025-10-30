@@ -4,6 +4,7 @@ import { User } from '../../../models/user.model';
 import { UserService } from '../../../services/User/user-service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-component',
@@ -14,6 +15,7 @@ import { CommonModule } from '@angular/common';
 export class AdminComponent {
   private adminService = inject(AdminService);
   private userService = inject(UserService);
+  private router = inject(Router)
 
   allUsers: User[] = [];
   message = "";
@@ -54,5 +56,9 @@ export class AdminComponent {
       this.message = data.message;
       this.reloadUsers()
     });
+  }
+
+  logout(){
+    this.router.navigate([''])
   }
 }

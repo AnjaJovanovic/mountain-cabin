@@ -1,0 +1,184 @@
+.tourist-wrapper {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(180deg, #ffffff, #f5f3e7);
+  color: #1f6837;
+  min-height: 100vh;
+  padding: 0 60px 40px;
+}
+
+/* HEADER */
+.tourist-header {
+  background-color: #ffffff;
+  border-bottom: 3px solid #1f6837;
+  text-align: center;
+  padding: 20px 0;
+  margin-bottom: 30px;
+}
+
+.logo {
+  height: 80px;
+  object-fit: contain;
+}
+
+/* Naslovi */
+.section-title {
+  color: #1f6837;
+  font-size: 26px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* FILTER SEKCIJA */
+.filter-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 20px;
+  align-items: end;
+  max-width: 900px;
+  margin: 0 auto 20px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.filter-item label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.filter-item input {
+  border: 1px solid #b8c9b9;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 15px;
+  width: 100%;
+}
+
+.filter-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  gap: 6px;
+}
+
+.filter-section button {
+  background-color: #1f6837;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  width: 100px;
+}
+
+.filter-section button:hover {
+  background-color: #14512b;
+}
+
+.count {
+  font-size: 14px;
+  color: #14512b;
+  font-weight: 500;
+}
+
+/* TABELA */
+.vikendice-table {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.vikendice-table th {
+  background-color: #1f6837;
+  color: #fff;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.vikendice-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e9ece9;
+}
+
+.vikendice-table tr:hover {
+  background-color: #f4faf5;
+}
+
+.vikendice-table a {
+  color: #1f6837;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.vikendice-table a:hover {
+  text-decoration: underline;
+}
+
+/* DETALJI */
+.detail-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 36px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Dugmad */
+button {
+  background-color: #1f6837;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  background-color: #14512b;
+}
+
+.back-btn {
+  background: none;
+  border: 1px solid #1f6837;
+  color: #1f6837;
+  margin-bottom: 16px;
+}
+
+.back-btn:hover {
+  background-color: #1f6837;
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .filter-section {
+    grid-template-columns: 1fr;
+  }
+
+  .tourist-wrapper {
+    padding: 0 20px 30px;
+  }
+
+  .detail-card {
+    padding: 20px;
+  }
+
+  .logo {
+    height: 60px;
+  }
+}
