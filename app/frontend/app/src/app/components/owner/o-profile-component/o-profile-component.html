@@ -1,0 +1,68 @@
+<div class="profile-wrapper">
+  <div class="profile-card">
+    {{messageImage}}
+    <div class="profile-image">
+      <div class="image-wrapper">
+        <img [src]="imageUrl" (error)="onImgError($event)" alt="Profilna slika">
+        <label for="fileInput" class="edit-icon">
+          <img src="edit.png" alt="Edit">
+        </label>
+        <input id="fileInput" type="file" (change)="onFileSelected($event)" accept="image/*">
+      </div>
+      <button class="confirm-btn" (click)="updateProfilePicture()">Potvrdi izmenu slike</button>
+      <button class="confirm-btn" routerLink="/changePassword">Promeni lozinku</button>
+    </div>
+
+    <h2 class="title">Owner Profile</h2>
+    <p class="subtitle">Ažurirajte svoje podatke</p>
+    <hr>
+
+    <div class="info-section">
+      <label>Ime:</label>
+      <p class="current">{{user.firstname}}</p>
+      <input type="text" [(ngModel)]="newFirstname" placeholder="Unesite novo ime">
+      <button (click)="updateFirstname()">Izmeni ime</button>
+      <p class="message">{{messageFirstname}}</p>
+    </div>
+
+    <div class="info-section">
+      <label>Prezime:</label>
+      <p class="current">{{user.lastname}}</p>
+      <input type="text" [(ngModel)]="newLastname" placeholder="Unesite novo prezime">
+      <button (click)="updateLastname()">Izmeni prezime</button>
+      <p class="message">{{messageLastname}}</p>
+    </div>
+
+    <div class="info-section">
+      <label>Adresa:</label>
+      <p class="current">{{user.address}}</p>
+      <input type="text" [(ngModel)]="newAddress" placeholder="Unesite novu adresu">
+      <button (click)="updateAddress()">Izmeni adresu</button>
+      <p class="message">{{messageAddress}}</p>
+    </div>
+
+    <div class="info-section">
+      <label>Telefon:</label>
+      <p class="current">{{user.phone}}</p>
+      <input type="text" [(ngModel)]="newPhone" placeholder="Unesite novi broj telefona">
+      <button (click)="updatePhone()">Izmeni broj telefona</button>
+      <p class="message">{{messagePhone}}</p>
+    </div>
+
+    <div class="info-section">
+      <label>Email:</label>
+      <p class="current">{{user.email}}</p>
+      <input type="text" [(ngModel)]="newEmail" placeholder="Unesite novi email">
+      <button (click)="updateEmail()">Izmeni email</button>
+      <p class="message">{{messageEmail}}</p>
+    </div>
+
+    <div class="info-section">
+      <label>Kreditna kartica:</label>
+      <p class="current">{{user.creditCardNumber}}</p>
+      <input type="text" [(ngModel)]="newCreditCardNumber" placeholder="Unesite novi broj kartice">
+      <button (click)="updateCreditCard()">Izmeni broj kartice</button>
+      <p class="message">{{messageCreditCard}}</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<div class="vik-wrap">
+  <div class="form-card">
+    <h3>Dodaj novu vikendicu</h3>
+    <div class="row">
+      <label>Naziv</label>
+      <input type="text" [(ngModel)]="form.naziv" placeholder="Naziv vikendice">
+    </div>
+    <div class="row">
+      <label>Mesto</label>
+      <input type="text" [(ngModel)]="form.mesto" placeholder="Mesto">
+    </div>
+    <div class="row">
+      <label>Usluge</label>
+      <textarea [(ngModel)]="form.usluge" placeholder="Opis usluga"></textarea>
+    </div>
+    <div class="row two">
+      <div>
+        <label>Cena noćenja (letnji period)</label>
+        <input type="number" [(ngModel)]="form.cenaNocenjaLetnja" placeholder="npr. 50">
+      </div>
+      <div>
+        <label>Cena noćenja (zimski period)</label>
+        <input type="number" [(ngModel)]="form.cenaNocenjaZimska" placeholder="npr. 70">
+      </div>
+    </div>
+    <div class="hint">Letnji period: maj, jun, jul, avgust.</div>
+    <div class="row">
+      <label>Telefon</label>
+      <input type="text" [(ngModel)]="form.telefon" placeholder="Kontakt telefon">
+    </div>
+    <div class="row two">
+      <div>
+        <label>Lat</label>
+        <input type="number" [(ngModel)]="form.lat" placeholder="Latitude" step="0.000001">
+      </div>
+      <div>
+        <label>Lng</label>
+        <input type="number" [(ngModel)]="form.lng" placeholder="Longitude" step="0.000001">
+      </div>
+    </div>
+    <div class="row">
+      <label>Slike (više fajlova)</label>
+      <input type="file" (change)="onImagesSelected($event)" accept="image/*" multiple>
+      <div class="thumbs">
+        <img *ngFor="let img of selectedImagesPreview" [src]="img" alt="preview">
+      </div>
+    </div>
+    <div class="row">
+      <label>Učitaj JSON</label>
+      <input type="file" (change)="onJsonSelected($event)" accept="application/json">
+      <div class="error" *ngIf="jsonError">{{jsonError}}</div>
+    </div>
+    <button (click)="create()">Sačuvaj</button>
+    <div class="msg">{{message}}</div>
+  </div>
+
+  <div class="list-card">
+    <h3>Moje vikendice</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Naziv</th><th>Mesto</th><th>Letnja</th><th>Zimska</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let v of vikendice">
+          <td>{{v.idVikendice}}</td>
+          <td>{{v.naziv}}</td>
+          <td>{{v.mesto}}</td>
+          <td>{{v.cenaNocenjaLetnja}}</td>
+          <td>{{v.cenaNocenjaZimska}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

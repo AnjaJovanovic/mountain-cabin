@@ -1,0 +1,181 @@
+.profile-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #eaf4ea, #f9fff8);
+  font-family: 'Poppins', sans-serif;
+}
+
+.profile-card {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 40px;
+  width: 500px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid #d3e5d6;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.title {
+  font-size: 26px;
+  color: #295e37;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #5c7c63;
+  margin-bottom: 25px;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #cce0cc;
+  margin-bottom: 25px;
+}
+
+/* Sekcije */
+.info-section {
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+label {
+  font-weight: 600;
+  color: #295e37;
+}
+
+.current {
+  margin: 5px 0;
+  color: #3c5a44;
+  background-color: #f3f9f3;
+  border: 1px solid #d5e5d2;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #bcd2b9;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  border-color: #5d9f66;
+}
+
+button {
+  background-color: #5d9f66;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+button:hover {
+  background-color: #4c8756;
+  transform: translateY(-1px);
+}
+
+.message {
+  color: #b04b4b;
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+/* --- Slika i olovčica --- */
+.profile-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.image-wrapper img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #d3e5d6;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Sakriven pravi file input */
+.image-wrapper input[type="file"] {
+  display: none;
+}
+
+/* Olovčica – gornji desni ugao */
+.edit-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.edit-icon img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.edit-icon:hover {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* Dugme za potvrdu izmene slike */
+.confirm-btn {
+  margin-top: 15px;
+  background-color: #5d9f66;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.confirm-btn:hover {
+  background-color: #4c8756;
+}
+

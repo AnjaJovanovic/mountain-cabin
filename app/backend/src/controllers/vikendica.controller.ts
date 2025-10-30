@@ -43,4 +43,44 @@ export class VikendicaController{
             })
     }
 
+    create = async (req: express.Request, res: express.Response) => {
+        try{
+            const all = await VikendicaModel.find({}).sort({idVikendice: -1}).limit(1)
+            const nextId = all.length ? (all[0].idVikendice as number) + 1 : 1
+            const doc = new VikendicaModel({
+                idVikendice: nextId,
+                naziv: req.body.naziv,
+                mesto: req.body.mesto,
+                telefon: req.body.telefon,
+                cenaNocenjaLetnja: req.body.cenaNocenjaLetnja,
+                cenaNocenjaZimska: req.body.cenaNocenjaZimska,
+                galerijaSlika: Array.isArray(req.body.galerijaSlika) ? req.body.galerijaSlika : [],
+                zauzeta: false,
+                usluge: req.body.usluge,
+                lat: req.body.lat,
+                lng: req.body.lng
+            })
+            await doc.save()
+            res.json({ message: "Vikendica kreirana", idVikendice: nextId })
+        }catch(err){
+            console.log(err)
+            res.status(500).json({ message: "Greška pri kreiranju" })
+        }
+    }
+
+    uploadImages = async (req: express.Request, res: express.Response) => {
+        try{
+            const idVikendice = Number(req.body.idVikendice)
+            if(!idVikendice){ res.status(400).json({message:'Nedostaje idVikendice'}); return }
+            const files = (req as any).files as Express.Multer.File[]
+            if(!files || files.length===0){ res.status(400).json({message:'Nema fajlova'}); return }
+            const paths = files.map(f=> 'uploads/' + f.filename)
+            await VikendicaModel.updateOne({ idVikendice }, { $push: { galerijaSlika: { $each: paths } } })
+            res.json({ message: 'Slike dodate', paths })
+        }catch(err){
+            console.log(err)
+            res.status(500).json({ message: 'Greška pri uploadu slika' })
+        }
+    }
+
 }

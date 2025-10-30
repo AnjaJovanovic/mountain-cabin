@@ -20,7 +20,18 @@ export class VikendicaService {
     }
 
     update(vikendica: Vikendica){
-      return this.httpClient.post<Message>("http://localhost:4000/vikendice/update",{idVikendice: vikendica.idVikendice});
+    return this.httpClient.post<Message>("http://localhost:4000/vikendice/update", vikendica);
     }
+
+  create(vikendica: Vikendica){
+    return this.httpClient.post<Message>("http://localhost:4000/vikendice/create", vikendica);
+  }
+
+  uploadImages(idVikendice: number, files: File[]){
+    const form = new FormData()
+    form.append('idVikendice', String(idVikendice))
+    files.forEach(f=> form.append('images', f))
+    return this.httpClient.post<{message:string, paths:string[]}>("http://localhost:4000/vikendice/uploadImages", form)
+  }
 
 }

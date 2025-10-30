@@ -9,4 +9,6 @@ export class Vikendica {
     zauzeta: boolean = false
     usluge: string = ""
     prosecnaOcena?: number = 0
+    lat?: number
+    lng?: number
 }
