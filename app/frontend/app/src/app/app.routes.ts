@@ -30,6 +30,7 @@ export const routes: Routes = [
     children: [
         {path: "touristProfile", component: TProfileComponent},
         {path: "touristVikendica", component: TVikendicaComponent},
+        {path: "touristVikendica/:id", component: TVikendicaComponent},
         { path: "touristReservation", component: TReservationsComponent},
         { path: '', redirectTo: '/profil', pathMatch: 'full' }
     ]

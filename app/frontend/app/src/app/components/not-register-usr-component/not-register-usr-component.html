@@ -11,6 +11,19 @@ Broj turista: {{numTourists}} <br>
 </div>
 
 <hr>
+<div style="margin: 12px 0; display:flex; gap:12px; align-items: end;">
+  <div>
+    <label>Naziv</label>
+    <input type="text" [(ngModel)]="searchNaziv" (input)="applyFilter()" placeholder="Pretraga po nazivu">
+  </div>
+  <div>
+    <label>Mesto</label>
+    <input type="text" [(ngModel)]="searchMesto" (input)="applyFilter()" placeholder="Pretraga po mestu">
+  </div>
+  <button (click)="clearFilter()">Očisti</button>
+  <span style="margin-left:auto;">Pronađeno: {{filteredVikendice.length}}</span>
+  </div>
+
 <table border="1" cellspacing="0" cellpadding="8">
   <thead>
     <tr>
@@ -30,7 +43,7 @@ Broj turista: {{numTourists}} <br>
   </thead>
 
   <tbody>
-    @for (v of allVikendice; track v.idVikendice) {
+    @for (v of filteredVikendice; track v.idVikendice) {
       <tr>
         <td>{{ v.naziv }}</td>
         <td>{{ v.mesto }}</td>

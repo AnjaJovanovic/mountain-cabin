@@ -1,30 +1,69 @@
-<h2>Lista vikendica</h2>
+@if (showDetail && selectedVikendica) {
+  <h2>Detalji vikendice</h2>
+  <div style="margin: 16px 0;">
+    <button routerLink="/touristVikendica" style="margin-bottom: 12px;">← Nazad na listu</button>
+    <div style="border: 1px solid #ddd; padding: 16px; border-radius: 8px;">
+      <h3>{{ selectedVikendica.naziv }}</h3>
+      <p><strong>Mesto:</strong> {{ selectedVikendica.mesto }}</p>
+      <p><strong>Telefon:</strong> {{ selectedVikendica.telefon }}</p>
+      <p><strong>Cena noćenja (letnja):</strong> {{ selectedVikendica.cenaNocenjaLetnja }}</p>
+      <p><strong>Cena noćenja (zimska):</strong> {{ selectedVikendica.cenaNocenjaZimska }}</p>
+      <p><strong>Zauzeta:</strong> {{ selectedVikendica.zauzeta ? 'Da' : 'Ne' }}</p>
+      <p><strong>Prosečna ocena:</strong> {{ selectedVikendica.prosecnaOcena || 0 }}
+        <span>
+          <ng-container *ngFor="let s of getStars(selectedVikendica.prosecnaOcena)">
+            <span [style.color]="s ? '#f5b301' : '#ccc'">★</span>
+          </ng-container>
+        </span>
+      </p>
+      <p><strong>Usluge:</strong> {{ selectedVikendica.usluge }}</p>
+      @if (selectedVikendica.galerijaSlika && selectedVikendica.galerijaSlika.length > 0) {
+        <div>
+          <strong>Galerija:</strong>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;">
+            @for (img of selectedVikendica.galerijaSlika; track $index) {
+              <img [src]="'http://localhost:4000/' + img" alt="Slika" style="max-width: 150px; max-height: 150px; border: 1px solid #ddd;">
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <h2>Lista vikendica</h2>
 
-<table border="1" cellspacing="0" cellpadding="8">
-  <thead>
-    <tr>
-      <th>Id</th>
-      <th>Naziv</th>
-      <th>Mesto</th>
-      <th>Telefon</th>
-      <th>Cena (letnja)</th>
-      <th>Cena (zimska)</th>
-      <th>Zauzeta</th>
-      <th>Usluge</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (v of allVikendice; track v.idVikendice) {
+  <div style="margin: 12px 0; display:flex; gap:12px; align-items: end;">
+    <div>
+      <label>Naziv</label>
+      <input type="text" [(ngModel)]="searchNaziv" (input)="applyFilter()" placeholder="Pretraga po nazivu">
+    </div>
+    <div>
+      <label>Mesto</label>
+      <input type="text" [(ngModel)]="searchMesto" (input)="applyFilter()" placeholder="Pretraga po mestu">
+    </div>
+    <button (click)="clearFilter()">Očisti</button>
+    <span style="margin-left:auto;">Pronađeno: {{filteredVikendice.length}}</span>
+  </div>
+
+  <table border="1" cellspacing="0" cellpadding="8">
+    <thead>
       <tr>
-        <td>{{ v.idVikendice }}</td>
-        <td>{{ v.naziv }}</td>
-        <td>{{ v.mesto }}</td>
-        <td>{{ v.telefon }}</td>
-        <td>{{ v.cenaNocenjaLetnja }}</td>
-        <td>{{ v.cenaNocenjaZimska }}</td>
-        <td>{{ v.zauzeta ? 'Da' : 'Ne' }}</td>
-        <td>{{ v.usluge }}</td>
+        <th>Naziv</th>
+        <th>Mesto</th>
       </tr>
-    }
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      @for (v of filteredVikendice; track v.idVikendice) {
+        <tr>
+          <td>
+            <a [routerLink]="['/touristVikendica', v.idVikendice]"
+               style="cursor:pointer; text-decoration: underline; color:#2f6fed;">
+              {{ v.naziv }}
+            </a>
+          </td>
+          <td>{{ v.mesto }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

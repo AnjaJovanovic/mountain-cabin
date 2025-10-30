@@ -15,6 +15,7 @@ import { UserService } from '../../services/User/user-service';
 export class NotRegisterUsrComponent {
   vikendica: Vikendica = new Vikendica()
   allVikendice: Vikendica[] = []
+  filteredVikendice: Vikendica[] = []
   allUsers: User[] = []
 
   numVikendice = 0
@@ -28,6 +29,7 @@ export class NotRegisterUsrComponent {
   ngOnInit(): void {
       this.vikendicaService.getAll().subscribe(data=>{
         this.allVikendice = data
+        this.filteredVikendice = data
         this.numVikendice = this.allVikendice.length
     })
     this.userService.getAllUsers().subscribe(data => {
@@ -57,6 +59,27 @@ sort(column: keyof Vikendica) {
     if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1
     return 0
   })
+}
+
+
+searchNaziv: string = ''
+searchMesto: string = ''
+
+applyFilter(){
+  const naziv = this.searchNaziv.trim().toLowerCase()
+  const mesto = this.searchMesto.trim().toLowerCase()
+
+  this.filteredVikendice = this.allVikendice.filter(v => {
+    const okNaziv = naziv ? v.naziv.toLowerCase().includes(naziv) : true
+    const okMesto = mesto ? v.mesto.toLowerCase().includes(mesto) : true
+    return okNaziv && okMesto
+  })
+}
+
+clearFilter(){
+  this.searchNaziv = ''
+  this.searchMesto = ''
+  this.filteredVikendice = [...this.allVikendice]
 }
 
 

@@ -95,41 +95,41 @@ class UserController {
             const newPassword = req.body.newPassword;
             const confirmNewPassword = req.body.confirmNewPassword;
             if (!username || !oldPassword || !newPassword || !confirmNewPassword) {
-                res.json({ message: 'Непотпуни подаци' });
+                res.json({ message: 'Nepotpuni podaci' });
                 return;
             }
             if (newPassword !== confirmNewPassword) {
-                res.json({ message: 'Нова лозинка и потврда се не поклапају' });
+                res.json({ message: 'Nova lozinka i potvrda se ne poklapaju' });
                 return;
             }
             if (oldPassword === newPassword) {
-                res.json({ message: 'Стара и нова лозинка не смеју бити исте' });
+                res.json({ message: 'Stara i nova lozinka ne smeju biti iste' });
                 return;
             }
             if (!this.validatePassword(newPassword)) {
-                res.json({ message: 'Нова лозинка није у исправном формату' });
+                res.json({ message: 'Nova lozinka nije u ispravnom formatu' });
                 return;
             }
             user_model_1.default.findOne({ username: username }).then(user => {
                 if (!user) {
-                    res.json({ message: 'Корисник није пронађен' });
+                    res.json({ message: 'Korisnik nije pronađen' });
                     return;
                 }
                 if (!bcrypt_1.default.compareSync(oldPassword, user.password)) {
-                    res.json({ message: 'Стара лозинка није исправна' });
+                    res.json({ message: 'Stara lozinka nije ispravna' });
                     return;
                 }
                 const saltRounds = 10;
                 const hashed = bcrypt_1.default.hashSync(newPassword, saltRounds);
                 user_model_1.default.updateOne({ username }, { $set: { password: hashed } })
-                    .then(() => res.json({ message: 'Лозинка успешно промењена' }))
+                    .then(() => res.json({ message: 'Lozinka uspešno promenjena' }))
                     .catch(err => {
                     console.log(err);
-                    res.json({ message: 'Грешка при промени лозинке' });
+                    res.json({ message: 'Greška pri promeni lozinke' });
                 });
             }).catch(err => {
                 console.log(err);
-                res.json({ message: 'Грешка' });
+                res.json({ message: 'Greška' });
             });
         };
         this.updateFirstname = (req, res) => {

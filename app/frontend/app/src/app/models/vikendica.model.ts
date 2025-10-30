@@ -8,4 +8,5 @@ export class Vikendica {
     galerijaSlika: string[] = []
     zauzeta: boolean = false
     usluge: string = ""
+    prosecnaOcena?: number = 0
 }
