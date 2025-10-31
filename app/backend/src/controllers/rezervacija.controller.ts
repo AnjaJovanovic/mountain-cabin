@@ -2,8 +2,39 @@ import express from 'express'
 import RezervacijaModel from '../models/rezervacija.model'
 import VikendicaModel from '../models/vikendica.model'
 
-function rangesOverlap(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date){
-  return aStart < bEnd && bStart < aEnd
+// Funkcija za proveru preklapanja datuma sa tačnim vremenom
+// Proverava da li se bilo koji trenutak preklapa između dve rezervacije
+// VAŽNO: Ako jedna rezervacija završava u 10:00 i druga počinje u 14:00 istog dana,
+// to NIJE preklapanje jer vikendica može da se oslobodi i ponovo rezerviše istog dana
+function rangesOverlap(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date): boolean {
+  // Koristimo tačno vreme (sa satima i minutima), ne samo dan
+  // Dva perioda se preklapaju ako postoji bilo koji zajednički trenutak između njih
+  
+  // Pravilna logika: preklapanje postoji ako aStart < bEnd && bStart < aEnd
+  // Ovo znači: prva rezervacija počinje pre nego što se druga završi,
+  // I druga rezervacija počinje pre nego što se prva završi
+  
+  // VAŽNO: Koristimo striktno < (ne <=) jer:
+  // - Ako rezervacija završava u 10:00 i druga počinje u 14:00 istog dana, to NIJE preklapanje
+  //   (vikendica se oslobađa u 10:00 i može ponovo da se rezerviše u 14:00)
+  // - Ako se rezervacije dodiruju tačno (aEnd === bStart), to takođe NIJE preklapanje
+  //   jer se smatra da vikendica može biti oslobođena i ponovo rezervisana u istom trenutku
+  
+  // Primeri:
+  // - Rez 1: 5. jan 10:00 - 10. jan 10:00
+  // - Rez 2: 10. jan 14:00 - 15. jan 10:00
+  //   => NEMA preklapanja (10. jan 10:00 < 10. jan 14:00, ali 10. jan 14:00 < 10. jan 10:00 je false)
+  
+  // - Rez 1: 5. jan 10:00 - 10. jan 10:00
+  // - Rez 2: 9. jan 14:00 - 15. jan 10:00
+  //   => IMA preklapanja (9. jan 14:00 < 10. jan 10:00 je false, ali 5. jan 10:00 < 15. jan 10:00 je true...)
+  //   WAIT, provera: aStart (5. jan 10:00) < bEnd (15. jan 10:00) = true
+  //                  bStart (9. jan 14:00) < aEnd (10. jan 10:00) = true (9. jan 14:00 je pre 10. jan 10:00)
+  //   => IMA preklapanja ✓
+  
+  const overlaps = aStart < bEnd && bStart < aEnd
+  
+  return overlaps
 }
 
 function isSummerMonth(monthIndex0: number){
@@ -27,10 +58,58 @@ export class RezervacijaController {
 
       if(napomena && String(napomena).length > 500){ res.status(400).json({message:'Napomena do 500 karaktera'}); return }
 
-      // Provera preklapanja
-      const existing = await RezervacijaModel.find({ idVikendice })
-      const hasOverlap = existing.some(r => rangesOverlap(start, end, new Date(r.pocetak as any), new Date(r.kraj as any)))
-      if(hasOverlap){ res.status(409).json({message:'Nema slobodnog mesta u izabranom periodu.'}); return }
+      // Provera preklapanja - proveravamo SVE rezervacije (i obrađene i neobrađene)
+      // Čak i neobrađena rezervacija zauzima vikendicu u tom periodu
+      const idVikendiceNum = Number(idVikendice)
+      const allExisting = await RezervacijaModel.find({ idVikendice: idVikendiceNum })
+      
+      let hasOverlap = false
+      let overlapDetails: any[] = []
+      
+      for(const r of allExisting){
+        let rStart: Date
+        let rEnd: Date
+        
+        if(r.pocetak instanceof Date){
+          rStart = new Date(r.pocetak)
+        } else if(typeof r.pocetak === 'string'){
+          rStart = new Date(r.pocetak)
+        } else {
+          rStart = new Date(r.pocetak as any)
+        }
+        
+        if(r.kraj instanceof Date){
+          rEnd = new Date(r.kraj)
+        } else if(typeof r.kraj === 'string'){
+          rEnd = new Date(r.kraj)
+        } else {
+          rEnd = new Date(r.kraj as any)
+        }
+        
+        if(isNaN(rStart.getTime()) || isNaN(rEnd.getTime())){
+          continue
+        }
+        
+        const overlaps = rangesOverlap(start, end, rStart, rEnd)
+        
+        if(overlaps){
+          hasOverlap = true
+          overlapDetails.push({
+            idRezervacije: r.idRezervacije,
+            pocetak: rStart,
+            kraj: rEnd,
+            obradjena: r.obradjena,
+            accepted: r.accepted
+          })
+        }
+      }
+      
+      if(hasOverlap){ 
+        res.status(409).json({
+          message: `Vikendica je već zauzeta u izabranom periodu. Preklapanje sa rezervacijom/a: ${overlapDetails.map(o => `#${o.idRezervacije}`).join(', ')}`
+        })
+        return 
+      }
 
       // Dodeli idRezervacije
       const last = await RezervacijaModel.find({}).sort({idRezervacije: -1}).limit(1)
@@ -82,12 +161,131 @@ export class RezervacijaController {
     res.json({message:'Ažurirano'})
   }
 
+  addTouristReview = async (req: express.Request, res: express.Response) => {
+    try{
+      const idRezervacije = Number(req.body.idRezervacije)
+      const touristComment = req.body.touristComment ? String(req.body.touristComment).trim() : ''
+      const touristRating = Number(req.body.touristRating)
+      
+      if(!idRezervacije){
+        res.status(400).json({message:'idRezervacije je obavezno polje'})
+        return
+      }
+      
+      if(touristRating < 1 || touristRating > 5 || isNaN(touristRating)){
+        res.status(400).json({message:'Ocena mora biti između 1 i 5'})
+        return
+      }
+      
+      // Proveri da li rezervacija postoji i da li je završena
+      const rez = await RezervacijaModel.findOne({ idRezervacije })
+      if(!rez){
+        res.status(404).json({message:'Rezervacija nije pronađena'})
+        return
+      }
+      
+      // Proveri da li je rezervacija završena (kraj < sada)
+      const kraj = new Date(rez.kraj as any)
+      const now = new Date()
+      if(kraj > now){
+        res.status(400).json({message:'Možete ostaviti ocenu i komentar samo za završene rezervacije'})
+        return
+      }
+      
+      await RezervacijaModel.updateOne(
+        { idRezervacije }, 
+        { $set: { touristComment, touristRating } }
+      )
+      
+      res.json({message:'Ocena i komentar su uspešno sačuvani'})
+    }catch(err){
+      console.log(err)
+      res.status(500).json({message:'Greška pri čuvanju ocene i komentara'})
+    }
+  }
+
+  cancel = async (req: express.Request, res: express.Response) => {
+    try{
+      const idRezervacije = Number(req.body.idRezervacije)
+      
+      if(!idRezervacije){
+        res.status(400).json({message:'idRezervacije je obavezno polje'})
+        return
+      }
+      
+      const rez = await RezervacijaModel.findOne({ idRezervacije })
+      if(!rez){
+        res.status(404).json({message:'Rezervacija nije pronađena'})
+        return
+      }
+      
+      // Proveri da li je rezervacija prihvaćena
+      if(rez.accepted !== true || rez.obradjena !== true){
+        res.status(400).json({message:'Možete otkazati samo prihvaćene rezervacije'})
+        return
+      }
+      
+      // Proveri da li je više od 1 dana do početka
+      const pocetak = new Date(rez.pocetak as any)
+      const now = new Date()
+      const diffTime = pocetak.getTime() - now.getTime()
+      const diffDays = diffTime / (1000 * 60 * 60 * 24)
+      
+      if(diffDays <= 1){
+        res.status(400).json({message:'Rezervaciju možete otkazati samo ako je više od 1 dana do početka'})
+        return
+      }
+      
+      // Obriši rezervaciju
+      await RezervacijaModel.deleteOne({ idRezervacije })
+      
+      res.json({message:'Rezervacija je uspešno otkazana'})
+    }catch(err){
+      console.log(err)
+      res.status(500).json({message:'Greška pri otkazivanju rezervacije'})
+    }
+  }
+
   byOwner = async (req: express.Request, res: express.Response) => {
-    const username = String(req.params.username)
-    const vik = await VikendicaModel.find({ ownerUsername: username }, { idVikendice: 1, _id:0 })
-    const ids = vik.map(v=> v.idVikendice)
-    const list = await RezervacijaModel.find({ idVikendice: { $in: ids } }).sort({ createdAt: -1 })
-    res.json(list)
+    try{
+      const username = String(req.params.username)
+      
+      const vik = await VikendicaModel.find({ ownerUsername: username }, { idVikendice: 1, ownerUsername: 1, _id:0 })
+      const ids = vik.map(v=> v.idVikendice)
+      
+      if(ids.length === 0){
+        res.json([])
+        return
+      }
+      
+      const list = await RezervacijaModel.find({ idVikendice: { $in: ids } }).sort({ createdAt: -1 })
+      
+      const formatted = list.map(r => {
+        const obradjena = r.obradjena === true ? true : false
+        const accepted = r.accepted === true ? true : false
+        
+        return {
+          idRezervacije: r.idRezervacije,
+          idVikendice: r.idVikendice,
+          usernameTuriste: r.usernameTuriste,
+          pocetak: r.pocetak,
+          kraj: r.kraj,
+          brojOdraslih: r.brojOdraslih || 0,
+          brojDece: r.brojDece || 0,
+          cena: r.cena || 0,
+          napomena: r.napomena || '',
+          obradjena: obradjena,
+          accepted: accepted,
+          ownerComment: r.ownerComment || '',
+          createdAt: r.createdAt || new Date()
+        }
+      })
+      
+      res.json(formatted)
+    }catch(err){
+      console.log('Greška u byOwner:', err)
+      res.status(500).json({message:'Greška pri učitavanju rezervacija'})
+    }
   }
 }
 

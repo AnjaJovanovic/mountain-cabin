@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RezervacijaService } from '../../../services/rezervacija/rezervacija-service';
@@ -9,24 +9,34 @@ import { RezervacijaService } from '../../../services/rezervacija/rezervacija-se
   templateUrl: './o-reservation-component.html',
   styleUrl: './o-reservation-component.css'
 })
-export class OReservationComponent {
+export class OReservationComponent implements OnInit {
   private rezervacijaService = inject(RezervacijaService)
 
   unprocessed: any[] = []
   allReservations: any[] = []
   ownerComment: {[id: number]: string} = {}
   message: string = ''
+  selectedRezForDialog: any | null = null
+  showDialog: boolean = false
+  dialogComment: string = ''
 
   ngOnInit(){
     const uStr = localStorage.getItem('loggedUser')
     const username = uStr ? JSON.parse(uStr).username : ''
     if(username){
       this.rezervacijaService.byOwner(username).subscribe(list=>{
-        // all
-        this.allReservations = list
-        // unprocessed sorted newest->oldest
-        this.unprocessed = list.filter(r=> !r.obradjena).sort((a,b)=> new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        this.allReservations = list || []
+        
+        const filtered = (list || []).filter(r=> r.obradjena === false)
+        
+        this.unprocessed = filtered.sort((a,b)=> {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+          return dateB - dateA
+        })
         this.renderCalendar()
+      }, error => {
+        this.message = 'Greška pri učitavanju rezervacija.'
       })
     }
   }
@@ -42,6 +52,33 @@ export class OReservationComponent {
     const c = (this.ownerComment[r.idRezervacije]||'').trim()
     if(c.length === 0){ this.message = 'Komentar je obavezan kod odbijanja.'; return }
     this.rezervacijaService.processDecision(r.idRezervacije, false, c).subscribe(()=>{
+      this.ngOnInit()
+    })
+  }
+
+  closeDialog(){
+    this.showDialog = false
+    this.selectedRezForDialog = null
+    this.dialogComment = ''
+  }
+
+  confirmFromDialog(){
+    if(!this.selectedRezForDialog) return
+    this.rezervacijaService.processDecision(this.selectedRezForDialog.idRezervacije, true, '').subscribe(()=>{
+      this.closeDialog()
+      this.ngOnInit()
+    })
+  }
+
+  declineFromDialog(){
+    if(!this.selectedRezForDialog) return
+    const c = this.dialogComment.trim()
+    if(c.length === 0){ 
+      this.message = 'Komentar je obavezan kod odbijanja.'
+      return 
+    }
+    this.rezervacijaService.processDecision(this.selectedRezForDialog.idRezervacije, false, c).subscribe(()=>{
+      this.closeDialog()
       this.ngOnInit()
     })
   }
@@ -72,14 +109,10 @@ export class OReservationComponent {
         const id = Number(info.event.id)
         const rez = this.allReservations.find(x=> x.idRezervacije === id)
         if(!rez) return
-        const choice = win.prompt(`Rez #${id} | Turista: ${rez.usernameTuriste}\nPotvrdite sa YES ili odbijte sa komentarom:`, 'YES')
-        if(choice === null) return
-        if(choice.trim().toUpperCase() === 'YES'){
-          this.rezervacijaService.processDecision(id, true, '').subscribe(()=> this.ngOnInit())
-        } else {
-          if(choice.trim().length === 0){ win.alert('Komentar je obavezan kod odbijanja.'); return }
-          this.rezervacijaService.processDecision(id, false, choice.trim()).subscribe(()=> this.ngOnInit())
-        }
+        // Otvori modalni dijalog
+        this.selectedRezForDialog = rez
+        this.dialogComment = ''
+        this.showDialog = true
       }
     })
     cal.render()

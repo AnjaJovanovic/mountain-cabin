@@ -23,6 +23,14 @@ rezervacijaRouter.route('/byOwner/:username').get(
   (req, res) => new RezervacijaController().byOwner(req, res)
 )
 
+rezervacijaRouter.route('/addTouristReview').post(
+  (req, res) => new RezervacijaController().addTouristReview(req, res)
+)
+
+rezervacijaRouter.route('/cancel').post(
+  (req, res) => new RezervacijaController().cancel(req, res)
+)
+
 export default rezervacijaRouter
 
 

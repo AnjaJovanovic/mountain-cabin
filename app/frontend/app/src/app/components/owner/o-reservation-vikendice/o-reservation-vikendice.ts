@@ -30,7 +30,9 @@ export class OReservationVikendice {
     const uStr = localStorage.getItem('loggedUser')
     const username = uStr ? JSON.parse(uStr).username : ''
     if(username){
-      this.vikendicaService.getByOwner(username).subscribe(data=>{ this.vikendice = data })
+      this.vikendicaService.getByOwner(username).subscribe(data=>{ 
+        this.vikendice = data 
+      })
     }else{
       this.vikendicaService.getAll().subscribe(data=>{ this.vikendice = data })
     }
@@ -86,7 +88,9 @@ export class OReservationVikendice {
     const err = this.validate(); if(err){ this.message = err; return }
     if(this.editMode && this.editingId){
       // update postojeće vikendice
-      const payload: Vikendica = { ...this.form, idVikendice: this.editingId }
+      // Izbacujemo ownerUsername jer ne treba da se ažurira
+      const { ownerUsername, ...formWithoutOwner } = this.form
+      const payload: Vikendica = { ...formWithoutOwner, idVikendice: this.editingId }
       this.vikendicaService.update(payload).subscribe((resp:any)=>{
         this.message = resp?.message || 'Ažurirano.'
         const idForImages = this.editingId as number

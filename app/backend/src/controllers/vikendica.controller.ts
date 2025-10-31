@@ -31,15 +31,28 @@ export class VikendicaController{
 
     update = (req: express.Request, res: express.Response) => {
         const updateData: any = {}
+        const protectedFields = ['ownerUsername', 'idVikendice'] // Polja koja ne mogu biti ažurirana
 
         // prolazimo kroz sva polja iz requesta
         for (const key in req.body) {
+            // preskačemo zaštićena polja - ownerUsername NIKADA ne može biti ažuriran!
+            if (protectedFields.includes(key)) {
+                console.log(`⚠️ Zaštićeno polje "${key}" je preskočeno - ne može biti ažurirano`)
+                continue
+            }
             // ako polje nije prazno (undefined, null, ili prazan string) — dodaj u update objekat
             if (req.body[key] !== undefined && req.body[key] !== null && req.body[key] !== "") {
                 updateData[key] = req.body[key]
             }
         }
-        // ažuriramo samo ta polja
+        
+        // DODATNA ZAŠTITA: Eksplicitno uklanjamo ownerUsername iz updateData ako je neko pokušao da ga postavi
+        if('ownerUsername' in updateData){
+            console.log(`❌ POKUŠAJ AŽURIRANJA ownerUsername - UKLANJAMO IZ UPDATE DATA!`)
+            delete updateData.ownerUsername
+        }
+        
+        // ažuriramo samo ta polja - ownerUsername NIKADA neće biti uključen
         VikendicaModel.updateOne({ idVikendice: req.body.idVikendice }, { $set: updateData })
             .then(result => {
                 if (result.modifiedCount > 0)
@@ -55,6 +68,15 @@ export class VikendicaController{
 
     create = async (req: express.Request, res: express.Response) => {
         try{
+            // Osiguravamo da ownerUsername postoji i nije prazan
+            const ownerUsername = req.body.ownerUsername
+            if(!ownerUsername || ownerUsername.trim() === ''){
+                res.status(400).json({ message: "ownerUsername je obavezno polje." })
+                return
+            }
+            
+            console.log(`Kreiranje vikendice sa ownerUsername="${ownerUsername}"`)
+            
             const all = await VikendicaModel.find({}).sort({idVikendice: -1}).limit(1)
             const nextId = all.length ? (all[0].idVikendice as number) + 1 : 1
             const doc = new VikendicaModel({
@@ -67,11 +89,12 @@ export class VikendicaController{
                 galerijaSlika: Array.isArray(req.body.galerijaSlika) ? req.body.galerijaSlika : [],
                 zauzeta: false,
                 usluge: req.body.usluge,
-                ownerUsername: req.body.ownerUsername,
+                ownerUsername: String(ownerUsername).trim(), // Eksplicitno postavljamo ownerUsername
                 lat: req.body.lat,
                 lng: req.body.lng
             })
             await doc.save()
+            console.log(`✓ Vikendica ID=${nextId} kreirana sa ownerUsername="${ownerUsername}"`)
             res.json({ message: "Vikendica kreirana", idVikendice: nextId })
         }catch(err){
             console.log(err)

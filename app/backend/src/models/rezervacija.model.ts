@@ -14,6 +14,8 @@ const rezervacijaSchema = new mongoose.Schema(
     obradjena: Boolean,
     accepted: Boolean,
     ownerComment: String,
+    touristComment: String,
+    touristRating: Number,
     createdAt: { type: Date, default: Date.now }
   },
   { versionKey: false }

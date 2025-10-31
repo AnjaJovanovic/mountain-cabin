@@ -17,6 +17,8 @@ const rezervacijaSchema = new mongoose_1.default.Schema({
     obradjena: Boolean,
     accepted: Boolean,
     ownerComment: String,
+    touristComment: String,
+    touristRating: Number,
     createdAt: { type: Date, default: Date.now }
 }, { versionKey: false });
 exports.default = mongoose_1.default.model('RezervacijaModel', rezervacijaSchema, 'rezervacije');

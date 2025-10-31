@@ -1,1 +1,154 @@
-<p>t-reservations-component works!</p>
+<div class="tourist-wrapper">
+  <header class="tourist-header">
+    <img src="uploads/logo.png" alt="Mountain Cabin Logo" class="logo">
+  </header>
+
+  <h2 class="section-title">Moje rezervacije</h2>
+
+  <!-- Trenutne rezervacije -->
+  <div class="reservations-section">
+    <h3>Trenutna zakazivanja</h3>
+    @if (currentReservations.length === 0) {
+      <p class="no-data">Nemate trenutnih rezervacija.</p>
+    } @else {
+      <table class="reservations-table">
+        <thead>
+          <tr>
+            <th>Datum početka</th>
+            <th>Datum kraja</th>
+            <th>Naziv vikendice</th>
+            <th>Mesto</th>
+            <th>Akcija</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rez of currentReservations; track rez.idRezervacije) {
+            <tr>
+              <td>{{ formatDate(rez.pocetak) }}</td>
+              <td>{{ formatDate(rez.kraj) }}</td>
+              <td>{{ getVikendicaName(rez.idVikendice) }}</td>
+              <td>{{ getVikendicaMesto(rez.idVikendice) }}</td>
+              <td>
+                @if (canCancel(rez)) {
+                  <button class="btn-cancel-res" (click)="cancelReservation(rez)">Otkaži</button>
+                } @else {
+                  <span class="cannot-cancel">Nije moguće otkazati</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      @if (message && message.includes('otkazan')) {
+        <div class="message success">{{ message }}</div>
+      }
+    }
+  </div>
+
+  <!-- Arhiva rezervacija -->
+  <div class="reservations-section">
+    <h3>Arhiva zakazivanja</h3>
+    @if (archiveReservations.length === 0) {
+      <p class="no-data">Nemate prethodnih rezervacija.</p>
+    } @else {
+      <table class="reservations-table">
+        <thead>
+          <tr>
+            <th>Datum početka</th>
+            <th>Vikendica</th>
+            <th>Komentar</th>
+            <th>Ocena</th>
+            <th>Akcija</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rez of archiveReservations; track rez.idRezervacije) {
+            <tr>
+              <td>{{ formatDate(rez.pocetak) }}</td>
+              <td>{{ getVikendicaName(rez.idVikendice) }}</td>
+              <td>
+                @if (rez.touristComment) {
+                  <div class="comment-text">{{ rez.touristComment }}</div>
+                } @else {
+                  <span class="no-comment">-</span>
+                }
+              </td>
+              <td>
+                @if (rez.touristRating) {
+                  <div class="rating-display">
+                    @for (star of getStars(rez.touristRating); track $index) {
+                      <span class="star" [class.filled]="star">★</span>
+                    }
+                    <span class="rating-number">({{ rez.touristRating }})</span>
+                  </div>
+                } @else {
+                  <span class="no-rating">-</span>
+                }
+              </td>
+              <td>
+                @if (canLeaveReview(rez)) {
+                  <button class="btn-review" (click)="openReviewForm(rez)">Oceni</button>
+                } @else {
+                  <button class="btn-review" (click)="openReviewForm(rez)">Izmeni</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- Modal za unos komentara i ocene -->
+  @if (showReviewForm && selectedRezForReview) {
+    <div class="modal-overlay" (click)="closeReviewForm()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <h3>Oceni rezervaciju - {{ getVikendicaName(selectedRezForReview.idVikendice) }}</h3>
+        <p class="reservation-info">
+          Period: {{ formatDate(selectedRezForReview.pocetak) }} - {{ formatDate(selectedRezForReview.kraj) }}
+        </p>
+
+        <div class="review-form">
+          <div class="form-group">
+            <label>Ocena (1-5 zvezdica)</label>
+            <div class="star-rating">
+              @for (i of [1,2,3,4,5]; track i) {
+                <button
+                  type="button"
+                  class="star-btn"
+                  [class.active]="reviewRating >= i"
+                  (click)="setRating(i)"
+                >
+                  ★
+                </button>
+              }
+              @if (reviewRating > 0) {
+                <span class="rating-text">{{ reviewRating }} / 5</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="comment">Komentar (opciono)</label>
+            <textarea
+              id="comment"
+              [(ngModel)]="reviewComment"
+              rows="5"
+              placeholder="Ostavite svoj komentar o boravku..."
+              class="comment-input"
+            ></textarea>
+          </div>
+
+          @if (message) {
+            <div class="message" [class.error]="message.includes('Greška')">{{ message }}</div>
+          }
+
+          <div class="form-actions">
+            <button type="button" (click)="submitReview()" class="btn-submit">Sačuvaj</button>
+            <button type="button" (click)="closeReviewForm()" class="btn-cancel">Otkaži</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

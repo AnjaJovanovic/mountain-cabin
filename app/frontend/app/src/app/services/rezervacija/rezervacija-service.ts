@@ -36,4 +36,12 @@ export class RezervacijaService{
   processDecision(idRezervacije: number, accepted: boolean, ownerComment: string){
     return this.http.post<{message:string}>(`${this.base}/process`, { idRezervacije, accepted, ownerComment })
   }
+
+  addTouristReview(payload: {idRezervacije: number, touristComment: string, touristRating: number}){
+    return this.http.post<{message:string}>(`${this.base}/addTouristReview`, payload)
+  }
+
+  cancelReservation(idRezervacije: number){
+    return this.http.post<{message:string}>(`${this.base}/cancel`, { idRezervacije })
+  }
 }

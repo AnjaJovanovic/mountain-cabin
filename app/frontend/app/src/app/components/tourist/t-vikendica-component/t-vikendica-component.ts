@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, AfterViewChecked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Vikendica } from '../../../models/vikendica.model';
@@ -13,7 +13,7 @@ import { User } from '../../../models/user.model';
   templateUrl: './t-vikendica-component.html',
   styleUrl: './t-vikendica-component.css'
 })
-export class TVikendicaComponent implements OnInit{
+export class TVikendicaComponent implements OnInit, AfterViewChecked{
 
   vikendica: Vikendica = new Vikendica()
   allVikendice: Vikendica[] = []
@@ -26,6 +26,7 @@ export class TVikendicaComponent implements OnInit{
   private router = inject(Router)
   private route = inject(ActivatedRoute)
   private rezervacijaService = inject(RezervacijaService)
+  private mapInitialized = false
 
   searchNaziv: string = ''
   searchMesto: string = ''
@@ -49,8 +50,8 @@ export class TVikendicaComponent implements OnInit{
       this.vikendicaService.getAll().subscribe(data=>{
         this.allVikendice = data
         this.selectedVikendica = data.find(v => v.idVikendice === numId) || null
-        // init map when details and coords exist
-        setTimeout(()=> this.initMap(), 0)
+        this.mapInitialized = false // Reset flag when new vikendica is selected
+        // Map will be initialized in ngAfterViewChecked when DOM is ready
         // preload card from logged user
         const uStr = localStorage.getItem('loggedUser')
         if(uStr){
@@ -154,7 +155,15 @@ export class TVikendicaComponent implements OnInit{
         this.router.navigate(['touristVikendica'])
       },
       error: (err)=>{
-        this.reservationMessage = err?.error?.message || 'Greška pri rezervaciji.'
+        const errorMessage = err?.error?.message || 'Greška pri rezervaciji.'
+        this.reservationMessage = errorMessage
+        // Prikaži alert za greške kako bi korisnik sigurno video poruku
+        if(err?.status === 409){
+          alert(`❌ ${errorMessage}`)
+        } else {
+          alert(`Greška: ${errorMessage}`)
+        }
+        console.error('Greška pri rezervaciji:', err)
       }
     })
   }
@@ -177,33 +186,59 @@ export class TVikendicaComponent implements OnInit{
     }
   }
 
+  ngAfterViewChecked(): void {
+    // Initialize map when view is checked and conditions are met
+    if(!this.mapInitialized && this.showDetail && this.selectedVikendica){
+      const lat = this.selectedVikendica.lat
+      const lng = this.selectedVikendica.lng
+      if(lat !== undefined && lng !== undefined){
+        // Check if element exists in DOM
+        const mapElement = document.getElementById('vik-map')
+        if(mapElement && !this.map){
+          this.initMap()
+        }
+      }
+    }
+  }
+
   private initMap(){
     if(!this.showDetail || !this.selectedVikendica) return
     const lat = this.selectedVikendica.lat
     const lng = this.selectedVikendica.lng
     if(lat === undefined || lng === undefined) return
+    
+    const mapElement = document.getElementById('vik-map')
+    if(!mapElement) return
+    
     // @ts-ignore - Leaflet provided by CDN
     const Lref = (window as any).L
     if(!Lref) return
-    if(this.map){
-      this.map.remove()
-      this.map = null
+    
+    try {
+      if(this.map){
+        this.map.remove()
+        this.map = null
+      }
+      
+      // Serbia bounding box
+      const serbiaBounds = Lref.latLngBounds([41.85, 18.8], [46.2, 23.0])
+      this.map = Lref.map('vik-map', {
+        zoomControl: true,
+        maxBounds: serbiaBounds,
+        maxBoundsViscosity: 0.8,
+        worldCopyJump: false
+      }).setView([lat, lng], 10)
+      
+      // OpenStreetMap tile layer
+      Lref.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(this.map)
+      
+      Lref.marker([lat, lng]).addTo(this.map)
+      this.mapInitialized = true
+    } catch(error){
+      // Silent fail
     }
-    // Serbia bounding box
-    const serbiaBounds = Lref.latLngBounds([41.85, 18.8], [46.2, 23.0])
-    this.map = Lref.map('vik-map', {
-      zoomControl: true,
-      maxBounds: serbiaBounds,
-      maxBoundsViscosity: 0.8,
-      worldCopyJump: false
-    }).setView([lat, lng], 10)
-    // Nicer light basemap, no world wrap
-    Lref.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19,
-      subdomains: 'abcd',
-      noWrap: true,
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-    }).addTo(this.map)
-    Lref.marker([lat, lng]).addTo(this.map)
   }
 }

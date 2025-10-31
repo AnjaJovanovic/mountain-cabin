@@ -2,6 +2,9 @@
 
 <div class="list-card">
   <h3>Neobrađene</h3>
+  <div style="margin-bottom: 10px; color: #666; font-size: 14px;">
+    Ukupno rezervacija: {{allReservations.length}} | Neobrađene: {{unprocessed.length}}
+  </div>
   <div *ngIf="unprocessed.length === 0">Nema neobrađenih rezervacija.</div>
   <table *ngIf="unprocessed.length > 0" border="1" cellspacing="0" cellpadding="8">
     <thead>
@@ -47,4 +50,30 @@
   </div>
 </div>
 
-<p>o-reservation-component works!</p>
+<!-- Modalni dijalog za kalendar -->
+@if (showDialog && selectedRezForDialog) {
+  <div class="modal-overlay" (click)="closeDialog()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <h3>Rezervacija #{{selectedRezForDialog.idRezervacije}}</h3>
+      <div class="dialog-info">
+        <p><strong>Turista:</strong> {{selectedRezForDialog.usernameTuriste}}</p>
+        <p><strong>Početak:</strong> {{selectedRezForDialog.pocetak | date:'dd.MM.yyyy, HH:mm'}}</p>
+        <p><strong>Kraj:</strong> {{selectedRezForDialog.kraj | date:'dd.MM.yyyy, HH:mm'}}</p>
+        <p><strong>Gosti:</strong> Odrasli: {{selectedRezForDialog.brojOdraslih}}, Deca: {{selectedRezForDialog.brojDece}}</p>
+        <p><strong>Cena:</strong> {{selectedRezForDialog.cena | currency:'EUR':'symbol':'1.2-2'}}</p>
+        @if (selectedRezForDialog.napomena) {
+          <p><strong>Napomena:</strong> {{selectedRezForDialog.napomena}}</p>
+        }
+      </div>
+      <div class="dialog-comment">
+        <label>Komentar (obavezno za odbijanje):</label>
+        <textarea [(ngModel)]="dialogComment" placeholder="Unesite komentar ako odbijate rezervaciju"></textarea>
+      </div>
+      <div class="dialog-actions">
+        <button (click)="confirmFromDialog()" class="btn-confirm">Potvrdi</button>
+        <button (click)="declineFromDialog()" class="btn-decline">Odbij</button>
+        <button (click)="closeDialog()" class="btn-cancel">Otkaži</button>
+      </div>
+    </div>
+  </div>
+}
