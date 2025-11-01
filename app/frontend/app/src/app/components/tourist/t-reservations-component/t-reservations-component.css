@@ -159,6 +159,13 @@
   font-style: italic;
 }
 
+.already-rated {
+  color: #1f6837;
+  font-size: 13px;
+  font-weight: 500;
+  font-style: italic;
+}
+
 .message.success {
   background-color: #d4edda;
   color: #155724;

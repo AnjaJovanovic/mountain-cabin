@@ -158,7 +158,13 @@ export class RezervacijaController {
         kraj: { $lt: now }, // Završene rezervacije
         $or: [
           { touristRating: { $exists: true, $ne: null, $gte: 1, $lte: 5 } }, // Koje imaju validnu ocenu (1-5)
-          { touristComment: { $exists: true, $ne: null, $ne: '' } } // ILI ne-prazan komentar
+          { 
+            $and: [
+              { touristComment: { $exists: true } },
+              { touristComment: { $ne: null } },
+              { touristComment: { $ne: '' } }
+            ]
+          } // ILI ne-prazan komentar
         ]
       }).sort({kraj: -1}).lean()
       
@@ -184,9 +190,34 @@ export class RezervacijaController {
   }
 
   byUser = async (req: express.Request, res: express.Response) => {
-    const username = String(req.params.username)
-    const list = await RezervacijaModel.find({ usernameTuriste: username }).sort({pocetak: -1})
-    res.json(list)
+    try{
+      const username = String(req.params.username)
+      const list = await RezervacijaModel.find({ usernameTuriste: username }).sort({pocetak: -1}).lean()
+      
+      // Eksplicitno formatirajmo podatke da bismo osigurali konzistentnost
+      const formatted = list.map((r: any) => ({
+        idRezervacije: r.idRezervacije,
+        idVikendice: r.idVikendice,
+        usernameTuriste: r.usernameTuriste,
+        pocetak: r.pocetak,
+        kraj: r.kraj,
+        brojOdraslih: r.brojOdraslih || 0,
+        brojDece: r.brojDece || 0,
+        cena: r.cena || 0,
+        napomena: r.napomena || '',
+        obradjena: r.obradjena === true,
+        accepted: r.accepted === true,
+        ownerComment: r.ownerComment || '',
+        touristComment: r.touristComment || null,
+        touristRating: (r.touristRating && typeof r.touristRating === 'number' && r.touristRating >= 1 && r.touristRating <= 5) ? r.touristRating : null,
+        createdAt: r.createdAt || new Date()
+      }))
+      
+      res.json(formatted)
+    }catch(err){
+      console.log('Greška u byUser:', err)
+      res.status(500).json({message:'Greška pri učitavanju rezervacija'})
+    }
   }
 
   process = async (req: express.Request, res: express.Response) => {
@@ -229,6 +260,19 @@ export class RezervacijaController {
       const now = new Date()
       if(kraj > now){
         res.status(400).json({message:'Možete ostaviti ocenu i komentar samo za završene rezervacije'})
+        return
+      }
+
+      // Proveri da li je rezervacija prihvaćena (opciono - dozvoljavamo ocenjivanje svih završenih rezervacija)
+      // if(rez.accepted !== true || rez.obradjena !== true){
+      //   res.status(400).json({message:'Možete ostaviti ocenu i komentar samo za prihvaćene rezervacije'})
+      //   return
+      // }
+
+      // Proveri da li je već ocenio ovu rezervaciju
+      const existingRating = rez.touristRating
+      if(existingRating !== null && existingRating !== undefined && existingRating >= 1 && existingRating <= 5){
+        res.status(400).json({message:'Već ste ocenili ovu rezervaciju. Ne možete je ponovo oceniti.'})
         return
       }
       

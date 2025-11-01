@@ -67,14 +67,14 @@
               <td>{{ formatDate(rez.pocetak) }}</td>
               <td>{{ getVikendicaName(rez.idVikendice) }}</td>
               <td>
-                @if (rez.touristComment) {
+                @if (rez.touristComment && rez.touristComment.trim().length > 0) {
                   <div class="comment-text">{{ rez.touristComment }}</div>
                 } @else {
                   <span class="no-comment">-</span>
                 }
               </td>
               <td>
-                @if (rez.touristRating) {
+                @if (rez.touristRating && typeof rez.touristRating === 'number' && rez.touristRating >= 1 && rez.touristRating <= 5) {
                   <div class="rating-display">
                     @for (star of getStars(rez.touristRating); track $index) {
                       <span class="star" [class.filled]="star">★</span>
@@ -89,8 +89,12 @@
                 @if (canLeaveReview(rez)) {
                   <button class="btn-review" (click)="openReviewForm(rez)">Oceni</button>
                 } @else {
-                  <button class="btn-review" (click)="openReviewForm(rez)">Izmeni</button>
+                  <span class="already-rated">Ocenjeno</span>
                 }
+                <!-- Debug info - obrišite kasnije -->
+                <!-- <small style="display: block; font-size: 10px; color: #999;">
+                  Rating: {{rez.touristRating}}, Accepted: {{rez.accepted}}, Obradjena: {{rez.obradjena}}
+                </small> -->
               </td>
             </tr>
           }
@@ -136,6 +140,7 @@
               rows="5"
               placeholder="Ostavite svoj komentar o boravku..."
               class="comment-input"
+              maxlength="1000"
             ></textarea>
           </div>
 

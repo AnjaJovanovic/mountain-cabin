@@ -167,26 +167,35 @@ class RezervacijaController {
         this.byVikendica = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const idVikendice = Number(req.params.idVikendice);
-                // Vraćamo završene rezervacije koje imaju komentar ILI ocenu
+                // Vraćamo završene rezervacije koje imaju popunjen komentar ILI ocenu
                 const now = new Date();
                 const list = yield rezervacija_model_1.default.find({
                     idVikendice,
                     kraj: { $lt: now }, // Završene rezervacije
                     $or: [
-                        { touristRating: { $exists: true, $ne: null } }, // Koje imaju ocenu
-                        { touristComment: { $exists: true, $ne: '' } } // ILI komentar
+                        { touristRating: { $exists: true, $ne: null, $gte: 1, $lte: 5 } }, // Koje imaju validnu ocenu (1-5)
+                        {
+                            $and: [
+                                { touristComment: { $exists: true } },
+                                { touristComment: { $ne: null } },
+                                { touristComment: { $ne: '' } }
+                            ]
+                        } // ILI ne-prazan komentar
                     ]
                 }).sort({ kraj: -1 }).lean();
-                // Formatirajmo rezervacije za frontend
-                const formatted = list.map((r) => ({
+                // Formatirajmo rezervacije za frontend i filtrirujemo prazne vrednosti
+                const formatted = list
+                    .map((r) => ({
                     idRezervacije: r.idRezervacije,
                     usernameTuriste: r.usernameTuriste,
                     pocetak: r.pocetak,
                     kraj: r.kraj,
-                    touristComment: r.touristComment || '',
-                    touristRating: r.touristRating || 0,
+                    touristComment: r.touristComment ? String(r.touristComment).trim() : '',
+                    touristRating: (r.touristRating && r.touristRating >= 1 && r.touristRating <= 5) ? Number(r.touristRating) : null,
                     createdAt: r.createdAt || r.kraj
-                }));
+                }))
+                    // Filtrirujemo samo one koje imaju bar jedan popunjen podatak
+                    .filter((r) => (r.touristRating !== null && r.touristRating > 0) || (r.touristComment && r.touristComment.length > 0));
                 res.json(formatted);
             }
             catch (err) {
@@ -195,9 +204,33 @@ class RezervacijaController {
             }
         });
         this.byUser = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const username = String(req.params.username);
-            const list = yield rezervacija_model_1.default.find({ usernameTuriste: username }).sort({ pocetak: -1 });
-            res.json(list);
+            try {
+                const username = String(req.params.username);
+                const list = yield rezervacija_model_1.default.find({ usernameTuriste: username }).sort({ pocetak: -1 }).lean();
+                // Eksplicitno formatirajmo podatke da bismo osigurali konzistentnost
+                const formatted = list.map((r) => ({
+                    idRezervacije: r.idRezervacije,
+                    idVikendice: r.idVikendice,
+                    usernameTuriste: r.usernameTuriste,
+                    pocetak: r.pocetak,
+                    kraj: r.kraj,
+                    brojOdraslih: r.brojOdraslih || 0,
+                    brojDece: r.brojDece || 0,
+                    cena: r.cena || 0,
+                    napomena: r.napomena || '',
+                    obradjena: r.obradjena === true,
+                    accepted: r.accepted === true,
+                    ownerComment: r.ownerComment || '',
+                    touristComment: r.touristComment || null,
+                    touristRating: (r.touristRating && typeof r.touristRating === 'number' && r.touristRating >= 1 && r.touristRating <= 5) ? r.touristRating : null,
+                    createdAt: r.createdAt || new Date()
+                }));
+                res.json(formatted);
+            }
+            catch (err) {
+                console.log('Greška u byUser:', err);
+                res.status(500).json({ message: 'Greška pri učitavanju rezervacija' });
+            }
         });
         this.process = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const idRezervacije = Number(req.body.idRezervacije);
@@ -235,6 +268,17 @@ class RezervacijaController {
                 const now = new Date();
                 if (kraj > now) {
                     res.status(400).json({ message: 'Možete ostaviti ocenu i komentar samo za završene rezervacije' });
+                    return;
+                }
+                // Proveri da li je rezervacija prihvaćena (opciono - dozvoljavamo ocenjivanje svih završenih rezervacija)
+                // if(rez.accepted !== true || rez.obradjena !== true){
+                //   res.status(400).json({message:'Možete ostaviti ocenu i komentar samo za prihvaćene rezervacije'})
+                //   return
+                // }
+                // Proveri da li je već ocenio ovu rezervaciju
+                const existingRating = rez.touristRating;
+                if (existingRating !== null && existingRating !== undefined && existingRating >= 1 && existingRating <= 5) {
+                    res.status(400).json({ message: 'Već ste ocenili ovu rezervaciju. Ne možete je ponovo oceniti.' });
                     return;
                 }
                 yield rezervacija_model_1.default.updateOne({ idRezervacije }, { $set: { touristComment, touristRating } });

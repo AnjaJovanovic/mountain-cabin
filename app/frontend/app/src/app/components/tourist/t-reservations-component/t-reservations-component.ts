@@ -50,6 +50,7 @@ export class TReservationsComponent implements OnInit {
     
     this.rezervacijaService.byUser(username).subscribe(list => {
       this.allReservations = list || []
+      console.log('Sve rezervacije:', this.allReservations)
       const now = new Date()
       
       // Trenutne rezervacije - prihvaćene i koje još nisu završile
@@ -75,6 +76,11 @@ export class TReservationsComponent implements OnInit {
           const dateB = new Date(b.kraj).getTime()
           return dateB - dateA // Najskorije prvo
         })
+      
+      console.log('Arhiva rezervacije:', this.archiveReservations)
+      this.archiveReservations.forEach(r => {
+        console.log(`Rez ${r.idRezervacije}: accepted=${r.accepted}, obradjena=${r.obradjena}, rating=${r.touristRating}, canReview=${this.canLeaveReview(r)}`)
+      })
     })
   }
 
@@ -113,15 +119,38 @@ export class TReservationsComponent implements OnInit {
   }
 
   canLeaveReview(rez: any): boolean {
+    // Proverava da li je rezervacija završena i da turista JOŠ NIJE ostavio ocenu
     const kraj = new Date(rez.kraj)
     const now = new Date()
-    return kraj <= now && (!rez.touristComment || !rez.touristRating)
+    
+    // 1. Rezervacija mora biti završena (kraj <= sada)
+    if(kraj > now) {
+      return false
+    }
+    
+    // 2. Proverava da li turista već ima ocenu (validan broj između 1 i 5)
+    const rating = rez.touristRating
+    const hasRating = rating !== null && 
+                      rating !== undefined && 
+                      rating !== '' &&
+                      typeof rating === 'number' && 
+                      !isNaN(rating) && 
+                      rating >= 1 && 
+                      rating <= 5
+    
+    // Dugme se prikazuje SAMO ako rezervacija je završena i NEMA ocene
+    // Ne proveravamo accepted/obradjena jer korisnik možda želi da oceni i odbijene rezervacije
+    return !hasRating
   }
 
   openReviewForm(rez: any) {
+    // Otvori formu samo ako može da ostavi ocenu i komentar
+    if(!this.canLeaveReview(rez)) {
+      return
+    }
     this.selectedRezForReview = rez
-    this.reviewComment = rez.touristComment || ''
-    this.reviewRating = rez.touristRating || 0
+    this.reviewComment = ''
+    this.reviewRating = 0
     this.showReviewForm = true
     this.message = ''
   }

@@ -1,52 +1,95 @@
 <h2>Rezervacije</h2>
 
 <div class="list-card">
-  <h3>Neobrađene</h3>
-  <div style="margin-bottom: 10px; color: #666; font-size: 14px;">
-    Ukupno rezervacija: {{allReservations.length}} | Neobrađene: {{unprocessed.length}}
+  <div class="card-header">
+    <h3>Neobrađene rezervacije</h3>
+    <div class="stats-info">
+      <span class="stat-item">
+        <span class="stat-label">Ukupno:</span>
+        <span class="stat-value">{{allReservations.length}}</span>
+      </span>
+      <span class="stat-item">
+        <span class="stat-label">Neobrađene:</span>
+        <span class="stat-value highlight">{{unprocessed.length}}</span>
+      </span>
+    </div>
   </div>
-  <div *ngIf="unprocessed.length === 0">Nema neobrađenih rezervacija.</div>
-  <table *ngIf="unprocessed.length > 0" border="1" cellspacing="0" cellpadding="8">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Turista</th>
-        <th>Početak</th>
-        <th>Kraj</th>
-        <th>Gosti</th>
-        <th>Cena</th>
-        <th>Komentar (obavezno kod odbijanja)</th>
-        <th>Akcije</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let r of unprocessed">
-        <td>{{r.idRezervacije}}</td>
-        <td>{{r.usernameTuriste}}</td>
-        <td>{{r.pocetak | date:'dd.MM.yyyy, HH:mm'}}</td>
-        <td>{{r.kraj | date:'dd.MM.yyyy, HH:mm'}}</td>
-        <td>Odr: {{r.brojOdraslih}} / Deca: {{r.brojDece}}</td>
-        <td>{{r.cena | currency:'EUR':'symbol':'1.2-2'}}</td>
-        <td>
-          <input type="text" [(ngModel)]="ownerComment[r.idRezervacije]" placeholder="Komentar (za odbijanje)">
-        </td>
-        <td>
-          <button (click)="confirm(r)">Potvrdi</button>
-          <button (click)="decline(r)" style="margin-left:6px;">Odbij</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <div class="error" style="color:#b00;">{{message}}</div>
+
+  @if (unprocessed.length === 0) {
+    <div class="no-reservations">
+      <p>Nema neobrađenih rezervacija.</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table class="reservations-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Turista</th>
+            <th>Početak</th>
+            <th>Kraj</th>
+            <th>Gosti</th>
+            <th>Cena</th>
+            <th>Komentar</th>
+            <th>Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of unprocessed; track r.idRezervacije) {
+            <tr>
+              <td class="reservation-id">#{{r.idRezervacije}}</td>
+              <td class="tourist-name">{{r.usernameTuriste}}</td>
+              <td class="date-time">{{r.pocetak | date:'dd.MM.yyyy, HH:mm'}}</td>
+              <td class="date-time">{{r.kraj | date:'dd.MM.yyyy, HH:mm'}}</td>
+              <td class="guests">
+                <span class="adults">Odrasli: {{r.brojOdraslih}}</span>
+                @if (r.brojDece > 0) {
+                  <span class="children">Deca: {{r.brojDece}}</span>
+                }
+              </td>
+              <td class="price">{{r.cena | currency:'EUR':'symbol':'1.2-2'}}</td>
+              <td class="comment-cell">
+                <input 
+                  type="text" 
+                  [(ngModel)]="ownerComment[r.idRezervacije]" 
+                  placeholder="Komentar (obavezno za odbijanje)"
+                  class="comment-input"
+                >
+              </td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <button (click)="confirm(r)" class="btn-confirm-table">Potvrdi</button>
+                  <button (click)="decline(r)" class="btn-decline-table">Odbij</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  
+  @if (message) {
+    <div class="error-message">{{message}}</div>
+  }
 </div>
 
-<div style="margin-top: 20px;">
-  <h3>Kalendar</h3>
+<div class="calendar-section">
+  <h3>Kalendar rezervacija</h3>
   <div id="owner-calendar"></div>
-  <div style="margin-top:8px;">
-    <span style="display:inline-block; width:12px; height:12px; background:#f1c40f; margin-right:6px;"></span> Neobrađene
-    <span style="display:inline-block; width:12px; height:12px; background:#2ecc71; margin: 0 6px 0 16px;"></span> Prihvaćene
-    <span style="display:inline-block; width:12px; height:12px; background:#e74c3c; margin: 0 6px 0 16px;"></span> Odbijene
+  <div class="calendar-legend">
+    <div class="legend-item">
+      <span class="legend-color" style="background:#f1c40f;"></span>
+      <span>Neobrađene</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-color" style="background:#2ecc71;"></span>
+      <span>Prihvaćene</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-color" style="background:#e74c3c;"></span>
+      <span>Odbijene</span>
+    </div>
   </div>
 </div>
 

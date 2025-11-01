@@ -100,12 +100,358 @@
   background-color: #7f8c8d;
 }
 
-.list-card {
-  margin-bottom: 20px;
+/* GLAVNI NASLOV */
+h2 {
+  color: #1f6837;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  font-family: 'Poppins', sans-serif;
 }
 
-.error {
-  color: #b00;
-  margin-top: 8px;
+/* KARTICA SA REZERVACIJAMA */
+.list-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  margin-bottom: 30px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e9ece9;
+}
+
+.card-header h3 {
+  color: #1f6837;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.stats-info {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.stat-value {
+  color: #1f6837;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.stat-value.highlight {
+  color: #f1c40f;
+  font-size: 18px;
+}
+
+/* PRAZAN PRIKAZ */
+.no-reservations {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.no-reservations p {
+  font-size: 16px;
+  font-style: italic;
+  margin: 0;
+}
+
+/* TABELA */
+.table-container {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+
+.reservations-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border: 1px solid #e9ece9;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.reservations-table th {
+  background: linear-gradient(135deg, #1f6837, #2d7945);
+  color: #fff;
+  padding: 14px 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  border-right: 1px solid #1a5a2e;
+  border-bottom: 1px solid #1a5a2e;
+}
+
+.reservations-table th:last-child {
+  border-right: none;
+}
+
+.reservations-table td {
+  padding: 16px 12px;
+  border-right: 1px solid #e9ece9;
+  border-bottom: 1px solid #e9ece9;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+.reservations-table td:last-child {
+  border-right: none;
+}
+
+.reservations-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.reservations-table tbody tr:hover {
+  background-color: #f8faf9;
+}
+
+.reservations-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* SPECIFIČNI STILOVI ZA ĆELIJE */
+.reservation-id {
+  font-weight: 600;
+  color: #1f6837;
+  font-family: 'Courier New', monospace;
+}
+
+.tourist-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.date-time {
+  color: #555;
+  white-space: nowrap;
+}
+
+.guests {
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+.adults,
+.children {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 6px;
+}
+
+.adults {
+  color: #1f6837;
+  font-weight: 500;
+}
+
+.children {
+  color: #666;
+}
+
+.price {
+  font-weight: 600;
+  color: #1f6837;
+  font-size: 15px;
+}
+
+.comment-cell {
+  min-width: 200px;
+  text-align: center;
+}
+
+.comment-input {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 10px 12px;
+  border: 2px solid #b8c9b9;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.25s ease;
+  background: #fff;
+  text-align: center;
+  display: block;
+}
+
+.comment-input:focus {
+  outline: none;
+  border-color: #1f6837;
+  box-shadow: 0 0 0 3px rgba(31, 104, 55, 0.1);
+}
+
+.comment-input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-confirm-table,
+.btn-decline-table {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btn-confirm-table {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+.btn-confirm-table:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+}
+
+.btn-decline-table {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.btn-decline-table:hover {
+  background-color: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+/* GREŠKE */
+.error-message {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background-color: #fee;
+  color: #c62828;
+  border-radius: 6px;
+  border-left: 4px solid #c62828;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* KALENDAR SEKCIJA */
+.calendar-section {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  margin-top: 30px;
+}
+
+.calendar-section h3 {
+  color: #1f6837;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+#owner-calendar {
+  margin-bottom: 16px;
+}
+
+.calendar-legend {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.legend-item span:last-child {
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .reservations-table {
+    font-size: 13px;
+  }
+  
+  .reservations-table th,
+  .reservations-table td {
+    padding: 12px 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .stats-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .btn-confirm-table,
+  .btn-decline-table {
+    width: 100%;
+  }
+  
+  .comment-cell {
+    min-width: 150px;
+  }
 }
 
