@@ -50,22 +50,25 @@
           <h3>Rezervišite boravak</h3>
 
           @if (step === 1) {
-            <div class="reservation-grid">
-              <div>
-                <label>Početak (od 14:00)</label>
-                <input type="datetime-local" [(ngModel)]="startISO">
+            <div class="reservation-form">
+              <div class="form-field-group">
+                <label class="field-label">Početak rezervacije (od 14:00)</label>
+                <input type="datetime-local" [(ngModel)]="startISO" class="datetime-input">
               </div>
-              <div>
-                <label>Kraj (do 10:00)</label>
-                <input type="datetime-local" [(ngModel)]="endISO">
+
+              <div class="form-field-group">
+                <label class="field-label">Kraj rezervacije (do 10:00)</label>
+                <input type="datetime-local" [(ngModel)]="endISO" class="datetime-input">
               </div>
-              <div>
-                <label>Broj odraslih</label>
-                <input type="number" min="1" [(ngModel)]="adults">
+
+              <div class="form-field-group">
+                <label class="field-label">Broj odraslih</label>
+                <input type="number" min="1" [(ngModel)]="adults" class="number-input">
               </div>
-              <div>
-                <label>Broj dece</label>
-                <input type="number" min="0" [(ngModel)]="children">
+
+              <div class="form-field-group">
+                <label class="field-label">Broj dece</label>
+                <input type="number" min="0" [(ngModel)]="children" class="number-input">
               </div>
             </div>
 
@@ -123,6 +126,7 @@
         <tr>
           <th>Naziv</th>
           <th>Mesto</th>
+          <th>Prosečna ocena</th>
         </tr>
       </thead>
       <tbody>
@@ -130,6 +134,20 @@
           <tr>
             <td><a [routerLink]="['/touristVikendica', v.idVikendice]">{{ v.naziv }}</a></td>
             <td>{{ v.mesto }}</td>
+            <td>
+              <div class="rating-cell">
+                @if (v.prosecnaOcena && v.prosecnaOcena > 0) {
+                  <span class="rating-value">{{ formatRating(v.prosecnaOcena) }}</span>
+                  <div class="stars">
+                    @for (star of getStars(v.prosecnaOcena); track $index) {
+                      <span class="star" [class.filled]="star === 1" [class.half]="star === 0.5">★</span>
+                    }
+                  </div>
+                } @else {
+                  <span class="no-rating">Nema ocene</span>
+                }
+              </div>
+            </td>
           </tr>
         }
       </tbody>

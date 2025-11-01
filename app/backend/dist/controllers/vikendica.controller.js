@@ -16,22 +16,47 @@ exports.VikendicaController = void 0;
 const vikendica_model_1 = __importDefault(require("../models/vikendica.model"));
 class VikendicaController {
     constructor() {
-        this.getAll = (req, res) => {
-            vikendica_model_1.default.find({}).sort({ idVikendice: 1 }).then(vikendice => {
-                res.json(vikendice);
-            }).catch((err) => {
+        this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const vikendice = yield vikendica_model_1.default.find({}).sort({ idVikendice: 1 }).lean();
+                // Računamo prosečnu ocenu za svaku vikendicu
+                const vikendiceWithRating = vikendice.map((v) => {
+                    const ocene = v.ocene || [];
+                    let prosecnaOcena = 0;
+                    if (ocene.length > 0) {
+                        const sum = ocene.reduce((acc, o) => acc + (o.rating || 0), 0);
+                        prosecnaOcena = sum / ocene.length;
+                    }
+                    return Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena });
+                });
+                res.json(vikendiceWithRating);
+            }
+            catch (err) {
                 console.log(err);
-            });
-        };
-        this.getByOwner = (req, res) => {
-            const ownerUsername = String(req.params.username);
-            vikendica_model_1.default.find({ ownerUsername }).sort({ idVikendice: 1 }).then(vikendice => {
-                res.json(vikendice);
-            }).catch((err) => {
+                res.status(500).json({ message: 'Greška pri učitavanju vikendica' });
+            }
+        });
+        this.getByOwner = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const ownerUsername = String(req.params.username);
+                const vikendice = yield vikendica_model_1.default.find({ ownerUsername }).sort({ idVikendice: 1 }).lean();
+                // Računamo prosečnu ocenu za svaku vikendicu
+                const vikendiceWithRating = vikendice.map((v) => {
+                    const ocene = v.ocene || [];
+                    let prosecnaOcena = 0;
+                    if (ocene.length > 0) {
+                        const sum = ocene.reduce((acc, o) => acc + (o.rating || 0), 0);
+                        prosecnaOcena = sum / ocene.length;
+                    }
+                    return Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena });
+                });
+                res.json(vikendiceWithRating);
+            }
+            catch (err) {
                 console.log(err);
                 res.status(500).json({ message: 'Greška' });
-            });
-        };
+            }
+        });
         this.delete = (req, res) => {
             vikendica_model_1.default.deleteOne({ idVikendice: req.body.idVikendice }).then(vikendice => {
                 res.json({ message: "Vikendica obrisana" });

@@ -2,22 +2,51 @@ import express from 'express'
 import VikendicaModel from '../models/vikendica.model'
 
 export class VikendicaController{
-    getAll = (req: express.Request, res: express.Response)=>{
-        VikendicaModel.find({}).sort({idVikendice: 1}).then(vikendice=>{
-            res.json(vikendice)
-        }).catch((err)=>{
+    getAll = async (req: express.Request, res: express.Response)=>{
+        try{
+            const vikendice = await VikendicaModel.find({}).sort({idVikendice: 1}).lean()
+            // Računamo prosečnu ocenu za svaku vikendicu
+            const vikendiceWithRating = vikendice.map((v: any) => {
+                const ocene = v.ocene || []
+                let prosecnaOcena = 0
+                if(ocene.length > 0){
+                    const sum = ocene.reduce((acc: number, o: any) => acc + (o.rating || 0), 0)
+                    prosecnaOcena = sum / ocene.length
+                }
+                return {
+                    ...v,
+                    prosecnaOcena: prosecnaOcena
+                }
+            })
+            res.json(vikendiceWithRating)
+        }catch(err){
             console.log(err)
-        })
+            res.status(500).json({message: 'Greška pri učitavanju vikendica'})
+        }
     }
 
-    getByOwner = (req: express.Request, res: express.Response)=>{
-        const ownerUsername = String(req.params.username)
-        VikendicaModel.find({ ownerUsername }).sort({idVikendice: 1}).then(vikendice=>{
-            res.json(vikendice)
-        }).catch((err)=>{
+    getByOwner = async (req: express.Request, res: express.Response)=>{
+        try{
+            const ownerUsername = String(req.params.username)
+            const vikendice = await VikendicaModel.find({ ownerUsername }).sort({idVikendice: 1}).lean()
+            // Računamo prosečnu ocenu za svaku vikendicu
+            const vikendiceWithRating = vikendice.map((v: any) => {
+                const ocene = v.ocene || []
+                let prosecnaOcena = 0
+                if(ocene.length > 0){
+                    const sum = ocene.reduce((acc: number, o: any) => acc + (o.rating || 0), 0)
+                    prosecnaOcena = sum / ocene.length
+                }
+                return {
+                    ...v,
+                    prosecnaOcena: prosecnaOcena
+                }
+            })
+            res.json(vikendiceWithRating)
+        }catch(err){
             console.log(err)
             res.status(500).json({message:'Greška'})
-        })
+        }
     }
 
     delete = (req: express.Request, res: express.Response)=>{

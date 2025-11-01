@@ -86,8 +86,17 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
   }
 
   getStars(rating?: number): number[] {
-    const r = Math.round((rating || 0))
-    return Array.from({length: 5}, (_, i) => i < r ? 1 : 0)
+    const r = rating || 0
+    // Vraćamo niz gde je 1 = puna zvezda, 0.5 = pola zvezde, 0 = prazna zvezda
+    return Array.from({length: 5}, (_, i) => {
+      if(i < Math.floor(r)) return 1 // Puna zvezda
+      if(i === Math.floor(r) && r % 1 >= 0.5) return 0.5 // Pola zvezde ako je decimala >= 0.5
+      return 0 // Prazna zvezda
+    })
+  }
+
+  formatRating(rating: number): string {
+    return rating.toFixed(1)
   }
 
   openDetail(id: number){

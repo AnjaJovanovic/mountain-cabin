@@ -126,6 +126,55 @@
   text-decoration: underline;
 }
 
+.rating-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.rating-value {
+  font-weight: 600;
+  color: #1f6837;
+  font-size: 15px;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star {
+  font-size: 18px;
+  color: #ddd;
+  transition: color 0.2s;
+}
+
+.star.filled {
+  color: #f5b301;
+}
+
+.star.half {
+  color: #f5b301;
+  opacity: 0.5;
+  position: relative;
+}
+
+.star.half::after {
+  content: '★';
+  position: absolute;
+  left: 0;
+  color: #f5b301;
+  width: 50%;
+  overflow: hidden;
+}
+
+.no-rating {
+  color: #999;
+  font-style: italic;
+  font-size: 13px;
+}
+
 /* DETALJI */
 .detail-card {
   background: #fff;
@@ -184,6 +233,140 @@ button:hover {
   overflow: hidden;
 }
 
+/* REZERVACIJA FORMA */
+.reservation-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #e9ece9;
+}
+
+.reservation-section h3 {
+  color: #1f6837;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.reservation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.field-label {
+  font-weight: 600;
+  color: #1f6837;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.datetime-input,
+.number-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #b8c9b9;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #ffffff;
+  color: #1f6837;
+  transition: all 0.25s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.datetime-input:focus,
+.number-input:focus {
+  outline: none;
+  border-color: #1f6837;
+  box-shadow: 0 0 0 3px rgba(31, 104, 55, 0.1);
+}
+
+.datetime-input {
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Sakrivanje AM/PM */
+.datetime-input::-webkit-datetime-edit-ampm-field {
+  display: none !important;
+}
+
+.datetime-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.datetime-input::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.number-input {
+  -moz-appearance: textfield;
+  -webkit-appearance: textfield;
+}
+
+.number-input::-webkit-outer-spin-button,
+.number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.btn-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-row .message {
+  color: #c62828;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.payment-section {
+  margin-top: 20px;
+}
+
+.payment-section > div {
+  margin-bottom: 20px;
+}
+
+.payment-section label {
+  display: block;
+  font-weight: 600;
+  color: #1f6837;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.payment-section textarea,
+.payment-section input[type="text"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #b8c9b9;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #ffffff;
+  color: #1f6837;
+  transition: all 0.25s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.payment-section textarea:focus,
+.payment-section input[type="text"]:focus {
+  outline: none;
+  border-color: #1f6837;
+  box-shadow: 0 0 0 3px rgba(31, 104, 55, 0.1);
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .filter-section {
@@ -204,5 +387,18 @@ button:hover {
 
   #vik-map {
     height: 300px;
+  }
+
+  .reservation-form {
+    gap: 20px;
+  }
+
+  .btn-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-row button {
+    width: 100%;
   }
 }
