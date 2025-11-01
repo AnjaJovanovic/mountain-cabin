@@ -200,7 +200,25 @@ class RezervacijaController {
                     res.status(400).json({ message: 'Možete ostaviti ocenu i komentar samo za završene rezervacije' });
                     return;
                 }
+                const usernameTuriste = String(rez.usernameTuriste);
+                const idVikendice = Number(rez.idVikendice);
+                // Proveri da li turista već ima ocenu za ovu vikendicu
+                const vikendica = yield vikendica_model_1.default.findOne({ idVikendice });
+                if (!vikendica) {
+                    res.status(404).json({ message: 'Vikendica nije pronađena' });
+                    return;
+                }
+                // Proveri da li je već ocenio
+                const ocene = vikendica.ocene || [];
+                const existingRating = ocene.find((o) => o.username === usernameTuriste);
+                if (existingRating) {
+                    res.status(400).json({ message: 'Već ste ocenili ovu vikendicu' });
+                    return;
+                }
+                // Dodaj ocenu u rezervaciju
                 yield rezervacija_model_1.default.updateOne({ idRezervacije }, { $set: { touristComment, touristRating } });
+                // Dodaj ocenu u vikendicu
+                yield vikendica_model_1.default.updateOne({ idVikendice }, { $push: { ocene: { username: usernameTuriste, rating: touristRating } } });
                 res.json({ message: 'Ocena i komentar su uspešno sačuvani' });
             }
             catch (err) {

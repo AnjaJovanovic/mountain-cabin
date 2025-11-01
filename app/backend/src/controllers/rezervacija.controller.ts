@@ -192,9 +192,35 @@ export class RezervacijaController {
         return
       }
       
+      const usernameTuriste = String(rez.usernameTuriste)
+      const idVikendice = Number(rez.idVikendice)
+      
+      // Proveri da li turista već ima ocenu za ovu vikendicu
+      const vikendica = await VikendicaModel.findOne({ idVikendice })
+      if(!vikendica){
+        res.status(404).json({message:'Vikendica nije pronađena'})
+        return
+      }
+      
+      // Proveri da li je već ocenio
+      const ocene = (vikendica.ocene as any[]) || []
+      const existingRating = ocene.find((o: any) => o.username === usernameTuriste)
+      
+      if(existingRating){
+        res.status(400).json({message:'Već ste ocenili ovu vikendicu'})
+        return
+      }
+      
+      // Dodaj ocenu u rezervaciju
       await RezervacijaModel.updateOne(
         { idRezervacije }, 
         { $set: { touristComment, touristRating } }
+      )
+      
+      // Dodaj ocenu u vikendicu
+      await VikendicaModel.updateOne(
+        { idVikendice },
+        { $push: { ocene: { username: usernameTuriste, rating: touristRating } } }
       )
       
       res.json({message:'Ocena i komentar su uspešno sačuvani'})
