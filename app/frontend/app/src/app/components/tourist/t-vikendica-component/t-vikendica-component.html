@@ -200,4 +200,58 @@
       </div>
     </div>
   }
+
+  <!-- Reservation Confirmation Modal -->
+  @if (showReservationConfirmation && reservationDetails) {
+    <div class="reservation-confirmation-overlay" (click)="closeReservationConfirmation()">
+      <div class="reservation-confirmation-content" (click)="$event.stopPropagation()">
+        <div class="confirmation-header">
+          <h2>✓ Rezervacija uspešno kreirana</h2>
+          <button class="confirmation-close" (click)="closeReservationConfirmation()">×</button>
+        </div>
+        <div class="confirmation-body">
+          <div class="confirmation-details">
+            <div class="detail-row">
+              <strong>Broj rezervacije:</strong>
+              <span>#{{ reservationDetails.idRezervacije }}</span>
+            </div>
+            <div class="detail-row">
+              <strong>Vikendica:</strong>
+              <span>{{ reservationDetails.naziv }}</span>
+            </div>
+            <div class="detail-row">
+              <strong>Mesto:</strong>
+              <span>{{ reservationDetails.mesto }}</span>
+            </div>
+            <div class="detail-row">
+              <strong>Početak:</strong>
+              <span>{{ reservationDetails.pocetak }}</span>
+            </div>
+            <div class="detail-row">
+              <strong>Kraj:</strong>
+              <span>{{ reservationDetails.kraj }}</span>
+            </div>
+            <div class="detail-row">
+              <strong>Gosti:</strong>
+              <span>Odraslih: {{ reservationDetails.brojOdraslih }}, Dece: {{ reservationDetails.brojDece }}</span>
+            </div>
+            <div class="detail-row">
+              <strong>Cena:</strong>
+              <span>{{ formatEur(reservationDetails.cena) }}</span>
+            </div>
+            @if (reservationDetails.napomena) {
+              <div class="detail-row">
+                <strong>Napomena:</strong>
+                <span>{{ reservationDetails.napomena }}</span>
+              </div>
+            }
+          </div>
+          <div class="confirmation-footer">
+            <p class="confirmation-note">Rezervacija je poslata vlasniku na odobrenje. Bićete obavešteni kada vlasnik potvrdi ili odbije rezervaciju.</p>
+            <button class="confirmation-btn" (click)="closeReservationConfirmation()">U redu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>

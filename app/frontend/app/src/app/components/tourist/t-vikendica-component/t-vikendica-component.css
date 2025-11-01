@@ -620,3 +620,142 @@ button:hover {
   font-weight: 600;
   margin: 0;
 }
+
+/* RESERVATION CONFIRMATION MODAL */
+.reservation-confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 20px;
+}
+
+.reservation-confirmation-content {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.confirmation-header {
+  background: linear-gradient(135deg, #1f6837 0%, #14512b 100%);
+  color: #ffffff;
+  padding: 24px 30px;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.confirmation-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.confirmation-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  line-height: 1;
+  padding: 0;
+}
+
+.confirmation-close:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.confirmation-body {
+  padding: 30px;
+}
+
+.confirmation-details {
+  margin-bottom: 24px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid #e9ece9;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-row strong {
+  color: #1f6837;
+  font-weight: 600;
+  font-size: 15px;
+  min-width: 140px;
+}
+
+.detail-row span {
+  color: #333;
+  font-size: 15px;
+  text-align: right;
+  flex: 1;
+}
+
+.confirmation-footer {
+  border-top: 2px solid #e9ece9;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+.confirmation-note {
+  background-color: #eaf4ec;
+  color: #1f6837;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  border-left: 4px solid #1f6837;
+}
+
+.confirmation-btn {
+  width: 100%;
+  background-color: #1f6837;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 0;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.confirmation-btn:hover {
+  background-color: #14512b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(31, 104, 55, 0.3);
+}

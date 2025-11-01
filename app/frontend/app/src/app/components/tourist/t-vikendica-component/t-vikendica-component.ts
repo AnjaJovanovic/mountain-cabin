@@ -44,6 +44,8 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
   reviews: any[] = []
   selectedImage: string | null = null
   showImageModal: boolean = false
+  showReservationConfirmation: boolean = false
+  reservationDetails: any = null
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')
@@ -192,10 +194,21 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
     }
     this.rezervacijaService.create(payload).subscribe({
       next: (resp)=>{
-        this.reservationMessage = 'Rezervacija uspešno poslata'
-        // prikaži kratku poruku, zatim vrati na listu
-        alert('Rezervacija uspešno poslata')
-        this.router.navigate(['touristVikendica'])
+        // Sačuvaj detalje rezervacije za potvrdu
+        this.reservationDetails = {
+          idRezervacije: resp.idRezervacije,
+          naziv: this.selectedVikendica?.naziv || '',
+          mesto: this.selectedVikendica?.mesto || '',
+          pocetak: this.formatDateTime(this.startISO),
+          kraj: this.formatDateTime(this.endISO),
+          brojOdraslih: this.adults,
+          brojDece: this.children,
+          cena: this.calculatedPrice,
+          napomena: this.note || ''
+        }
+        // Prikaži potvrdu rezervacije
+        this.showReservationConfirmation = true
+        this.reservationMessage = ''
       },
       error: (err)=>{
         const errorMessage = err?.error?.message || 'Greška pri rezervaciji.'
@@ -310,5 +323,11 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
       return blockedUntil > now
     }
     return false
+  }
+
+  closeReservationConfirmation() {
+    this.showReservationConfirmation = false
+    this.reservationDetails = null
+    this.router.navigate(['touristVikendica'])
   }
 }
