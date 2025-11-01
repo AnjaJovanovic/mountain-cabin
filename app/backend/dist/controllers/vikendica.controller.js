@@ -23,24 +23,6 @@ class VikendicaController {
                 const vikendiceWithRating = [];
                 for (const v of vikendice) {
                     const ocene = v.ocene || [];
-                    // Debug: prikaži sve ocene pre filtriranja
-                    if (v.idVikendice === 14 && ocene.length > 0) {
-                        console.log(`Vikendica ${v.idVikendice} - SVE ocene pre filtriranja:`, JSON.stringify(ocene, null, 2));
-                        ocene.forEach((o, idx) => {
-                            console.log(`  Ocena ${idx}:`, {
-                                obj: o,
-                                rating: o === null || o === void 0 ? void 0 : o.rating,
-                                ratingType: typeof (o === null || o === void 0 ? void 0 : o.rating),
-                                isNull: (o === null || o === void 0 ? void 0 : o.rating) === null,
-                                isUndefined: (o === null || o === void 0 ? void 0 : o.rating) === undefined,
-                                isNaN: isNaN(o === null || o === void 0 ? void 0 : o.rating),
-                                isNumber: typeof (o === null || o === void 0 ? void 0 : o.rating) === 'number',
-                                gte1: ((o === null || o === void 0 ? void 0 : o.rating) >= 1),
-                                lte5: ((o === null || o === void 0 ? void 0 : o.rating) <= 5),
-                                valid: o && o.rating !== null && o.rating !== undefined && typeof o.rating === 'number' && !isNaN(o.rating) && o.rating >= 1 && o.rating <= 5
-                            });
-                        });
-                    }
                     // Filtriraj samo validne ocene (1-5) - konvertuj u broj ako je string
                     const validOcene = ocene.filter((o) => {
                         if (!o)
@@ -57,14 +39,11 @@ class VikendicaController {
                     if (validOcene.length > 0) {
                         const sum = validOcene.reduce((acc, o) => acc + o.rating, 0);
                         prosecnaOcena = Math.round((sum / validOcene.length) * 100) / 100; // Zaokruženo na 2 decimale
-                        // Debug logovanje za dijagnostiku
-                        console.log(`Vikendica ${v.idVikendice}: ${validOcene.length} validnih ocena:`, validOcene.map((o) => o.rating).join(', '), `| Suma: ${sum} | Prosek: ${sum}/${validOcene.length} = ${prosecnaOcena}`);
                     }
                     // Ažuriraj prosecnaOcena u bazi ako se promenila
                     const currentProsecna = (v.prosecnaOcena || 0);
                     if (Math.abs(currentProsecna - prosecnaOcena) > 0.01) {
                         yield vikendica_model_1.default.updateOne({ idVikendice: v.idVikendice }, { $set: { prosecnaOcena } });
-                        console.log(`Ažurirana prosecnaOcena za vikendicu ${v.idVikendice}: ${currentProsecna} -> ${prosecnaOcena}`);
                     }
                     // Proveravamo poslednje 3 ocene (ako ih ima) - samo validne
                     const last3 = validOcene.slice(-3);
@@ -88,24 +67,6 @@ class VikendicaController {
                 const vikendiceWithRating = [];
                 for (const v of vikendice) {
                     const ocene = v.ocene || [];
-                    // Debug: prikaži sve ocene pre filtriranja
-                    if (v.idVikendice === 14 && ocene.length > 0) {
-                        console.log(`Vikendica ${v.idVikendice} - SVE ocene pre filtriranja:`, JSON.stringify(ocene, null, 2));
-                        ocene.forEach((o, idx) => {
-                            console.log(`  Ocena ${idx}:`, {
-                                obj: o,
-                                rating: o === null || o === void 0 ? void 0 : o.rating,
-                                ratingType: typeof (o === null || o === void 0 ? void 0 : o.rating),
-                                isNull: (o === null || o === void 0 ? void 0 : o.rating) === null,
-                                isUndefined: (o === null || o === void 0 ? void 0 : o.rating) === undefined,
-                                isNaN: isNaN(o === null || o === void 0 ? void 0 : o.rating),
-                                isNumber: typeof (o === null || o === void 0 ? void 0 : o.rating) === 'number',
-                                gte1: ((o === null || o === void 0 ? void 0 : o.rating) >= 1),
-                                lte5: ((o === null || o === void 0 ? void 0 : o.rating) <= 5),
-                                valid: o && o.rating !== null && o.rating !== undefined && typeof o.rating === 'number' && !isNaN(o.rating) && o.rating >= 1 && o.rating <= 5
-                            });
-                        });
-                    }
                     // Filtriraj samo validne ocene (1-5) - konvertuj u broj ako je string
                     const validOcene = ocene.filter((o) => {
                         if (!o)
@@ -122,14 +83,11 @@ class VikendicaController {
                     if (validOcene.length > 0) {
                         const sum = validOcene.reduce((acc, o) => acc + o.rating, 0);
                         prosecnaOcena = Math.round((sum / validOcene.length) * 100) / 100; // Zaokruženo na 2 decimale
-                        // Debug logovanje za dijagnostiku
-                        console.log(`Vikendica ${v.idVikendice}: ${validOcene.length} validnih ocena:`, validOcene.map((o) => o.rating).join(', '), `| Suma: ${sum} | Prosek: ${sum}/${validOcene.length} = ${prosecnaOcena}`);
                     }
                     // Ažuriraj prosecnaOcena u bazi ako se promenila
                     const currentProsecna = (v.prosecnaOcena || 0);
                     if (Math.abs(currentProsecna - prosecnaOcena) > 0.01) {
                         yield vikendica_model_1.default.updateOne({ idVikendice: v.idVikendice }, { $set: { prosecnaOcena } });
-                        console.log(`Ažurirana prosecnaOcena za vikendicu ${v.idVikendice}: ${currentProsecna} -> ${prosecnaOcena}`);
                     }
                     vikendiceWithRating.push(Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena }));
                 }
@@ -145,7 +103,7 @@ class VikendicaController {
                 res.json({ message: "Vikendica obrisana" });
             }).catch((err) => {
                 console.log(err);
-                res.json({ message: "Fail" });
+                res.json({ message: "Greška" });
             });
         };
         this.update = (req, res) => {
@@ -155,7 +113,6 @@ class VikendicaController {
             for (const key in req.body) {
                 // preskačemo zaštićena polja - ownerUsername NIKADA ne može biti ažuriran!
                 if (protectedFields.includes(key)) {
-                    console.log(`⚠️ Zaštićeno polje "${key}" je preskočeno - ne može biti ažurirano`);
                     continue;
                 }
                 // ako polje nije prazno (undefined, null, ili prazan string) — dodaj u update objekat
@@ -165,7 +122,6 @@ class VikendicaController {
             }
             // DODATNA ZAŠTITA: Eksplicitno uklanjamo ownerUsername iz updateData ako je neko pokušao da ga postavi
             if ('ownerUsername' in updateData) {
-                console.log(`❌ POKUŠAJ AŽURIRANJA ownerUsername - UKLANJAMO IZ UPDATE DATA!`);
                 delete updateData.ownerUsername;
             }
             // ažuriramo samo ta polja - ownerUsername NIKADA neće biti uključen
@@ -189,9 +145,10 @@ class VikendicaController {
                     res.status(400).json({ message: "ownerUsername je obavezno polje." });
                     return;
                 }
-                console.log(`Kreiranje vikendice sa ownerUsername="${ownerUsername}"`);
                 const all = yield vikendica_model_1.default.find({}).sort({ idVikendice: -1 }).limit(1);
                 const nextId = all.length ? all[0].idVikendice + 1 : 1;
+                // Koristimo sve podatke iz req.body, ali postavljamo ownerUsername na ulogovanog korisnika
+                // i osiguravamo osnovne vrednosti
                 const doc = new vikendica_model_1.default({
                     idVikendice: nextId,
                     naziv: req.body.naziv,
@@ -199,15 +156,16 @@ class VikendicaController {
                     telefon: req.body.telefon,
                     cenaNocenjaLetnja: req.body.cenaNocenjaLetnja,
                     cenaNocenjaZimska: req.body.cenaNocenjaZimska,
-                    galerijaSlika: Array.isArray(req.body.galerijaSlika) ? req.body.galerijaSlika : [],
-                    zauzeta: false,
+                    galerijaSlika: Array.isArray(req.body.galerijaSlika) ? req.body.galerijaSlika : (req.body.galerijaSlika ? [req.body.galerijaSlika] : []),
+                    zauzeta: req.body.zauzeta !== undefined ? req.body.zauzeta : false,
                     usluge: req.body.usluge,
-                    ownerUsername: String(ownerUsername).trim(), // Eksplicitno postavljamo ownerUsername
+                    ownerUsername: String(ownerUsername).trim(), // Uvek postavljamo ownerUsername na ulogovanog korisnika
                     lat: req.body.lat,
-                    lng: req.body.lng
+                    lng: req.body.lng,
+                    ocene: Array.isArray(req.body.ocene) ? req.body.ocene : [],
+                    prosecnaOcena: req.body.prosecnaOcena
                 });
                 yield doc.save();
-                console.log(`✓ Vikendica ID=${nextId} kreirana sa ownerUsername="${ownerUsername}"`);
                 res.json({ message: "Vikendica kreirana", idVikendice: nextId });
             }
             catch (err) {

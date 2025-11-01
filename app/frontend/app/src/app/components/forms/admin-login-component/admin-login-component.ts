@@ -18,18 +18,20 @@ export class AdminLoginComponent {
   message = ""
 
   login(){
-    this.adminService.login(this.username, this.password).subscribe(data=>{
-      console.log("PODACI KOJE DOBIJAM IZ LOGIN BACKENDA:", data)
-      if(data){
-        localStorage.setItem("loggedUser", JSON.stringify(data));
-        this.message = "ulogovan korisnik" + this.username
+    this.adminService.login(this.username, this.password).subscribe({
+      next: (data) => {
+        if(data){
+          localStorage.setItem("loggedUser", JSON.stringify(data));
+          this.message = "ulogovan korisnik" + this.username
       
-        this.router.navigate(['admin'])
-        
-        console.log("PODACI KOJE DOBIJAM IZ LOGIN BACKENDA:", data)
-      }
-      else{
-        this.message = "Error"
+          this.router.navigate(['admin'])
+        }
+        else{
+          this.message = "Pogrešno korisničko ime ili lozinka"
+        }
+      },
+      error: (err) => {
+        this.message = "Pogrešno korisničko ime ili lozinka"
       }
     })
   }

@@ -111,7 +111,7 @@ export class VikendicaController{
             res.json({message: "Vikendica obrisana"})
         }).catch((err)=>{
             console.log(err)
-            res.json({message: "Fail"})
+            res.json({message: "Greška"})
         })
     }
 
@@ -123,7 +123,6 @@ export class VikendicaController{
         for (const key in req.body) {
             // preskačemo zaštićena polja - ownerUsername NIKADA ne može biti ažuriran!
             if (protectedFields.includes(key)) {
-                console.log(`⚠️ Zaštićeno polje "${key}" je preskočeno - ne može biti ažurirano`)
                 continue
             }
             // ako polje nije prazno (undefined, null, ili prazan string) — dodaj u update objekat
@@ -134,7 +133,6 @@ export class VikendicaController{
         
         // DODATNA ZAŠTITA: Eksplicitno uklanjamo ownerUsername iz updateData ako je neko pokušao da ga postavi
         if('ownerUsername' in updateData){
-            console.log(`❌ POKUŠAJ AŽURIRANJA ownerUsername - UKLANJAMO IZ UPDATE DATA!`)
             delete updateData.ownerUsername
         }
         
@@ -161,10 +159,11 @@ export class VikendicaController{
                 return
             }
             
-            console.log(`Kreiranje vikendice sa ownerUsername="${ownerUsername}"`)
-            
             const all = await VikendicaModel.find({}).sort({idVikendice: -1}).limit(1)
             const nextId = all.length ? (all[0].idVikendice as number) + 1 : 1
+            
+            // Koristimo sve podatke iz req.body, ali postavljamo ownerUsername na ulogovanog korisnika
+            // i osiguravamo osnovne vrednosti
             const doc = new VikendicaModel({
                 idVikendice: nextId,
                 naziv: req.body.naziv,
@@ -172,15 +171,16 @@ export class VikendicaController{
                 telefon: req.body.telefon,
                 cenaNocenjaLetnja: req.body.cenaNocenjaLetnja,
                 cenaNocenjaZimska: req.body.cenaNocenjaZimska,
-                galerijaSlika: Array.isArray(req.body.galerijaSlika) ? req.body.galerijaSlika : [],
-                zauzeta: false,
+                galerijaSlika: Array.isArray(req.body.galerijaSlika) ? req.body.galerijaSlika : (req.body.galerijaSlika ? [req.body.galerijaSlika] : []),
+                zauzeta: req.body.zauzeta !== undefined ? req.body.zauzeta : false,
                 usluge: req.body.usluge,
-                ownerUsername: String(ownerUsername).trim(), // Eksplicitno postavljamo ownerUsername
+                ownerUsername: String(ownerUsername).trim(), // Uvek postavljamo ownerUsername na ulogovanog korisnika
                 lat: req.body.lat,
-                lng: req.body.lng
+                lng: req.body.lng,
+                ocene: Array.isArray(req.body.ocene) ? req.body.ocene : [],
+                prosecnaOcena: req.body.prosecnaOcena
             })
             await doc.save()
-            console.log(`✓ Vikendica ID=${nextId} kreirana sa ownerUsername="${ownerUsername}"`)
             res.json({ message: "Vikendica kreirana", idVikendice: nextId })
         }catch(err){
             console.log(err)

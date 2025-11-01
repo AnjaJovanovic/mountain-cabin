@@ -18,25 +18,35 @@ export class LoginComponent {
   message = ""
 
   login(){
-    this.userService.login(this.username, this.password).subscribe(data=>{
-      if(data && (data as any).message){
-        this.message = (data as any).message
-        return
-      }
-      if(data){
-        localStorage.setItem("loggedUser", JSON.stringify(data));
-        this.message = "ulogovan korisnik" + this.username
-        if(data.userType == "tourist"){
-          this.router.navigate(['touristProfile'])
-          console.log("Turista sam")
+    this.userService.login(this.username, this.password).subscribe({
+      next: (data) => {
+        if(data && (data as any).message){
+          const msg = (data as any).message
+          // Proveri tačnu poruku i mapiraj na prikladnu poruku za korisnika
+          if(msg === 'Blokiran'){
+            this.message = 'Korisnički nalog je blokiran'
+          } else if(msg === 'Nalog nije aktiviran'){
+            this.message = 'Korisnički nalog nije aktiviran'
+          } else {
+            this.message = msg
+          }
+          return
         }
-        else if(data.userType == "owner")
-          this.router.navigate(['/owner/profile'])
-        
-        console.log("PODACI KOJE DOBIJAM IZ LOGIN BACKENDA:", data)
-      }
-      else{
-        this.message = "Error"
+        if(data){
+          localStorage.setItem("loggedUser", JSON.stringify(data));
+          this.message = "ulogovan korisnik" + this.username
+          if(data.userType == "tourist"){
+            this.router.navigate(['touristProfile'])
+          }
+          else if(data.userType == "owner")
+            this.router.navigate(['/owner/profile'])
+        }
+        else{
+          this.message = "Pogrešno korisničko ime ili lozinka"
+        }
+      },
+      error: (err) => {
+        this.message = "Pogrešno korisničko ime ili lozinka"
       }
     })
   }

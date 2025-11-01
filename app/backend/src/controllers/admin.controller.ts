@@ -36,7 +36,7 @@ export class AdminController {
             })
             .catch(err => {
                 console.log(err)
-                res.json({ message: 'fail register' })
+                res.json({ message: 'Greška pri registraciji' })
             })
     }
 
@@ -48,10 +48,10 @@ export class AdminController {
             { username: username },
             { $set: { isActive: isActive } }
         ).then(() => {
-            res.json({ message: 'User activation updated' })
+            res.json({ message: 'Aktivacija korisnika ažurirana' })
         }).catch(err => {
             console.log(err)
-            res.json({ message: 'Fail' })
+            res.json({ message: 'Greška' })
         })
     }
 
@@ -63,10 +63,10 @@ export class AdminController {
             { username: username },
             { $set: { isBlocked: isBlocked } }
         ).then(() => {
-            res.json({ message: 'User blocking updated' })
+            res.json({ message: 'Blokiranje korisnika ažurirano' })
         }).catch(err => {
             console.log(err)
-            res.json({ message: 'Fail' })
+            res.json({ message: 'Greška' })
         })
     }
 }

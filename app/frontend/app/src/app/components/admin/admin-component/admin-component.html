@@ -14,6 +14,7 @@
         <thead>
           <tr>
             <th>Korisničko ime</th>
+            <th>Tip korisnika</th>
             <th>Aktivan</th>
             <th>Blokiran</th>
             <th>Akcije</th>
@@ -24,6 +25,15 @@
           @for (u of allUsers; track u.username) {
             <tr>
               <td>{{ u.username }}</td>
+              <td>
+                @if (u.userType === 'owner') {
+                  Vlasnik
+                } @else if (u.userType === 'tourist') {
+                  Turista
+                } @else {
+                  {{ u.userType || '-' }}
+                }
+              </td>
               <td>
                 <span class="status" [class.active]="u.isActive" [class.inactive]="!u.isActive">
                   {{ u.isActive ? 'Da' : 'Ne' }}

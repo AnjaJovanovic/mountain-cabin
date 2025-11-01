@@ -42,6 +42,8 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
   calculatedPrice: number = 0
   reservationMessage: string = ''
   reviews: any[] = []
+  selectedImage: string | null = null
+  showImageModal: boolean = false
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')
@@ -190,9 +192,9 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
     }
     this.rezervacijaService.create(payload).subscribe({
       next: (resp)=>{
-        this.reservationMessage = 'Rezervacija uspesno poslata'
+        this.reservationMessage = 'Rezervacija uspešno poslata'
         // prikaži kratku poruku, zatim vrati na listu
-        alert('Rezervacija uspesno poslata')
+        alert('Rezervacija uspešno poslata')
         this.router.navigate(['touristVikendica'])
       },
       error: (err)=>{
@@ -281,5 +283,15 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
     } catch(error){
       // Silent fail
     }
+  }
+
+  openImageModal(imagePath: string) {
+    this.selectedImage = 'http://localhost:4000/' + imagePath
+    this.showImageModal = true
+  }
+
+  closeImageModal() {
+    this.showImageModal = false
+    this.selectedImage = null
   }
 }

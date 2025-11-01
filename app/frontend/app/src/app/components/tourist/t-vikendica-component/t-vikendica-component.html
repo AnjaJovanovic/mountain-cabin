@@ -33,7 +33,7 @@
             <strong>Galerija:</strong>
             <div class="gallery-images">
               @for (img of selectedVikendica.galerijaSlika; track $index) {
-                <img [src]="'http://localhost:4000/' + img" alt="Slika">
+                <img [src]="'http://localhost:4000/' + img" alt="Slika" (click)="openImageModal(img)" class="gallery-thumbnail">
               }
             </div>
           </div>
@@ -184,5 +184,15 @@
         }
       </tbody>
     </table>
+  }
+
+  <!-- Image Modal -->
+  @if (showImageModal && selectedImage) {
+    <div class="image-modal-overlay" (click)="closeImageModal()">
+      <div class="image-modal-content" (click)="$event.stopPropagation()">
+        <button class="image-modal-close" (click)="closeImageModal()">×</button>
+        <img [src]="selectedImage" alt="Velika slika" class="image-modal-image">
+      </div>
+    </div>
   }
 </div>

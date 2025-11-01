@@ -37,27 +37,27 @@ class AdminController {
             })
                 .catch(err => {
                 console.log(err);
-                res.json({ message: 'fail register' });
+                res.json({ message: 'Greška pri registraciji' });
             });
         };
         this.activation = (req, res) => {
             const username = req.body.username;
             const isActive = req.body.isActive;
             user_model_1.default.updateOne({ username: username }, { $set: { isActive: isActive } }).then(() => {
-                res.json({ message: 'User activation updated' });
+                res.json({ message: 'Aktivacija korisnika ažurirana' });
             }).catch(err => {
                 console.log(err);
-                res.json({ message: 'Fail' });
+                res.json({ message: 'Greška' });
             });
         };
         this.blocking = (req, res) => {
             const username = req.body.username;
             const isBlocked = req.body.isBlocked;
             user_model_1.default.updateOne({ username: username }, { $set: { isBlocked: isBlocked } }).then(() => {
-                res.json({ message: 'User blocking updated' });
+                res.json({ message: 'Blokiranje korisnika ažurirano' });
             }).catch(err => {
                 console.log(err);
-                res.json({ message: 'Fail' });
+                res.json({ message: 'Greška' });
             });
         };
     }

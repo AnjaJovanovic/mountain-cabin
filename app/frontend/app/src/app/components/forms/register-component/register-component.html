@@ -78,11 +78,10 @@
       <h4>Tip korisnika</h4>
       <label><input type="radio" name="type" [(ngModel)]="user.userType" value="owner"> Vlasnik</label>
       <label><input type="radio" name="type" [(ngModel)]="user.userType" value="tourist"> Turista</label>
-      <label><input type="radio" name="type" [(ngModel)]="user.userType" value="administrator"> Administrator</label>
     </div>
 
     <button class="register-btn" (click)="register()">Registruj se</button>
-    <p class="message">{{ message }}</p>
+    <p class="message" [class.has-message]="message">{{ message }}</p>
 
     <div class="back-link">
       <a routerLink="../login">Nazad na prijavu</a>

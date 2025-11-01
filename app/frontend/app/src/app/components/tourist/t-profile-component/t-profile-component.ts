@@ -93,12 +93,14 @@ export class TProfileComponent {
   }
 
   updateCreditCard(){
-    console.log(this.newCreditCardNumber)
     this.userService.updateCreditCard(this.user.username!, this.newCreditCardNumber).subscribe(
       data=>{
         this.messageCreditCard = data.message
-        this.user.creditCardNumber = this.newCreditCardNumber
-        localStorage.setItem("loggedUser", JSON.stringify(this.user))
+        // Ažuriraj samo ako je uspešno ažurirano (ne ako je greška)
+        if (data.message === "Korisnik ažuriran") {
+          this.user.creditCardNumber = this.newCreditCardNumber
+          localStorage.setItem("loggedUser", JSON.stringify(this.user))
+        }
       }
     )
   }
@@ -150,7 +152,6 @@ export class TProfileComponent {
       this.messageImage = data.message
       if (data.path) {
         this.user.profilePicture = data.path
-        console.log(data.path)
         this.cacheBuster = Date.now()
         localStorage.setItem('loggedUser', JSON.stringify(this.user))
         this.selectedFile = null

@@ -21,6 +21,8 @@ export class OReservationVikendice {
   selectedFiles: File[] = []
   editMode: boolean = false
   editingId: number | null = null
+  hasJsonData: boolean = false
+  jsonData: any = null
 
   ngOnInit(){
     this.load()
@@ -41,11 +43,16 @@ export class OReservationVikendice {
   onJsonSelected(event: any){
     const file = event.target.files?.[0]; if(!file) return
     this.jsonError = ''
+    this.hasJsonData = false
     const reader = new FileReader()
     reader.onload = () => {
       try{
         const obj = JSON.parse(String(reader.result||'{}'))
-        // Prefill allowed fields
+        // Sačuvaj ceo JSON objekat za direktno kreiranje
+        this.jsonData = obj
+        this.hasJsonData = true
+        
+        // Prefill allowed fields (opciono - za prikaz u formi)
         this.form.naziv = obj.naziv || ''
         this.form.mesto = obj.mesto || ''
         this.form.usluge = obj.usluge || ''
@@ -54,8 +61,14 @@ export class OReservationVikendice {
         this.form.cenaNocenjaZimska = Number(obj.cenaNocenjaZimska||0)
         this.form.lat = (obj.lat!==undefined)? Number(obj.lat) : undefined
         this.form.lng = (obj.lng!==undefined)? Number(obj.lng) : undefined
+        
+        // Poruka korisniku da je JSON učitan
+        this.message = 'JSON fajl je uspešno učitan. Možete kliknuti "Sačuvaj" bez popunjavanja ostalih polja.'
       }catch(e:any){
         this.jsonError = 'Nevažeći JSON fajl.'
+        this.hasJsonData = false
+        this.jsonData = null
+        this.message = ''
       }
     }
     reader.readAsText(file)
@@ -75,6 +88,12 @@ export class OReservationVikendice {
   }
 
   validate(): string | null{
+    // Ako ima JSON podatke, preskoči validaciju
+    if(this.hasJsonData && this.jsonData) {
+      return null
+    }
+    
+    // Inače, validiraj sva polja kao pre
     if(!this.form.naziv?.trim()) return 'Unesite naziv.'
     if(!this.form.mesto?.trim()) return 'Unesite mesto.'
     if(!this.form.telefon?.trim()) return 'Unesite telefon.'
@@ -108,7 +127,20 @@ export class OReservationVikendice {
       // prvo kreiramo vikendicu bez slika
       const uStr = localStorage.getItem('loggedUser')
       const username = uStr ? JSON.parse(uStr).username : ''
-      const payload: Vikendica = { ...this.form, ownerUsername: username } as any
+      
+      let payload: Vikendica
+      
+      // Ako ima JSON podatke, koristi ih direktno
+      if(this.hasJsonData && this.jsonData) {
+        payload = {
+          ...this.jsonData,
+          ownerUsername: username // Postavi ownerUsername na ulogovanog korisnika
+        } as any
+      } else {
+        // Inače, koristi form podatke
+        payload = { ...this.form, ownerUsername: username } as any
+      }
+      
       this.vikendicaService.create(payload).subscribe((resp:any)=>{
         this.message = resp?.message || 'Kreirano.'
         const newId = resp?.idVikendice
@@ -158,6 +190,9 @@ export class OReservationVikendice {
     this.selectedImagesPreview = []
     this.editMode = false
     this.editingId = null
+    this.hasJsonData = false
+    this.jsonData = null
+    this.jsonError = ''
   }
 
   remove(v: Vikendica){

@@ -215,7 +215,7 @@ export class RezervacijaController {
       
       res.json(formatted)
     }catch(err){
-      console.log('Greška u byUser:', err)
+      console.log(err)
       res.status(500).json({message:'Greška pri učitavanju rezervacija'})
     }
   }
@@ -441,7 +441,7 @@ export class RezervacijaController {
       
       res.json(formatted)
     }catch(err){
-      console.log('Greška u byOwner:', err)
+      console.log(err)
       res.status(500).json({message:'Greška pri učitavanju rezervacija'})
     }
   }

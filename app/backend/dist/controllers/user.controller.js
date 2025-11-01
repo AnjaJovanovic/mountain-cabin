@@ -42,10 +42,10 @@ class UserController {
             let creditCardNumber = req.body.creditCardNumber;
             const cardType = this.validateCreditCard(creditCardNumber || '');
             if (!this.validatePassword(password)) {
-                res.json({ message: "Password does not meet complexity requirements" });
+                res.json({ message: "Lozinka ne ispunjava zahteve složenosti" });
             }
             else if (cardType === "Invalid") {
-                res.json({ message: "Invalid credit card number" });
+                res.json({ message: "Nevažeći broj kreditne kartice" });
             }
             else {
                 const saltRounds = 10;
@@ -60,7 +60,7 @@ class UserController {
                 let email = req.body.email;
                 this.userAlredyExists(username, email).then(existingUser => {
                     if (existingUser) {
-                        res.json({ message: "Username or email already exists" });
+                        res.json({ message: "Korisničko ime ili e-mail već postoji" });
                     }
                     else {
                         let user = {
@@ -80,12 +80,12 @@ class UserController {
                             res.json({ message: "ok" });
                         }).catch(err => {
                             console.log(err);
-                            res.json({ message: "fail register" });
+                            res.json({ message: "Greška pri registraciji" });
                         });
                     }
                 }).catch(err => {
                     console.log(err);
-                    res.json({ message: "fail register" });
+                    res.json({ message: "Greška pri registraciji" });
                 });
             }
         };
@@ -134,51 +134,56 @@ class UserController {
         };
         this.updateFirstname = (req, res) => {
             user_model_2.default.updateOne({ username: req.body.username }, { $set: { firstname: req.body.firstname } }).then(currUser => {
-                res.json({ message: "User updated" });
+                res.json({ message: "Korisnik ažuriran" });
             }).catch((err) => {
                 console.log(err);
-                res.json({ message: "Fail" });
+                res.json({ message: "Greška" });
             });
         };
         this.updateLastname = (req, res) => {
             user_model_2.default.updateOne({ username: req.body.username }, { $set: { lastname: req.body.lastname } }).then(currUser => {
-                res.json({ message: "User updated" });
+                res.json({ message: "Korisnik ažuriran" });
             }).catch((err) => {
                 console.log(err);
-                res.json({ message: "Fail" });
+                res.json({ message: "Greška" });
             });
         };
         this.updateAddress = (req, res) => {
             user_model_2.default.updateOne({ username: req.body.username }, { $set: { address: req.body.address } }).then(currUser => {
-                res.json({ message: "User updated" });
+                res.json({ message: "Korisnik ažuriran" });
             }).catch((err) => {
                 console.log(err);
-                res.json({ message: "Fail" });
+                res.json({ message: "Greška" });
             });
         };
         this.updateEmail = (req, res) => {
             user_model_2.default.updateOne({ username: req.body.username }, { $set: { email: req.body.email } }).then(currUser => {
-                res.json({ message: "User updated" });
+                res.json({ message: "Korisnik ažuriran" });
             }).catch((err) => {
                 console.log(err);
-                res.json({ message: "Fail" });
+                res.json({ message: "Greška" });
             });
         };
         this.updatePhone = (req, res) => {
             user_model_2.default.updateOne({ username: req.body.username }, { $set: { phone: req.body.phone } }).then(currUser => {
-                res.json({ message: "User updated" });
+                res.json({ message: "Korisnik ažuriran" });
             }).catch((err) => {
                 console.log(err);
-                res.json({ message: "Fail" });
+                res.json({ message: "Greška" });
             });
         };
         this.updateCreditCard = (req, res) => {
-            console.log(req.body.username + " " + req.body.creditCardNumber);
+            const creditCardNumber = req.body.creditCardNumber || '';
+            const cardType = this.validateCreditCard(creditCardNumber);
+            if (cardType === "Invalid") {
+                res.json({ message: "Nevažeći broj kreditne kartice" });
+                return;
+            }
             user_model_2.default.updateOne({ username: req.body.username }, { $set: { creditCardNumber: req.body.creditCardNumber } }).then(currUser => {
-                res.json({ message: "User updated" });
+                res.json({ message: "Korisnik ažuriran" });
             }).catch((err) => {
                 console.log(err);
-                res.json({ message: "Fail" });
+                res.json({ message: "Greška" });
             });
         };
         this.getAll = (req, res) => {
@@ -191,21 +196,21 @@ class UserController {
         this.updateProfilePicture = (req, res) => {
             const username = req.body.username;
             if (!username) {
-                res.json({ message: 'No username provided' });
+                res.json({ message: 'Korisničko ime nije uneto' });
                 return;
             }
             if (!req.file) {
-                res.json({ message: 'No file uploaded' });
+                res.json({ message: 'Fajl nije učitan' });
                 return;
             }
             const newPicture = 'uploads/' + req.file.filename;
             user_model_1.default.updateOne({ username }, { $set: { profilePicture: newPicture } })
                 .then(() => {
-                res.json({ message: 'Profile picture updated', path: newPicture });
+                res.json({ message: 'Profilna slika ažurirana', path: newPicture });
             })
                 .catch(err => {
                 console.log(err);
-                res.json({ message: 'Error updating picture' });
+                res.json({ message: 'Greška pri ažuriranju slike' });
             });
         };
     }

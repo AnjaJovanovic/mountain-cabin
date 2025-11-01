@@ -77,10 +77,15 @@ register() {
     formData.append('profilePicture', this.selectedFile)
   }
 
-  this.userService.register(formData).subscribe(data => {
-    this.message = data.message
-    if (data.message === 'ok') {
-      this.router.navigate(['login'])
+  this.userService.register(formData).subscribe({
+    next: (data) => {
+      this.message = data.message
+      if (data.message === 'ok') {
+        this.router.navigate(['login'])
+      }
+    },
+    error: (err) => {
+      this.message = 'Greška pri registraciji. Pokušajte ponovo.'
     }
   })
 }

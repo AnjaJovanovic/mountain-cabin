@@ -34,7 +34,7 @@ export class OProfileComponent {
   updateAddress(){ this.userService.updateAddress(this.user.username!, this.newAddress).subscribe(d=>{ this.messageAddress=d.message; this.user.address=this.newAddress; localStorage.setItem('loggedUser', JSON.stringify(this.user)) }) }
   updatePhone(){ this.userService.updatePhone(this.user.username!, this.newPhone).subscribe(d=>{ this.messagePhone=d.message; this.user.phone=this.newPhone; localStorage.setItem('loggedUser', JSON.stringify(this.user)) }) }
   updateEmail(){ this.userService.updateEmail(this.user.username!, this.newEmail).subscribe(d=>{ this.messageEmail=d.message; this.user.email=this.newEmail; localStorage.setItem('loggedUser', JSON.stringify(this.user)) }) }
-  updateCreditCard(){ this.userService.updateCreditCard(this.user.username!, this.newCreditCardNumber).subscribe(d=>{ this.messageCreditCard=d.message; this.user.creditCardNumber=this.newCreditCardNumber; localStorage.setItem('loggedUser', JSON.stringify(this.user)) }) }
+  updateCreditCard(){ this.userService.updateCreditCard(this.user.username!, this.newCreditCardNumber).subscribe(d=>{ this.messageCreditCard=d.message; if(d.message === "Korisnik ažuriran"){ this.user.creditCardNumber=this.newCreditCardNumber; localStorage.setItem('loggedUser', JSON.stringify(this.user)) } }) }
 
   onFileSelected(ev: any) {
     const file = ev.target.files?.[0]; if (!file) return
