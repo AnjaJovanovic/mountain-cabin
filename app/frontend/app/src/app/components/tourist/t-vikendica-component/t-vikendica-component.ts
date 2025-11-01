@@ -294,4 +294,21 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
     this.showImageModal = false
     this.selectedImage = null
   }
+
+  isVikendicaBlocked(vikendica: any): boolean {
+    if (!vikendica) {
+      return false
+    }
+    // Backend vraća isBlocked ili možemo proveriti blockedUntil direktno
+    if (vikendica.isBlocked === true) {
+      return true
+    }
+    // Alternativno, proveravamo blockedUntil direktno
+    if (vikendica.blockedUntil) {
+      const blockedUntil = new Date(vikendica.blockedUntil)
+      const now = new Date()
+      return blockedUntil > now
+    }
+    return false
+  }
 }

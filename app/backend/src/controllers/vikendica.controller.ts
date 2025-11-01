@@ -96,7 +96,9 @@ export class VikendicaController{
                 
                 vikendiceWithRating.push({
                     ...v,
-                    prosecnaOcena: prosecnaOcena
+                    prosecnaOcena: prosecnaOcena,
+                    // Proveravamo da li je blokirana (blockedUntil > sada)
+                    isBlocked: v.blockedUntil ? new Date(v.blockedUntil) > new Date() : false
                 })
             }
             res.json(vikendiceWithRating)

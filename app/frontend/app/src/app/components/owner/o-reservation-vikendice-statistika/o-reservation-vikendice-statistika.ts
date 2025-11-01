@@ -25,7 +25,8 @@ export class OReservationVikendiceStatistika {
       this.vikendice = vlist.map(v=>({ idVikendice: v.idVikendice, naziv: v.naziv }))
     })
     this.rezervacijaService.byOwner(username).subscribe(list=>{
-      this.reservations = list
+      // Filtriramo samo prihvaćene rezervacije (obradjena: true, accepted: true)
+      this.reservations = list.filter(r => r.obradjena === true && r.accepted === true)
       setTimeout(()=> this.renderCharts(), 0)
     })
   }
@@ -48,9 +49,10 @@ export class OReservationVikendiceStatistika {
     if(!Chart || !el) return
     const labels = ['01','02','03','04','05','06','07','08','09','10','11','12']
     // group by cottage then months counting accepted reservations
+    // this.reservations već sadrži samo prihvaćene rezervacije
     const byCottage: Record<string, number[]> = {}
     this.vikendice.forEach(v=> byCottage[v.naziv] = Array(12).fill(0))
-    this.reservations.filter(r=> r.obradjena && r.accepted).forEach(r=>{
+    this.reservations.forEach(r=>{
       const start = new Date(r.pocetak)
       const m = start.getMonth()
       const vik = this.vikendice.find(v=> v.idVikendice === r.idVikendice)
@@ -91,7 +93,8 @@ export class OReservationVikendiceStatistika {
       wrap.appendChild(title)
       wrap.appendChild(canvas)
       container.appendChild(wrap)
-      const list = this.reservations.filter(r=> r.idVikendice === v.idVikendice && r.obradjena && r.accepted)
+      // this.reservations već sadrži samo prihvaćene rezervacije
+      const list = this.reservations.filter(r=> r.idVikendice === v.idVikendice)
       let weekend = 0, weekday = 0
       
       list.forEach(r=>{

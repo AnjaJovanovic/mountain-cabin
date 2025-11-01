@@ -15,7 +15,6 @@
         <p><strong>Telefon:</strong> {{ selectedVikendica.telefon }}</p>
         <p><strong>Cena noćenja (letnja):</strong> {{ selectedVikendica.cenaNocenjaLetnja }} €</p>
         <p><strong>Cena noćenja (zimska):</strong> {{ selectedVikendica.cenaNocenjaZimska }} €</p>
-        <p><strong>Zauzeta:</strong> {{ selectedVikendica.zauzeta ? 'Da' : 'Ne' }}</p>
 
         <p>
           <strong>Prosečna ocena:</strong> {{ selectedVikendica.prosecnaOcena || 0 }}
@@ -79,56 +78,62 @@
         <div class="reservation-section">
           <h3>Rezervišite boravak</h3>
 
-          @if (step === 1) {
-            <div class="reservation-form">
-              <div class="form-field-group">
-                <label class="field-label">Početak rezervacije (od 14:00)</label>
-                <input type="datetime-local" [(ngModel)]="startISO" class="datetime-input">
-              </div>
-
-              <div class="form-field-group">
-                <label class="field-label">Kraj rezervacije (do 10:00)</label>
-                <input type="datetime-local" [(ngModel)]="endISO" class="datetime-input">
-              </div>
-
-              <div class="form-field-group">
-                <label class="field-label">Broj odraslih</label>
-                <input type="number" min="1" [(ngModel)]="adults" class="number-input">
-              </div>
-
-              <div class="form-field-group">
-                <label class="field-label">Broj dece</label>
-                <input type="number" min="0" [(ngModel)]="children" class="number-input">
-              </div>
-            </div>
-
-            <div class="btn-row">
-              <button (click)="proceedToPayment()">Nastavi</button>
-              <span class="message">{{ reservationMessage }}</span>
+          @if (isVikendicaBlocked(selectedVikendica)) {
+            <div class="blocked-message">
+              <p class="blocked-text">Vikendica trenutno nije raspoloživa za izdavanje</p>
             </div>
           } @else {
-            <div class="payment-section">
-              <p><strong>Vikendica:</strong> {{ selectedVikendica.naziv }}</p>
-              <p><strong>Period:</strong> {{ formatDateTime(startISO) }} — {{ formatDateTime(endISO) }}</p>
-              <p><strong>Gosti:</strong> Odraslih {{ adults }}, Dece {{ children }}</p>
-              <p><strong>Cena:</strong> {{ formatEur(calculatedPrice) }}</p>
+            @if (step === 1) {
+              <div class="reservation-form">
+                <div class="form-field-group">
+                  <label class="field-label">Početak rezervacije (od 14:00)</label>
+                  <input type="datetime-local" [(ngModel)]="startISO" class="datetime-input">
+                </div>
 
-              <div>
-                <label>Napomena (opciono, do 500 karaktera)</label>
-                <textarea [(ngModel)]="note" rows="3" maxlength="500"></textarea>
-              </div>
+                <div class="form-field-group">
+                  <label class="field-label">Kraj rezervacije (do 10:00)</label>
+                  <input type="datetime-local" [(ngModel)]="endISO" class="datetime-input">
+                </div>
 
-              <div>
-                <label>Kartica</label>
-                <input type="text" [(ngModel)]="cardNumber" placeholder="**** **** **** ****">
+                <div class="form-field-group">
+                  <label class="field-label">Broj odraslih</label>
+                  <input type="number" min="1" [(ngModel)]="adults" class="number-input">
+                </div>
+
+                <div class="form-field-group">
+                  <label class="field-label">Broj dece</label>
+                  <input type="number" min="0" [(ngModel)]="children" class="number-input">
+                </div>
               </div>
 
               <div class="btn-row">
-                <button (click)="confirmReservation()">Potvrdi i plati</button>
-                <button type="button" (click)="backToStep1()" class="back-btn">Nazad</button>
+                <button (click)="proceedToPayment()">Nastavi</button>
                 <span class="message">{{ reservationMessage }}</span>
               </div>
-            </div>
+            } @else {
+              <div class="payment-section">
+                <p><strong>Vikendica:</strong> {{ selectedVikendica.naziv }}</p>
+                <p><strong>Period:</strong> {{ formatDateTime(startISO) }} — {{ formatDateTime(endISO) }}</p>
+                <p><strong>Gosti:</strong> Odraslih {{ adults }}, Dece {{ children }}</p>
+                <p><strong>Cena:</strong> {{ formatEur(calculatedPrice) }}</p>
+
+                <div>
+                  <label>Napomena (opciono, do 500 karaktera)</label>
+                  <textarea [(ngModel)]="note" rows="3" maxlength="500"></textarea>
+                </div>
+
+                <div>
+                  <label>Kartica</label>
+                  <input type="text" [(ngModel)]="cardNumber" placeholder="**** **** **** ****">
+                </div>
+
+                <div class="btn-row">
+                  <button (click)="confirmReservation()">Potvrdi i plati</button>
+                  <button type="button" (click)="backToStep1()" class="back-btn">Nazad</button>
+                  <span class="message">{{ reservationMessage }}</span>
+                </div>
+              </div>
+            }
           }
         </div>
       </div>

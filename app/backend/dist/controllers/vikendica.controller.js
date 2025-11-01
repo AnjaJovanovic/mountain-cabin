@@ -89,7 +89,9 @@ class VikendicaController {
                     if (Math.abs(currentProsecna - prosecnaOcena) > 0.01) {
                         yield vikendica_model_1.default.updateOne({ idVikendice: v.idVikendice }, { $set: { prosecnaOcena } });
                     }
-                    vikendiceWithRating.push(Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena }));
+                    vikendiceWithRating.push(Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena, 
+                        // Proveravamo da li je blokirana (blockedUntil > sada)
+                        isBlocked: v.blockedUntil ? new Date(v.blockedUntil) > new Date() : false }));
                 }
                 res.json(vikendiceWithRating);
             }

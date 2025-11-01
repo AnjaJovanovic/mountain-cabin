@@ -234,14 +234,17 @@ class RezervacijaController {
         });
         this.process = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const idRezervacije = Number(req.body.idRezervacije);
-            const accepted = Boolean(req.body.accepted);
+            // Eksplicitno proveravamo da li je accepted === true (ne Boolean() jer može konvertovati "false" string u true)
+            const acceptedValue = req.body.accepted;
+            const accepted = acceptedValue === true || acceptedValue === 'true' || acceptedValue === 1;
             const ownerCommentRaw = req.body.ownerComment;
             const ownerComment = ownerCommentRaw ? String(ownerCommentRaw) : '';
             if (!accepted && ownerComment.trim().length === 0) {
                 res.status(400).json({ message: 'Komentar je obavezan kod odbijanja.' });
                 return;
             }
-            yield rezervacija_model_1.default.updateOne({ idRezervacije }, { $set: { obradjena: true, accepted, ownerComment } });
+            // Eksplicitno postavljamo accepted na true ili false
+            yield rezervacija_model_1.default.updateOne({ idRezervacije }, { $set: { obradjena: true, accepted: accepted, ownerComment } });
             res.json({ message: 'Ažurirano' });
         });
         this.addTouristReview = (req, res) => __awaiter(this, void 0, void 0, function* () {

@@ -62,16 +62,9 @@ sort(column: keyof Vikendica) {
     this.sortDirection = 'asc'
   }
 
-  this.allVikendice.sort((a, b) => {
-    const valueA = a[column]?.toString().toLowerCase() || ''
-    const valueB = b[column]?.toString().toLowerCase() || ''
-
-    if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1
-    if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1
-    return 0
-  })
+  // Primenimo filtriranje prvo, pa onda sortiranje na filtrirane rezultate
+  this.applyFilter()
 }
-
 
 searchNaziv: string = ''
 searchMesto: string = ''
@@ -80,16 +73,31 @@ applyFilter(){
   const naziv = this.searchNaziv.trim().toLowerCase()
   const mesto = this.searchMesto.trim().toLowerCase()
 
+  // Prvo filtriraj
   this.filteredVikendice = this.allVikendice.filter(v => {
     const okNaziv = naziv ? v.naziv.toLowerCase().includes(naziv) : true
     const okMesto = mesto ? v.mesto.toLowerCase().includes(mesto) : true
     return okNaziv && okMesto
   })
+
+  // Zatim primeni sortiranje ako je aktivno
+  if (this.sortColumn) {
+    this.filteredVikendice.sort((a, b) => {
+      const valueA = a[this.sortColumn as keyof Vikendica]?.toString().toLowerCase() || ''
+      const valueB = b[this.sortColumn as keyof Vikendica]?.toString().toLowerCase() || ''
+
+      if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1
+      if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1
+      return 0
+    })
+  }
 }
 
 clearFilter(){
   this.searchNaziv = ''
   this.searchMesto = ''
+  this.sortColumn = ''
+  this.sortDirection = 'asc'
   this.filteredVikendice = [...this.allVikendice]
 }
 

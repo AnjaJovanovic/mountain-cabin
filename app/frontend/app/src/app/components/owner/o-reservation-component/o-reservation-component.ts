@@ -51,6 +51,7 @@ export class OReservationComponent implements OnInit {
   decline(r: any){
     const c = (this.ownerComment[r.idRezervacije]||'').trim()
     if(c.length === 0){ this.message = 'Komentar je obavezan kod odbijanja.'; return }
+    this.message = ''
     this.rezervacijaService.processDecision(r.idRezervacije, false, c).subscribe(()=>{
       this.ngOnInit()
     })

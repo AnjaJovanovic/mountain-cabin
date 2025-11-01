@@ -603,3 +603,20 @@ button:hover {
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
+
+/* BLOCKED MESSAGE */
+.blocked-message {
+  padding: 30px;
+  text-align: center;
+  background-color: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.blocked-text {
+  color: #856404;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
