@@ -44,4 +44,8 @@ export class RezervacijaService{
   cancelReservation(idRezervacije: number){
     return this.http.post<{message:string}>(`${this.base}/cancel`, { idRezervacije })
   }
+
+  getStatistics(){
+    return this.http.get<{last24h: number, last7days: number, last30days: number}>(`${this.base}/statistics`)
+  }
 }

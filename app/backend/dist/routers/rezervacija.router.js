@@ -13,4 +13,5 @@ rezervacijaRouter.route('/process').post((req, res) => new rezervacija_controlle
 rezervacijaRouter.route('/byOwner/:username').get((req, res) => new rezervacija_controller_1.RezervacijaController().byOwner(req, res));
 rezervacijaRouter.route('/addTouristReview').post((req, res) => new rezervacija_controller_1.RezervacijaController().addTouristReview(req, res));
 rezervacijaRouter.route('/cancel').post((req, res) => new rezervacija_controller_1.RezervacijaController().cancel(req, res));
+rezervacijaRouter.route('/statistics').get((req, res) => new rezervacija_controller_1.RezervacijaController().getStatistics(req, res));
 exports.default = rezervacijaRouter;

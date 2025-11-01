@@ -204,6 +204,43 @@ export class RezervacijaController {
     }
   }
 
+  getStatistics = async (req: express.Request, res: express.Response) => {
+    try{
+      const now = new Date()
+      const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+      const last7days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      const last30days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+      
+      // Brojimo samo prihvaćene rezervacije
+      const count24h = await RezervacijaModel.countDocuments({
+        createdAt: { $gte: last24h },
+        accepted: true,
+        obradjena: true
+      })
+      
+      const count7days = await RezervacijaModel.countDocuments({
+        createdAt: { $gte: last7days },
+        accepted: true,
+        obradjena: true
+      })
+      
+      const count30days = await RezervacijaModel.countDocuments({
+        createdAt: { $gte: last30days },
+        accepted: true,
+        obradjena: true
+      })
+      
+      res.json({
+        last24h: count24h,
+        last7days: count7days,
+        last30days: count30days
+      })
+    }catch(err){
+      console.log(err)
+      res.status(500).json({message:'Greška pri učitavanju statistike'})
+    }
+  }
+
   cancel = async (req: express.Request, res: express.Response) => {
     try{
       const idRezervacije = Number(req.body.idRezervacije)

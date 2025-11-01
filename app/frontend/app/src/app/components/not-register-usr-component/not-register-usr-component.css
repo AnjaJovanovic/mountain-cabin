@@ -103,6 +103,62 @@ button.outline:hover {
   font-weight: 500;
 }
 
+/* Sekcija sa rezervacijama */
+.reservation-stats-section {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f8f9f7;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 900px;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.reservation-stats-section h2 {
+  color: #1f6837;
+  font-weight: 600;
+  margin-bottom: 30px;
+  font-size: 24px;
+}
+
+.reservation-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.reservation-stat-card {
+  text-align: center;
+  flex: 1;
+  min-width: 150px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reservation-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.reservation-stat-card h3 {
+  color: #1f6837;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.reservation-stat-card p {
+  color: #5a7a60;
+  font-weight: 500;
+  font-size: 14px;
+}
+
 /* Filter sekcija */
 .filter-section {
   text-align: center;

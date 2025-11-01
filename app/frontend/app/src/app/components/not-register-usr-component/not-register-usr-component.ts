@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { User } from '../../models/user.model';
 import { UserService } from '../../services/User/user-service';
+import { RezervacijaService } from '../../services/rezervacija/rezervacija-service';
 
 @Component({
   selector: 'app-not-register-usr-component',
@@ -21,9 +22,13 @@ export class NotRegisterUsrComponent {
   numVikendice = 0
   numOwners = 0
   numTourists = 0
+  reservations24h = 0
+  reservations7days = 0
+  reservations30days = 0
 
   private vikendicaService = inject(VikendicaService)
   private userService = inject(UserService)
+  private rezervacijaService = inject(RezervacijaService)
 
 
   ngOnInit(): void {
@@ -37,6 +42,12 @@ export class NotRegisterUsrComponent {
       // filtriramo samo one koji imaju userType === 'vlasnik'
       this.numOwners = this.allUsers.filter(user => user.userType === 'owner').length
       this.numTourists = this.allUsers.filter(user => user.userType === 'tourist').length
+    })
+    
+    this.rezervacijaService.getStatistics().subscribe(data => {
+      this.reservations24h = data.last24h
+      this.reservations7days = data.last7days
+      this.reservations30days = data.last30days
     })
   }
 

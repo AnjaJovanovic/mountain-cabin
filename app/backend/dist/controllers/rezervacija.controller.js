@@ -200,28 +200,45 @@ class RezervacijaController {
                     res.status(400).json({ message: 'Možete ostaviti ocenu i komentar samo za završene rezervacije' });
                     return;
                 }
-                // Proveri da li je već ocenio ovu rezervaciju
-                if (rez.touristRating !== null && rez.touristRating !== undefined) {
-                    res.status(400).json({ message: 'Već ste ocenili ovu rezervaciju' });
-                    return;
-                }
-                const usernameTuriste = String(rez.usernameTuriste);
-                const idVikendice = Number(rez.idVikendice);
-                // Proveri da li vikendica postoji
-                const vikendica = yield vikendica_model_1.default.findOne({ idVikendice });
-                if (!vikendica) {
-                    res.status(404).json({ message: 'Vikendica nije pronađena' });
-                    return;
-                }
-                // Dodaj ocenu u rezervaciju
                 yield rezervacija_model_1.default.updateOne({ idRezervacije }, { $set: { touristComment, touristRating } });
-                // Dodaj ocenu u vikendicu (dozvoljeno je oceniti istu vikendicu više puta za različite rezervacije)
-                yield vikendica_model_1.default.updateOne({ idVikendice }, { $push: { ocene: { username: usernameTuriste, rating: touristRating } } });
                 res.json({ message: 'Ocena i komentar su uspešno sačuvani' });
             }
             catch (err) {
                 console.log(err);
                 res.status(500).json({ message: 'Greška pri čuvanju ocene i komentara' });
+            }
+        });
+        this.getStatistics = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const now = new Date();
+                const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                const last7days = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                const last30days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                // Brojimo samo prihvaćene rezervacije
+                const count24h = yield rezervacija_model_1.default.countDocuments({
+                    createdAt: { $gte: last24h },
+                    accepted: true,
+                    obradjena: true
+                });
+                const count7days = yield rezervacija_model_1.default.countDocuments({
+                    createdAt: { $gte: last7days },
+                    accepted: true,
+                    obradjena: true
+                });
+                const count30days = yield rezervacija_model_1.default.countDocuments({
+                    createdAt: { $gte: last30days },
+                    accepted: true,
+                    obradjena: true
+                });
+                res.json({
+                    last24h: count24h,
+                    last7days: count7days,
+                    last30days: count30days
+                });
+            }
+            catch (err) {
+                console.log(err);
+                res.status(500).json({ message: 'Greška pri učitavanju statistike' });
             }
         });
         this.cancel = (req, res) => __awaiter(this, void 0, void 0, function* () {
