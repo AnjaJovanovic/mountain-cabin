@@ -59,7 +59,7 @@ export class ChangePasswordComponent {
           return
         }
         if(u?.userType === 'owner'){
-          this.router.navigate(['ownerProfile'])
+          this.router.navigate(['/owner/profile'])
           return
         }
       }catch{}

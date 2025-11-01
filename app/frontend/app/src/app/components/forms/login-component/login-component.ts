@@ -31,7 +31,7 @@ export class LoginComponent {
           console.log("Turista sam")
         }
         else if(data.userType == "owner")
-          this.router.navigate(['ownerProfile'])
+          this.router.navigate(['/owner/profile'])
         
         console.log("PODACI KOJE DOBIJAM IZ LOGIN BACKENDA:", data)
       }
@@ -39,5 +39,9 @@ export class LoginComponent {
         this.message = "Error"
       }
     })
+  }
+
+  back() {
+    this.router.navigate([''])
   }
 }

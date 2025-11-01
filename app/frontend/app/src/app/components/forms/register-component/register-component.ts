@@ -101,4 +101,8 @@ register() {
       this.cardType = '';
     }
   }
+
+  back() {
+    this.router.navigate([''])
+  }
 }

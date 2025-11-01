@@ -26,7 +26,8 @@ export const routes: Routes = [
     //{path: "touristProfile", component: TProfileComponent},
     //{path: "touristVikendica", component: TVikendicaComponent},
 
-    {path: "ownerProfile", component: OProfileComponent},
+    // Stara ruta redirect-ovana na novu sa layoutom
+    {path: "ownerProfile", redirectTo: "/owner/profile", pathMatch: "full"},
 
     {
     path: '',
