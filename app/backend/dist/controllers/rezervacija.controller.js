@@ -270,18 +270,42 @@ class RezervacijaController {
                     res.status(400).json({ message: 'Možete ostaviti ocenu i komentar samo za završene rezervacije' });
                     return;
                 }
-                // Proveri da li je rezervacija prihvaćena (opciono - dozvoljavamo ocenjivanje svih završenih rezervacija)
-                // if(rez.accepted !== true || rez.obradjena !== true){
-                //   res.status(400).json({message:'Možete ostaviti ocenu i komentar samo za prihvaćene rezervacije'})
-                //   return
-                // }
+                // Proveri da li je rezervacija prihvaćena (obavezno)
+                if (rez.accepted !== true || rez.obradjena !== true) {
+                    res.status(400).json({ message: 'Možete ostaviti ocenu i komentar samo za prihvaćene rezervacije' });
+                    return;
+                }
                 // Proveri da li je već ocenio ovu rezervaciju
                 const existingRating = rez.touristRating;
                 if (existingRating !== null && existingRating !== undefined && existingRating >= 1 && existingRating <= 5) {
                     res.status(400).json({ message: 'Već ste ocenili ovu rezervaciju. Ne možete je ponovo oceniti.' });
                     return;
                 }
+                const usernameTuriste = String(rez.usernameTuriste);
+                const idVikendice = Number(rez.idVikendice);
+                // Ažuriraj rezervaciju sa ocenom i komentarom
                 yield rezervacija_model_1.default.updateOne({ idRezervacije }, { $set: { touristComment, touristRating } });
+                // Dodaj ocenu u vikendicu
+                yield vikendica_model_1.default.updateOne({ idVikendice }, { $push: { ocene: { username: usernameTuriste, rating: touristRating } } });
+                // Ažuriraj prosečnu ocenu vikendice
+                const vikendica = yield vikendica_model_1.default.findOne({ idVikendice }).lean();
+                if (vikendica) {
+                    const ocene = vikendica.ocene || [];
+                    // Filtriraj samo validne ocene (1-5)
+                    const validOcene = ocene.filter((o) => o &&
+                        o.rating !== null &&
+                        o.rating !== undefined &&
+                        typeof o.rating === 'number' &&
+                        !isNaN(o.rating) &&
+                        o.rating >= 1 &&
+                        o.rating <= 5);
+                    let prosecnaOcena = 0;
+                    if (validOcene.length > 0) {
+                        const sum = validOcene.reduce((acc, o) => acc + o.rating, 0);
+                        prosecnaOcena = Math.round((sum / validOcene.length) * 100) / 100; // Zaokruženo na 2 decimale
+                    }
+                    yield vikendica_model_1.default.updateOne({ idVikendice }, { $set: { prosecnaOcena } });
+                }
                 res.json({ message: 'Ocena i komentar su uspešno sačuvani' });
             }
             catch (err) {

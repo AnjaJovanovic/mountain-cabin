@@ -6,26 +6,50 @@ export class VikendicaController{
         try{
             const vikendice = await VikendicaModel.find({}).sort({idVikendice: 1}).lean()
             // Računamo prosečnu ocenu za svaku vikendicu i proveravamo poslednje 3 ocene
-            const vikendiceWithRating = vikendice.map((v: any) => {
+            const vikendiceWithRating = []
+            for(const v of vikendice){
                 const ocene = v.ocene || []
+                // Filtriraj samo validne ocene (1-5) - konvertuj u broj ako je string
+                const validOcene = ocene.filter((o: any) => {
+                    if(!o) return false
+                    // Konvertuj rating u broj ako nije već broj
+                    const rating = typeof o.rating === 'string' ? parseFloat(o.rating) : o.rating
+                    return rating !== null && 
+                           rating !== undefined && 
+                           !isNaN(rating) && 
+                           rating >= 1 && 
+                           rating <= 5
+                }).map((o: any) => ({
+                    ...o,
+                    rating: typeof o.rating === 'string' ? parseFloat(o.rating) : o.rating
+                }))
                 let prosecnaOcena = 0
-                if(ocene.length > 0){
-                    const sum = ocene.reduce((acc: number, o: any) => acc + (o.rating || 0), 0)
-                    prosecnaOcena = sum / ocene.length
+                if(validOcene.length > 0){
+                    const sum = validOcene.reduce((acc: number, o: any) => acc + o.rating, 0)
+                    prosecnaOcena = Math.round((sum / validOcene.length) * 100) / 100 // Zaokruženo na 2 decimale
                 }
                 
-                // Proveravamo poslednje 3 ocene (ako ih ima)
-                const last3 = ocene.slice(-3)
-                const hasLowRatings = last3.length === 3 && last3.every((o: any) => (o.rating || 0) < 2)
+                // Ažuriraj prosecnaOcena u bazi ako se promenila
+                const currentProsecna = (v.prosecnaOcena || 0)
+                if(Math.abs(currentProsecna - prosecnaOcena) > 0.01){
+                    await VikendicaModel.updateOne(
+                        { idVikendice: v.idVikendice },
+                        { $set: { prosecnaOcena } }
+                    )
+                }
                 
-                return {
+                // Proveravamo poslednje 3 ocene (ako ih ima) - samo validne
+                const last3 = validOcene.slice(-3)
+                const hasLowRatings = last3.length === 3 && last3.every((o: any) => o.rating < 2)
+                
+                vikendiceWithRating.push({
                     ...v,
                     prosecnaOcena: prosecnaOcena,
                     hasLowRatings: hasLowRatings,
                     // Proveravamo da li je blokirana (blockedUntil > sada)
                     isBlocked: v.blockedUntil ? new Date(v.blockedUntil) > new Date() : false
-                }
-            })
+                })
+            }
             res.json(vikendiceWithRating)
         }catch(err){
             console.log(err)
@@ -38,18 +62,43 @@ export class VikendicaController{
             const ownerUsername = String(req.params.username)
             const vikendice = await VikendicaModel.find({ ownerUsername }).sort({idVikendice: 1}).lean()
             // Računamo prosečnu ocenu za svaku vikendicu
-            const vikendiceWithRating = vikendice.map((v: any) => {
+            const vikendiceWithRating = []
+            for(const v of vikendice){
                 const ocene = v.ocene || []
+                // Filtriraj samo validne ocene (1-5) - konvertuj u broj ako je string
+                const validOcene = ocene.filter((o: any) => {
+                    if(!o) return false
+                    // Konvertuj rating u broj ako nije već broj
+                    const rating = typeof o.rating === 'string' ? parseFloat(o.rating) : o.rating
+                    return rating !== null && 
+                           rating !== undefined && 
+                           !isNaN(rating) && 
+                           rating >= 1 && 
+                           rating <= 5
+                }).map((o: any) => ({
+                    ...o,
+                    rating: typeof o.rating === 'string' ? parseFloat(o.rating) : o.rating
+                }))
                 let prosecnaOcena = 0
-                if(ocene.length > 0){
-                    const sum = ocene.reduce((acc: number, o: any) => acc + (o.rating || 0), 0)
-                    prosecnaOcena = sum / ocene.length
+                if(validOcene.length > 0){
+                    const sum = validOcene.reduce((acc: number, o: any) => acc + o.rating, 0)
+                    prosecnaOcena = Math.round((sum / validOcene.length) * 100) / 100 // Zaokruženo na 2 decimale
                 }
-                return {
+                
+                // Ažuriraj prosecnaOcena u bazi ako se promenila
+                const currentProsecna = (v.prosecnaOcena || 0)
+                if(Math.abs(currentProsecna - prosecnaOcena) > 0.01){
+                    await VikendicaModel.updateOne(
+                        { idVikendice: v.idVikendice },
+                        { $set: { prosecnaOcena } }
+                    )
+                }
+                
+                vikendiceWithRating.push({
                     ...v,
                     prosecnaOcena: prosecnaOcena
-                }
-            })
+                })
+            }
             res.json(vikendiceWithRating)
         }catch(err){
             console.log(err)

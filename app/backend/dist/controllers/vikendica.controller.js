@@ -20,20 +20,59 @@ class VikendicaController {
             try {
                 const vikendice = yield vikendica_model_1.default.find({}).sort({ idVikendice: 1 }).lean();
                 // Računamo prosečnu ocenu za svaku vikendicu i proveravamo poslednje 3 ocene
-                const vikendiceWithRating = vikendice.map((v) => {
+                const vikendiceWithRating = [];
+                for (const v of vikendice) {
                     const ocene = v.ocene || [];
-                    let prosecnaOcena = 0;
-                    if (ocene.length > 0) {
-                        const sum = ocene.reduce((acc, o) => acc + (o.rating || 0), 0);
-                        prosecnaOcena = sum / ocene.length;
+                    // Debug: prikaži sve ocene pre filtriranja
+                    if (v.idVikendice === 14 && ocene.length > 0) {
+                        console.log(`Vikendica ${v.idVikendice} - SVE ocene pre filtriranja:`, JSON.stringify(ocene, null, 2));
+                        ocene.forEach((o, idx) => {
+                            console.log(`  Ocena ${idx}:`, {
+                                obj: o,
+                                rating: o === null || o === void 0 ? void 0 : o.rating,
+                                ratingType: typeof (o === null || o === void 0 ? void 0 : o.rating),
+                                isNull: (o === null || o === void 0 ? void 0 : o.rating) === null,
+                                isUndefined: (o === null || o === void 0 ? void 0 : o.rating) === undefined,
+                                isNaN: isNaN(o === null || o === void 0 ? void 0 : o.rating),
+                                isNumber: typeof (o === null || o === void 0 ? void 0 : o.rating) === 'number',
+                                gte1: ((o === null || o === void 0 ? void 0 : o.rating) >= 1),
+                                lte5: ((o === null || o === void 0 ? void 0 : o.rating) <= 5),
+                                valid: o && o.rating !== null && o.rating !== undefined && typeof o.rating === 'number' && !isNaN(o.rating) && o.rating >= 1 && o.rating <= 5
+                            });
+                        });
                     }
-                    // Proveravamo poslednje 3 ocene (ako ih ima)
-                    const last3 = ocene.slice(-3);
-                    const hasLowRatings = last3.length === 3 && last3.every((o) => (o.rating || 0) < 2);
-                    return Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena, hasLowRatings: hasLowRatings, 
+                    // Filtriraj samo validne ocene (1-5) - konvertuj u broj ako je string
+                    const validOcene = ocene.filter((o) => {
+                        if (!o)
+                            return false;
+                        // Konvertuj rating u broj ako nije već broj
+                        const rating = typeof o.rating === 'string' ? parseFloat(o.rating) : o.rating;
+                        return rating !== null &&
+                            rating !== undefined &&
+                            !isNaN(rating) &&
+                            rating >= 1 &&
+                            rating <= 5;
+                    }).map((o) => (Object.assign(Object.assign({}, o), { rating: typeof o.rating === 'string' ? parseFloat(o.rating) : o.rating })));
+                    let prosecnaOcena = 0;
+                    if (validOcene.length > 0) {
+                        const sum = validOcene.reduce((acc, o) => acc + o.rating, 0);
+                        prosecnaOcena = Math.round((sum / validOcene.length) * 100) / 100; // Zaokruženo na 2 decimale
+                        // Debug logovanje za dijagnostiku
+                        console.log(`Vikendica ${v.idVikendice}: ${validOcene.length} validnih ocena:`, validOcene.map((o) => o.rating).join(', '), `| Suma: ${sum} | Prosek: ${sum}/${validOcene.length} = ${prosecnaOcena}`);
+                    }
+                    // Ažuriraj prosecnaOcena u bazi ako se promenila
+                    const currentProsecna = (v.prosecnaOcena || 0);
+                    if (Math.abs(currentProsecna - prosecnaOcena) > 0.01) {
+                        yield vikendica_model_1.default.updateOne({ idVikendice: v.idVikendice }, { $set: { prosecnaOcena } });
+                        console.log(`Ažurirana prosecnaOcena za vikendicu ${v.idVikendice}: ${currentProsecna} -> ${prosecnaOcena}`);
+                    }
+                    // Proveravamo poslednje 3 ocene (ako ih ima) - samo validne
+                    const last3 = validOcene.slice(-3);
+                    const hasLowRatings = last3.length === 3 && last3.every((o) => o.rating < 2);
+                    vikendiceWithRating.push(Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena, hasLowRatings: hasLowRatings, 
                         // Proveravamo da li je blokirana (blockedUntil > sada)
-                        isBlocked: v.blockedUntil ? new Date(v.blockedUntil) > new Date() : false });
-                });
+                        isBlocked: v.blockedUntil ? new Date(v.blockedUntil) > new Date() : false }));
+                }
                 res.json(vikendiceWithRating);
             }
             catch (err) {
@@ -46,15 +85,54 @@ class VikendicaController {
                 const ownerUsername = String(req.params.username);
                 const vikendice = yield vikendica_model_1.default.find({ ownerUsername }).sort({ idVikendice: 1 }).lean();
                 // Računamo prosečnu ocenu za svaku vikendicu
-                const vikendiceWithRating = vikendice.map((v) => {
+                const vikendiceWithRating = [];
+                for (const v of vikendice) {
                     const ocene = v.ocene || [];
-                    let prosecnaOcena = 0;
-                    if (ocene.length > 0) {
-                        const sum = ocene.reduce((acc, o) => acc + (o.rating || 0), 0);
-                        prosecnaOcena = sum / ocene.length;
+                    // Debug: prikaži sve ocene pre filtriranja
+                    if (v.idVikendice === 14 && ocene.length > 0) {
+                        console.log(`Vikendica ${v.idVikendice} - SVE ocene pre filtriranja:`, JSON.stringify(ocene, null, 2));
+                        ocene.forEach((o, idx) => {
+                            console.log(`  Ocena ${idx}:`, {
+                                obj: o,
+                                rating: o === null || o === void 0 ? void 0 : o.rating,
+                                ratingType: typeof (o === null || o === void 0 ? void 0 : o.rating),
+                                isNull: (o === null || o === void 0 ? void 0 : o.rating) === null,
+                                isUndefined: (o === null || o === void 0 ? void 0 : o.rating) === undefined,
+                                isNaN: isNaN(o === null || o === void 0 ? void 0 : o.rating),
+                                isNumber: typeof (o === null || o === void 0 ? void 0 : o.rating) === 'number',
+                                gte1: ((o === null || o === void 0 ? void 0 : o.rating) >= 1),
+                                lte5: ((o === null || o === void 0 ? void 0 : o.rating) <= 5),
+                                valid: o && o.rating !== null && o.rating !== undefined && typeof o.rating === 'number' && !isNaN(o.rating) && o.rating >= 1 && o.rating <= 5
+                            });
+                        });
                     }
-                    return Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena });
-                });
+                    // Filtriraj samo validne ocene (1-5) - konvertuj u broj ako je string
+                    const validOcene = ocene.filter((o) => {
+                        if (!o)
+                            return false;
+                        // Konvertuj rating u broj ako nije već broj
+                        const rating = typeof o.rating === 'string' ? parseFloat(o.rating) : o.rating;
+                        return rating !== null &&
+                            rating !== undefined &&
+                            !isNaN(rating) &&
+                            rating >= 1 &&
+                            rating <= 5;
+                    }).map((o) => (Object.assign(Object.assign({}, o), { rating: typeof o.rating === 'string' ? parseFloat(o.rating) : o.rating })));
+                    let prosecnaOcena = 0;
+                    if (validOcene.length > 0) {
+                        const sum = validOcene.reduce((acc, o) => acc + o.rating, 0);
+                        prosecnaOcena = Math.round((sum / validOcene.length) * 100) / 100; // Zaokruženo na 2 decimale
+                        // Debug logovanje za dijagnostiku
+                        console.log(`Vikendica ${v.idVikendice}: ${validOcene.length} validnih ocena:`, validOcene.map((o) => o.rating).join(', '), `| Suma: ${sum} | Prosek: ${sum}/${validOcene.length} = ${prosecnaOcena}`);
+                    }
+                    // Ažuriraj prosecnaOcena u bazi ako se promenila
+                    const currentProsecna = (v.prosecnaOcena || 0);
+                    if (Math.abs(currentProsecna - prosecnaOcena) > 0.01) {
+                        yield vikendica_model_1.default.updateOne({ idVikendice: v.idVikendice }, { $set: { prosecnaOcena } });
+                        console.log(`Ažurirana prosecnaOcena za vikendicu ${v.idVikendice}: ${currentProsecna} -> ${prosecnaOcena}`);
+                    }
+                    vikendiceWithRating.push(Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena }));
+                }
                 res.json(vikendiceWithRating);
             }
             catch (err) {

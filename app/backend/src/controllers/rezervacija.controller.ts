@@ -263,11 +263,11 @@ export class RezervacijaController {
         return
       }
 
-      // Proveri da li je rezervacija prihvaćena (opciono - dozvoljavamo ocenjivanje svih završenih rezervacija)
-      // if(rez.accepted !== true || rez.obradjena !== true){
-      //   res.status(400).json({message:'Možete ostaviti ocenu i komentar samo za prihvaćene rezervacije'})
-      //   return
-      // }
+      // Proveri da li je rezervacija prihvaćena (obavezno)
+      if(rez.accepted !== true || rez.obradjena !== true){
+        res.status(400).json({message:'Možete ostaviti ocenu i komentar samo za prihvaćene rezervacije'})
+        return
+      }
 
       // Proveri da li je već ocenio ovu rezervaciju
       const existingRating = rez.touristRating
@@ -276,10 +276,47 @@ export class RezervacijaController {
         return
       }
       
+      const usernameTuriste = String(rez.usernameTuriste)
+      const idVikendice = Number(rez.idVikendice)
+      
+      // Ažuriraj rezervaciju sa ocenom i komentarom
       await RezervacijaModel.updateOne(
         { idRezervacije }, 
         { $set: { touristComment, touristRating } }
       )
+      
+      // Dodaj ocenu u vikendicu
+      await VikendicaModel.updateOne(
+        { idVikendice },
+        { $push: { ocene: { username: usernameTuriste, rating: touristRating } } }
+      )
+      
+      // Ažuriraj prosečnu ocenu vikendice
+      const vikendica = await VikendicaModel.findOne({ idVikendice }).lean()
+      if(vikendica){
+        const ocene = (vikendica as any).ocene || []
+        // Filtriraj samo validne ocene (1-5)
+        const validOcene = ocene.filter((o: any) => 
+          o && 
+          o.rating !== null && 
+          o.rating !== undefined && 
+          typeof o.rating === 'number' && 
+          !isNaN(o.rating) && 
+          o.rating >= 1 && 
+          o.rating <= 5
+        )
+        
+        let prosecnaOcena = 0
+        if(validOcene.length > 0){
+          const sum = validOcene.reduce((acc: number, o: any) => acc + o.rating, 0)
+          prosecnaOcena = Math.round((sum / validOcene.length) * 100) / 100 // Zaokruženo na 2 decimale
+        }
+        
+        await VikendicaModel.updateOne(
+          { idVikendice },
+          { $set: { prosecnaOcena } }
+        )
+      }
       
       res.json({message:'Ocena i komentar su uspešno sačuvani'})
     }catch(err){

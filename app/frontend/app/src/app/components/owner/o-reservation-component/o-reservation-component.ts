@@ -94,12 +94,16 @@ export class OReservationComponent implements OnInit {
       (el as any)._calendar.destroy()
       ;(el as any)._calendar = null
     }
-    const events = this.allReservations.map(r=>({
+    // Filtrirati da se prikažu samo neobrađene i prihvaćene rezervacije (ne odbijene)
+    const visibleReservations = this.allReservations.filter(r => 
+      !r.obradjena || (r.obradjena && r.accepted === true)
+    )
+    const events = visibleReservations.map(r=>({
       id: String(r.idRezervacije),
       title: `Rez #${r.idRezervacije} - ${r.usernameTuriste}`,
       start: r.pocetak,
       end: r.kraj,
-      color: !r.obradjena ? '#f1c40f' : (r.accepted ? '#2ecc71' : '#e74c3c')
+      color: !r.obradjena ? '#f1c40f' : '#2ecc71' // Žuta za neobrađene, zelena za prihvaćene
     }))
     const cal = new Calendar(el, {
       initialView: 'dayGridMonth',

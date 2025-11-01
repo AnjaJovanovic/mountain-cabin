@@ -50,7 +50,6 @@ export class TReservationsComponent implements OnInit {
     
     this.rezervacijaService.byUser(username).subscribe(list => {
       this.allReservations = list || []
-      console.log('Sve rezervacije:', this.allReservations)
       const now = new Date()
       
       // Trenutne rezervacije - prihvaćene i koje još nisu završile
@@ -76,11 +75,6 @@ export class TReservationsComponent implements OnInit {
           const dateB = new Date(b.kraj).getTime()
           return dateB - dateA // Najskorije prvo
         })
-      
-      console.log('Arhiva rezervacije:', this.archiveReservations)
-      this.archiveReservations.forEach(r => {
-        console.log(`Rez ${r.idRezervacije}: accepted=${r.accepted}, obradjena=${r.obradjena}, rating=${r.touristRating}, canReview=${this.canLeaveReview(r)}`)
-      })
     })
   }
 
@@ -119,7 +113,7 @@ export class TReservationsComponent implements OnInit {
   }
 
   canLeaveReview(rez: any): boolean {
-    // Proverava da li je rezervacija završena i da turista JOŠ NIJE ostavio ocenu
+    // Proverava da li je rezervacija završena, prihvaćena i da turista JOŠ NIJE ostavio ocenu
     const kraj = new Date(rez.kraj)
     const now = new Date()
     
@@ -128,7 +122,13 @@ export class TReservationsComponent implements OnInit {
       return false
     }
     
-    // 2. Proverava da li turista već ima ocenu (validan broj između 1 i 5)
+    // 2. Rezervacija mora biti prihvaćena od strane vlasnika
+    const isAccepted = rez.accepted === true && rez.obradjena === true
+    if(!isAccepted) {
+      return false
+    }
+    
+    // 3. Proverava da li turista već ima ocenu (validan broj između 1 i 5)
     const rating = rez.touristRating
     const hasRating = rating !== null && 
                       rating !== undefined && 
@@ -138,8 +138,7 @@ export class TReservationsComponent implements OnInit {
                       rating >= 1 && 
                       rating <= 5
     
-    // Dugme se prikazuje SAMO ako rezervacija je završena i NEMA ocene
-    // Ne proveravamo accepted/obradjena jer korisnik možda želi da oceni i odbijene rezervacije
+    // Dugme se prikazuje SAMO ako rezervacija je završena, prihvaćena i NEMA ocene
     return !hasRating
   }
 
