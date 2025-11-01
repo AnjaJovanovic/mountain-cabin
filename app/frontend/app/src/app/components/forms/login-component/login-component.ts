@@ -31,17 +31,13 @@ export class LoginComponent {
           console.log("Turista sam")
         }
         else if(data.userType == "owner")
-          this.router.navigate(['owner','profile'])
+          this.router.navigate(['ownerProfile'])
         
         console.log("PODACI KOJE DOBIJAM IZ LOGIN BACKENDA:", data)
       }
       else{
-        this.message = "Uneli ste pogrešne podatke"
+        this.message = "Error"
       }
     })
-  }
-
-  back() {
-    this.router.navigate([''])
   }
 }

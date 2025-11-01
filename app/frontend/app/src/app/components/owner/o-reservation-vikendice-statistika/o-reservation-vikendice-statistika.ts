@@ -93,11 +93,26 @@ export class OReservationVikendiceStatistika {
       container.appendChild(wrap)
       const list = this.reservations.filter(r=> r.idVikendice === v.idVikendice && r.obradjena && r.accepted)
       let weekend = 0, weekday = 0
+      
       list.forEach(r=>{
-        const d = new Date(r.pocetak)
-        const day = d.getDay() // 0 Sun .. 6 Sat
-        if(day === 0 || day === 6) weekend += 1; else weekday += 1
+        const pocetak = new Date(r.pocetak)
+        const kraj = new Date(r.kraj)
+        
+        // Prolazimo kroz sve dane tokom rezervacije
+        const current = new Date(pocetak)
+        while(current < kraj){
+          const dayOfWeek = current.getDay() // 0 = nedelja, 6 = subota
+          // Subota (6) ili nedelja (0) = vikend
+          if(dayOfWeek === 0 || dayOfWeek === 6){
+            weekend += 1
+          } else {
+            weekday += 1
+          }
+          // Prelazimo na sledeći dan
+          current.setDate(current.getDate() + 1)
+        }
       })
+      
       const chart = new Chart(canvas.getContext('2d')!, {
         type: 'pie',
         data: {
