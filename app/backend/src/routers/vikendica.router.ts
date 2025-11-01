@@ -52,4 +52,8 @@ vikendicaRouter.post(
   (req, res) => new VikendicaController().uploadImages(req, res)
 )
 
+vikendicaRouter.route("/block").post(
+    (req, res) => new VikendicaController().blockVikendica(req, res)
+)
+
 export default vikendicaRouter

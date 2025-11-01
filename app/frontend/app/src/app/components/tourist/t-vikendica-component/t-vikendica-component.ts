@@ -41,6 +41,7 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
   cardNumber: string = ''
   calculatedPrice: number = 0
   reservationMessage: string = ''
+  reviews: any[] = []
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id')
@@ -57,6 +58,10 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
         if(uStr){
           const u: User = JSON.parse(uStr)
           this.cardNumber = u?.creditCardNumber || ''
+        }
+        // Učitaj komentare i ocene za ovu vikendicu
+        if(this.selectedVikendica){
+          this.loadReviews(this.selectedVikendica.idVikendice)
         }
       })
     } else {
@@ -97,6 +102,33 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
 
   formatRating(rating: number): string {
     return rating.toFixed(1)
+  }
+
+  loadReviews(idVikendice: number) {
+    this.rezervacijaService.byVikendica(idVikendice).subscribe({
+      next: (data) => {
+        // Dodatno filtriranje na frontend-u za sigurnost - samo popunjeni komentari i ocene
+        this.reviews = (data || []).filter((review: any) => {
+          const hasRating = review.touristRating !== null && review.touristRating !== undefined && review.touristRating >= 1 && review.touristRating <= 5
+          const hasComment = review.touristComment && String(review.touristComment).trim().length > 0
+          return hasRating || hasComment
+        })
+      },
+      error: (err) => {
+        console.error('Greška pri učitavanju komentara:', err)
+        this.reviews = []
+      }
+    })
+  }
+
+  formatDate(date: any): string {
+    if(!date) return ''
+    const d = new Date(date)
+    if(isNaN(d.getTime())) return ''
+    const day = String(d.getDate()).padStart(2, '0')
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const year = d.getFullYear()
+    return `${day}.${month}.${year}`
   }
 
   openDetail(id: number){

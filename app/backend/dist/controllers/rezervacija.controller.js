@@ -79,9 +79,21 @@ class RezervacijaController {
                     res.status(400).json({ message: 'Napomena do 500 karaktera' });
                     return;
                 }
+                // Provera da li je vikendica blokirana
+                const idVikendiceNum = Number(idVikendice);
+                const vikendica = yield vikendica_model_1.default.findOne({ idVikendice: idVikendiceNum });
+                if (!vikendica) {
+                    res.status(404).json({ message: 'Vikendica nije pronađena' });
+                    return;
+                }
+                if (vikendica.blockedUntil && new Date(vikendica.blockedUntil) > new Date()) {
+                    const blockedUntil = new Date(vikendica.blockedUntil);
+                    const formatted = blockedUntil.toLocaleString('sr-RS');
+                    res.status(403).json({ message: `Vikendica je privremeno blokirana do ${formatted}` });
+                    return;
+                }
                 // Provera preklapanja - proveravamo SVE rezervacije (i obrađene i neobrađene)
                 // Čak i neobrađena rezervacija zauzima vikendicu u tom periodu
-                const idVikendiceNum = Number(idVikendice);
                 const allExisting = yield rezervacija_model_1.default.find({ idVikendice: idVikendiceNum });
                 let hasOverlap = false;
                 let overlapDetails = [];
@@ -153,9 +165,34 @@ class RezervacijaController {
             }
         });
         this.byVikendica = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const idVikendice = Number(req.params.idVikendice);
-            const list = yield rezervacija_model_1.default.find({ idVikendice }).sort({ pocetak: 1 });
-            res.json(list);
+            try {
+                const idVikendice = Number(req.params.idVikendice);
+                // Vraćamo završene rezervacije koje imaju komentar ILI ocenu
+                const now = new Date();
+                const list = yield rezervacija_model_1.default.find({
+                    idVikendice,
+                    kraj: { $lt: now }, // Završene rezervacije
+                    $or: [
+                        { touristRating: { $exists: true, $ne: null } }, // Koje imaju ocenu
+                        { touristComment: { $exists: true, $ne: '' } } // ILI komentar
+                    ]
+                }).sort({ kraj: -1 }).lean();
+                // Formatirajmo rezervacije za frontend
+                const formatted = list.map((r) => ({
+                    idRezervacije: r.idRezervacije,
+                    usernameTuriste: r.usernameTuriste,
+                    pocetak: r.pocetak,
+                    kraj: r.kraj,
+                    touristComment: r.touristComment || '',
+                    touristRating: r.touristRating || 0,
+                    createdAt: r.createdAt || r.kraj
+                }));
+                res.json(formatted);
+            }
+            catch (err) {
+                console.log(err);
+                res.status(500).json({ message: 'Greška pri učitavanju komentara' });
+            }
         });
         this.byUser = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const username = String(req.params.username);

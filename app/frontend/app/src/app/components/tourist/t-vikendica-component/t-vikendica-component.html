@@ -46,6 +46,36 @@
           </div>
         }
 
+        <!-- Komentari i ocene -->
+        <div class="reviews-section">
+          <h3>Komentari i ocene gostiju</h3>
+          @if (reviews.length === 0) {
+            <p class="no-reviews">Još nema komentara i ocena za ovu vikendicu.</p>
+          } @else {
+            <div class="reviews-list">
+              @for (review of reviews; track review.idRezervacije) {
+                <div class="review-item">
+                  <div class="review-header">
+                    <span class="review-user">{{ review.usernameTuriste }}</span>
+                    <span class="review-date">{{ formatDate(review.kraj) }}</span>
+                  </div>
+                  @if (review.touristRating) {
+                    <div class="review-rating">
+                      @for (star of getStars(review.touristRating); track $index) {
+                        <span class="star" [class.filled]="star === 1" [class.half]="star === 0.5">★</span>
+                      }
+                      <span class="rating-value">({{ review.touristRating }})</span>
+                    </div>
+                  }
+                  @if (review.touristComment) {
+                    <div class="review-comment">{{ review.touristComment }}</div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+
         <div class="reservation-section">
           <h3>Rezervišite boravak</h3>
 

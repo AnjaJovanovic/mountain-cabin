@@ -138,6 +138,39 @@
   cursor: not-allowed;
 }
 
+/* VIKENDICE TABELA */
+.low-rating {
+  background-color: #fee !important;
+}
+
+.low-rating:hover {
+  background-color: #fcc !important;
+}
+
+.blocked-row {
+  opacity: 0.7;
+  background-color: #f5f5f5 !important;
+}
+
+.low-rating-badge {
+  color: #c62828;
+  background-color: #fee;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.btn-block-vikendica {
+  background-color: #c62828 !important;
+  border-color: #c62828 !important;
+  color: white !important;
+}
+
+.btn-block-vikendica:hover:not(:disabled) {
+  background-color: #a02828 !important;
+  border-color: #a02828 !important;
+}
+
 @media (max-width: 900px) {
   .admin-header {
     flex-direction: column;

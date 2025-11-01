@@ -5,7 +5,7 @@ export class VikendicaController{
     getAll = async (req: express.Request, res: express.Response)=>{
         try{
             const vikendice = await VikendicaModel.find({}).sort({idVikendice: 1}).lean()
-            // Računamo prosečnu ocenu za svaku vikendicu
+            // Računamo prosečnu ocenu za svaku vikendicu i proveravamo poslednje 3 ocene
             const vikendiceWithRating = vikendice.map((v: any) => {
                 const ocene = v.ocene || []
                 let prosecnaOcena = 0
@@ -13,9 +13,17 @@ export class VikendicaController{
                     const sum = ocene.reduce((acc: number, o: any) => acc + (o.rating || 0), 0)
                     prosecnaOcena = sum / ocene.length
                 }
+                
+                // Proveravamo poslednje 3 ocene (ako ih ima)
+                const last3 = ocene.slice(-3)
+                const hasLowRatings = last3.length === 3 && last3.every((o: any) => (o.rating || 0) < 2)
+                
                 return {
                     ...v,
-                    prosecnaOcena: prosecnaOcena
+                    prosecnaOcena: prosecnaOcena,
+                    hasLowRatings: hasLowRatings,
+                    // Proveravamo da li je blokirana (blockedUntil > sada)
+                    isBlocked: v.blockedUntil ? new Date(v.blockedUntil) > new Date() : false
                 }
             })
             res.json(vikendiceWithRating)
@@ -143,6 +151,30 @@ export class VikendicaController{
         }catch(err){
             console.log(err)
             res.status(500).json({ message: 'Greška pri uploadu slika' })
+        }
+    }
+
+    blockVikendica = async (req: express.Request, res: express.Response) => {
+        try{
+            const idVikendice = Number(req.body.idVikendice)
+            if(!idVikendice){
+                res.status(400).json({message: 'Nedostaje idVikendice'})
+                return
+            }
+
+            // Blokiramo na 48 sati
+            const blockedUntil = new Date()
+            blockedUntil.setHours(blockedUntil.getHours() + 48)
+
+            await VikendicaModel.updateOne(
+                { idVikendice },
+                { $set: { blockedUntil } }
+            )
+
+            res.json({ message: 'Vikendica je blokirana na 48 sati', blockedUntil })
+        }catch(err){
+            console.log(err)
+            res.status(500).json({ message: 'Greška pri blokiranju vikendice' })
         }
     }
 

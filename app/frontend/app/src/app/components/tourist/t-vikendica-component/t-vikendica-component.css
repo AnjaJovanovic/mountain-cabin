@@ -213,6 +213,100 @@ button:hover {
   color: #fff;
 }
 
+/* KOMENTARI I OCENE */
+.reviews-section {
+  margin: 32px 0;
+  padding-top: 24px;
+  border-top: 2px solid #e9ece9;
+}
+
+.reviews-section h3 {
+  color: #1f6837;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.no-reviews {
+  color: #999;
+  font-style: italic;
+  padding: 20px;
+  text-align: center;
+  background-color: #f8f9f7;
+  border-radius: 8px;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.review-item {
+  background-color: #f8f9f7;
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 4px solid #1f6837;
+  transition: box-shadow 0.25s ease;
+}
+
+.review-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.review-user {
+  font-weight: 600;
+  color: #1f6837;
+  font-size: 16px;
+}
+
+.review-date {
+  color: #666;
+  font-size: 14px;
+}
+
+.review-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.review-rating .star {
+  font-size: 20px;
+  color: #ddd;
+  transition: color 0.2s;
+}
+
+.review-rating .star.filled {
+  color: #f5b301;
+}
+
+.review-rating .star.half {
+  color: #f5b301;
+  opacity: 0.5;
+}
+
+.review-rating .rating-value {
+  font-weight: 600;
+  color: #1f6837;
+  font-size: 15px;
+}
+
+.review-comment {
+  color: #333;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
 /* MAPA */
 .map-section {
   margin: 20px 0;

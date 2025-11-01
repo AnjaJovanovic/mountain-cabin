@@ -19,7 +19,7 @@ class VikendicaController {
         this.getAll = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const vikendice = yield vikendica_model_1.default.find({}).sort({ idVikendice: 1 }).lean();
-                // Računamo prosečnu ocenu za svaku vikendicu
+                // Računamo prosečnu ocenu za svaku vikendicu i proveravamo poslednje 3 ocene
                 const vikendiceWithRating = vikendice.map((v) => {
                     const ocene = v.ocene || [];
                     let prosecnaOcena = 0;
@@ -27,7 +27,12 @@ class VikendicaController {
                         const sum = ocene.reduce((acc, o) => acc + (o.rating || 0), 0);
                         prosecnaOcena = sum / ocene.length;
                     }
-                    return Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena });
+                    // Proveravamo poslednje 3 ocene (ako ih ima)
+                    const last3 = ocene.slice(-3);
+                    const hasLowRatings = last3.length === 3 && last3.every((o) => (o.rating || 0) < 2);
+                    return Object.assign(Object.assign({}, v), { prosecnaOcena: prosecnaOcena, hasLowRatings: hasLowRatings, 
+                        // Proveravamo da li je blokirana (blockedUntil > sada)
+                        isBlocked: v.blockedUntil ? new Date(v.blockedUntil) > new Date() : false });
                 });
                 res.json(vikendiceWithRating);
             }
@@ -151,6 +156,24 @@ class VikendicaController {
             catch (err) {
                 console.log(err);
                 res.status(500).json({ message: 'Greška pri uploadu slika' });
+            }
+        });
+        this.blockVikendica = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const idVikendice = Number(req.body.idVikendice);
+                if (!idVikendice) {
+                    res.status(400).json({ message: 'Nedostaje idVikendice' });
+                    return;
+                }
+                // Blokiramo na 48 sati
+                const blockedUntil = new Date();
+                blockedUntil.setHours(blockedUntil.getHours() + 48);
+                yield vikendica_model_1.default.updateOne({ idVikendice }, { $set: { blockedUntil } });
+                res.json({ message: 'Vikendica je blokirana na 48 sati', blockedUntil });
+            }
+            catch (err) {
+                console.log(err);
+                res.status(500).json({ message: 'Greška pri blokiranju vikendice' });
             }
         });
     }

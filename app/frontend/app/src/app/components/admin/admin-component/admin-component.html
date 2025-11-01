@@ -45,5 +45,48 @@
         </tbody>
       </table>
     </div>
+
+    <h3 style="margin-top: 40px;">Upravljanje vikendicama</h3>
+    <div class="table-container">
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Naziv</th>
+            <th>Mesto</th>
+            <th>Vlasnik</th>
+            <th>Prosečna ocena</th>
+            <th>Status</th>
+            <th>Akcije</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (v of allVikendice; track v.idVikendice) {
+            <tr [class.low-rating]="hasLowRatings(v)" [class.blocked-row]="isBlocked(v)">
+              <td>{{ v.idVikendice }}</td>
+              <td>{{ v.naziv }}</td>
+              <td>{{ v.mesto }}</td>
+              <td>{{ v.ownerUsername }}</td>
+              <td>{{ v.prosecnaOcena ? v.prosecnaOcena.toFixed(1) : 'Nema ocene' }}</td>
+              <td>
+                @if (isBlocked(v)) {
+                  <span class="status blocked">Blokirana do {{ formatDate(v.blockedUntil) }}</span>
+                } @else if (hasLowRatings(v)) {
+                  <span class="status low-rating-badge">Niska ocena</span>
+                } @else {
+                  <span class="status active">Aktivna</span>
+                }
+              </td>
+              <td class="actions">
+                @if (hasLowRatings(v) && !isBlocked(v)) {
+                  <button (click)="blockVikendica(v.idVikendice)" class="btn-block-vikendica">Blokiraj 48h</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </main>
 </div>

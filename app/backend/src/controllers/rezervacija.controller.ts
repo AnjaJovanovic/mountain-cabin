@@ -58,9 +58,20 @@ export class RezervacijaController {
 
       if(napomena && String(napomena).length > 500){ res.status(400).json({message:'Napomena do 500 karaktera'}); return }
 
+      // Provera da li je vikendica blokirana
+      const idVikendiceNum = Number(idVikendice)
+      const vikendica = await VikendicaModel.findOne({ idVikendice: idVikendiceNum })
+      if(!vikendica){ res.status(404).json({message:'Vikendica nije pronađena'}); return }
+      
+      if(vikendica.blockedUntil && new Date(vikendica.blockedUntil) > new Date()){
+        const blockedUntil = new Date(vikendica.blockedUntil)
+        const formatted = blockedUntil.toLocaleString('sr-RS')
+        res.status(403).json({message:`Vikendica je privremeno blokirana do ${formatted}`})
+        return
+      }
+
       // Provera preklapanja - proveravamo SVE rezervacije (i obrađene i neobrađene)
       // Čak i neobrađena rezervacija zauzima vikendicu u tom periodu
-      const idVikendiceNum = Number(idVikendice)
       const allExisting = await RezervacijaModel.find({ idVikendice: idVikendiceNum })
       
       let hasOverlap = false
@@ -138,9 +149,38 @@ export class RezervacijaController {
   }
 
   byVikendica = async (req: express.Request, res: express.Response) => {
-    const idVikendice = Number(req.params.idVikendice)
-    const list = await RezervacijaModel.find({ idVikendice }).sort({pocetak: 1})
-    res.json(list)
+    try{
+      const idVikendice = Number(req.params.idVikendice)
+      // Vraćamo završene rezervacije koje imaju popunjen komentar ILI ocenu
+      const now = new Date()
+      const list = await RezervacijaModel.find({ 
+        idVikendice,
+        kraj: { $lt: now }, // Završene rezervacije
+        $or: [
+          { touristRating: { $exists: true, $ne: null, $gte: 1, $lte: 5 } }, // Koje imaju validnu ocenu (1-5)
+          { touristComment: { $exists: true, $ne: null, $ne: '' } } // ILI ne-prazan komentar
+        ]
+      }).sort({kraj: -1}).lean()
+      
+      // Formatirajmo rezervacije za frontend i filtrirujemo prazne vrednosti
+      const formatted = list
+        .map((r: any) => ({
+          idRezervacije: r.idRezervacije,
+          usernameTuriste: r.usernameTuriste,
+          pocetak: r.pocetak,
+          kraj: r.kraj,
+          touristComment: r.touristComment ? String(r.touristComment).trim() : '',
+          touristRating: (r.touristRating && r.touristRating >= 1 && r.touristRating <= 5) ? Number(r.touristRating) : null,
+          createdAt: r.createdAt || r.kraj
+        }))
+        // Filtrirujemo samo one koje imaju bar jedan popunjen podatak
+        .filter((r: any) => (r.touristRating !== null && r.touristRating > 0) || (r.touristComment && r.touristComment.length > 0))
+      
+      res.json(formatted)
+    }catch(err){
+      console.log(err)
+      res.status(500).json({message: 'Greška pri učitavanju komentara'})
+    }
   }
 
   byUser = async (req: express.Request, res: express.Response) => {

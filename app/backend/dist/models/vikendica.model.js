@@ -4,6 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
+const ocenaSchema = new mongoose_1.default.Schema({
+    username: String,
+    rating: Number
+}, { _id: false });
 const vikendicaSchema = new mongoose_1.default.Schema({
     idVikendice: Number,
     naziv: String,
@@ -17,7 +21,10 @@ const vikendicaSchema = new mongoose_1.default.Schema({
     datumRezervacije: Date,
     ownerUsername: String,
     lat: Number,
-    lng: Number
+    lng: Number,
+    ocene: [ocenaSchema],
+    prosecnaOcena: Number,
+    blockedUntil: Date
 }, {
     versionKey: false
 });

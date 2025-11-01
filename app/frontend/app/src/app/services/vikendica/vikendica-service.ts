@@ -15,6 +15,10 @@ export class VikendicaService {
       return this.httpClient.get<Vikendica[]>("http://localhost:4000/vikendice/getAll")
     }
 
+  blockVikendica(idVikendice: number) {
+    return this.httpClient.post<{message: string, blockedUntil: string}>("http://localhost:4000/vikendice/block", { idVikendice })
+  }
+
   getByOwner(username: string){
     return this.httpClient.get<Vikendica[]>(`http://localhost:4000/vikendice/byOwner/${username}`)
   }

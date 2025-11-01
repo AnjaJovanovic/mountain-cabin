@@ -1,5 +1,10 @@
 import mongoose from "mongoose"
 
+const ocenaSchema = new mongoose.Schema({
+    username: String,
+    rating: Number
+}, { _id: false })
+
 const vikendicaSchema = new mongoose.Schema(
     {
         idVikendice: Number,
@@ -14,7 +19,10 @@ const vikendicaSchema = new mongoose.Schema(
         datumRezervacije: Date,
         ownerUsername: String,
         lat: Number,
-        lng: Number
+        lng: Number,
+        ocene: [ocenaSchema],
+        prosecnaOcena: Number,
+        blockedUntil: Date
     },
     {
         versionKey: false

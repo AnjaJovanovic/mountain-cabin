@@ -34,4 +34,5 @@ vikendicaRouter.route("/delete").post((req, res) => new vikendica_controller_1.V
 vikendicaRouter.route("/update").post((req, res) => new vikendica_controller_1.VikendicaController().update(req, res));
 vikendicaRouter.route("/create").post((req, res) => new vikendica_controller_1.VikendicaController().create(req, res));
 vikendicaRouter.post("/uploadImages", upload.array('images', 10), (req, res) => new vikendica_controller_1.VikendicaController().uploadImages(req, res));
+vikendicaRouter.route("/block").post((req, res) => new vikendica_controller_1.VikendicaController().blockVikendica(req, res));
 exports.default = vikendicaRouter;
