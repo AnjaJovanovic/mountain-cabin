@@ -18,6 +18,7 @@
             <th>Datum kraja</th>
             <th>Naziv vikendice</th>
             <th>Mesto</th>
+            <th>Status</th>
             <th>Akcija</th>
           </tr>
         </thead>
@@ -28,6 +29,11 @@
               <td>{{ formatDate(rez.kraj) }}</td>
               <td>{{ getVikendicaName(rez.idVikendice) }}</td>
               <td>{{ getVikendicaMesto(rez.idVikendice) }}</td>
+              <td>
+                <span class="status-badge" [class.status-pending]="!isProcessed(rez)" [class.status-accepted]="isAccepted(rez)" [class.status-declined]="isDeclined(rez)">
+                  {{ getReservationStatus(rez) }}
+                </span>
+              </td>
               <td>
                 @if (canCancel(rez)) {
                   <button class="btn-cancel-res" (click)="cancelReservation(rez)">Otkaži</button>
@@ -56,6 +62,7 @@
           <tr>
             <th>Datum početka</th>
             <th>Vikendica</th>
+            <th>Status</th>
             <th>Komentar</th>
             <th>Ocena</th>
             <th>Akcija</th>
@@ -66,6 +73,11 @@
             <tr>
               <td>{{ formatDate(rez.pocetak) }}</td>
               <td>{{ getVikendicaName(rez.idVikendice) }}</td>
+              <td>
+                <span class="status-badge" [class.status-pending]="!isProcessed(rez)" [class.status-accepted]="isAccepted(rez)" [class.status-declined]="isDeclined(rez)">
+                  {{ getReservationStatus(rez) }}
+                </span>
+              </td>
               <td>
                 @if (rez.touristComment && rez.touristComment.trim().length > 0) {
                   <div class="comment-text">{{ rez.touristComment }}</div>
@@ -91,10 +103,6 @@
                 } @else {
                   <span class="already-rated">Ocenjeno</span>
                 }
-                <!-- Debug info - obrišite kasnije -->
-                <!-- <small style="display: block; font-size: 10px; color: #999;">
-                  Rating: {{rez.touristRating}}, Accepted: {{rez.accepted}}, Obradjena: {{rez.obradjena}}
-                </small> -->
               </td>
             </tr>
           }

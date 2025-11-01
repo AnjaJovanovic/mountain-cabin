@@ -195,23 +195,47 @@ export class RezervacijaController {
       const list = await RezervacijaModel.find({ usernameTuriste: username }).sort({pocetak: -1}).lean()
       
       // Eksplicitno formatirajmo podatke da bismo osigurali konzistentnost
-      const formatted = list.map((r: any) => ({
-        idRezervacije: r.idRezervacije,
-        idVikendice: r.idVikendice,
-        usernameTuriste: r.usernameTuriste,
-        pocetak: r.pocetak,
-        kraj: r.kraj,
-        brojOdraslih: r.brojOdraslih || 0,
-        brojDece: r.brojDece || 0,
-        cena: r.cena || 0,
-        napomena: r.napomena || '',
-        obradjena: r.obradjena === true,
-        accepted: r.accepted === true,
-        ownerComment: r.ownerComment || '',
-        touristComment: r.touristComment || null,
-        touristRating: (r.touristRating && typeof r.touristRating === 'number' && r.touristRating >= 1 && r.touristRating <= 5) ? r.touristRating : null,
-        createdAt: r.createdAt || new Date()
-      }))
+      const formatted = list.map((r: any) => {
+        // VAŽNO: Čuvamo originalne vrednosti obradjena i accepted kao boolean
+        // Ako je obradjena = false, treba da ostane false (ne true)
+        // Ako je accepted = false, treba da ostane false (ne true)
+        // Koristimo STRICT proveru - samo === true postaje true, sve ostalo je false
+        let obradjena: boolean = false
+        if (r.obradjena === true) {
+          obradjena = true
+        } else if (r.obradjena === 'true' || r.obradjena === 1) {
+          obradjena = true
+        } else {
+          obradjena = false // Eksplicitno false za sve ostalo (false, null, undefined, 'false', 0, itd.)
+        }
+        
+        let accepted: boolean = false
+        if (r.accepted === true) {
+          accepted = true
+        } else if (r.accepted === 'true' || r.accepted === 1) {
+          accepted = true
+        } else {
+          accepted = false // Eksplicitno false za sve ostalo (false, null, undefined, 'false', 0, itd.)
+        }
+        
+        return {
+          idRezervacije: r.idRezervacije,
+          idVikendice: r.idVikendice,
+          usernameTuriste: r.usernameTuriste,
+          pocetak: r.pocetak,
+          kraj: r.kraj,
+          brojOdraslih: r.brojOdraslih || 0,
+          brojDece: r.brojDece || 0,
+          cena: r.cena || 0,
+          napomena: r.napomena || '',
+          obradjena: obradjena, // Eksplicitno boolean true ili false
+          accepted: accepted, // Eksplicitno boolean true ili false
+          ownerComment: r.ownerComment || '',
+          touristComment: r.touristComment || null,
+          touristRating: (r.touristRating && typeof r.touristRating === 'number' && r.touristRating >= 1 && r.touristRating <= 5) ? r.touristRating : null,
+          createdAt: r.createdAt || new Date()
+        }
+      })
       
       res.json(formatted)
     }catch(err){

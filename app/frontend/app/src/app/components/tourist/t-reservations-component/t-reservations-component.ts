@@ -49,14 +49,27 @@ export class TReservationsComponent implements OnInit {
     if(!username) return
     
     this.rezervacijaService.byUser(username).subscribe(list => {
+      // Debug: proveri podatke
+      console.log('=== DEBUG RESERVATIONS ===')
+      if (list && list.length > 0) {
+        list.forEach((r: any, idx: number) => {
+          console.log(`Rez ${idx}: id=${r.idRezervacije}, obradjena=${r.obradjena} (type: ${typeof r.obradjena}), accepted=${r.accepted} (type: ${typeof r.accepted})`)
+          console.log(`  - isProcessed: ${this.isProcessed(r)}`)
+          console.log(`  - isDeclined: ${this.isDeclined(r)}`)
+          console.log(`  - isAccepted: ${this.isAccepted(r)}`)
+          console.log(`  - Status: ${this.getReservationStatus(r)}`)
+        })
+      }
+      console.log('=== END DEBUG ===')
+      
       this.allReservations = list || []
       const now = new Date()
       
-      // Trenutne rezervacije - prihvaćene i koje još nisu završile
+      // Trenutne rezervacije - sve koje još nisu završile (i obrađene i neobrađene)
       this.currentReservations = this.allReservations
         .filter(r => {
           const kraj = new Date(r.kraj)
-          return r.accepted === true && r.obradjena === true && kraj > now
+          return kraj > now
         })
         .sort((a, b) => {
           const dateA = new Date(a.pocetak).getTime()
@@ -92,8 +105,69 @@ export class TReservationsComponent implements OnInit {
     // Razlika u danima
     const diffTime = pocetak.getTime() - now.getTime()
     const diffDays = diffTime / (1000 * 60 * 60 * 24)
-    // Može otkazati ako je više od 1 dana do početka
+    // Može otkazati ako je više od 1 dana do početka i rezervacija je prihvaćena
     return diffDays > 1 && rez.accepted === true && rez.obradjena === true
+  }
+
+  getReservationStatus(rez: any): string {
+    // Proveravamo eksplicitno: obradjena može biti true, false, null, undefined
+    // Neobrađena: obradjena nije eksplicitno true (može biti false, null, undefined)
+    // OVO JE KLJUČNO: ako je obradjena === false, ONA NIJE ODBIJENA, već NEOBRAĐENA
+    
+    // Proveri da li je obradjena STRICTLY true (ne samo truthy)
+    const obradjenaIsTrue = rez.obradjena === true
+    
+    // PRVO: Ako nije obrađena (obradjena !== true, što uključuje false, null, undefined), vrati "Neobrađena"
+    // Bez obzira na accepted vrednost
+    if (obradjenaIsTrue !== true) {
+      return 'Neobrađena'
+    }
+    
+    // DRUGO: Ako je obrađena (obradjena === true), proveri accepted
+    const acceptedIsTrue = rez.accepted === true
+    
+    // Odbijena: obradjena = true I accepted = false (ili nije true)
+    if (obradjenaIsTrue === true && acceptedIsTrue !== true) {
+      return 'Odbijena'
+    }
+    
+    // Prihvaćena: obradjena = true I accepted = true
+    if (obradjenaIsTrue === true && acceptedIsTrue === true) {
+      return 'Prihvaćena'
+    }
+    
+    // Fallback (ne bi trebalo da se desi)
+    return 'Neobrađena'
+  }
+
+  isProcessed(rez: any): boolean {
+    // Eksplicitno proveravamo da li je obrađena (true)
+    return rez.obradjena === true || rez.obradjena === 'true' || rez.obradjena === 1
+  }
+
+  isDeclined(rez: any): boolean {
+    // Odbijena je samo ako je obradjena = true I accepted = false
+    // PRVO proveravamo da li je obrađena (STRICTLY true)
+    const obradjena = rez.obradjena === true
+    
+    // Ako NIJE obrađena (false, null, undefined), ONA NIJE ODBIJENA
+    if (obradjena !== true) {
+      return false
+    }
+    
+    // Tek ako JE obrađena, proveravamo accepted
+    const accepted = rez.accepted === true
+    
+    // Odbijena je SAMO ako je obradjena=true I accepted=false
+    return accepted === false
+  }
+
+  isAccepted(rez: any): boolean {
+    // Prihvaćena je ako je obradjena = true I accepted = true
+    // Koristimo istu logiku kao u isDeclined - samo strict === true
+    const obradjena = rez.obradjena === true
+    const accepted = rez.accepted === true
+    return obradjena === true && accepted === true
   }
 
   cancelReservation(rez: any) {
