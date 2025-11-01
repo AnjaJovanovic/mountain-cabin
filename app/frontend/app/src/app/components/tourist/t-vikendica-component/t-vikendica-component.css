@@ -119,6 +119,23 @@
   font-weight: 600;
 }
 
+.vikendice-table th.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.vikendice-table th.sortable-header:hover {
+  background-color: #14512b;
+}
+
+.sort-indicator {
+  margin-left: 6px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
 .vikendice-table td {
   padding: 12px;
   border-bottom: 1px solid #e9ece9;

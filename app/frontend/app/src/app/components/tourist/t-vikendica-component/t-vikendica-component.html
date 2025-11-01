@@ -161,8 +161,18 @@
     <table class="vikendice-table">
       <thead>
         <tr>
-          <th>Naziv</th>
-          <th>Mesto</th>
+          <th (click)="sort('naziv')" class="sortable-header">
+            Naziv
+            @if (sortColumn === 'naziv') {
+              <span class="sort-indicator">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+            }
+          </th>
+          <th (click)="sort('mesto')" class="sortable-header">
+            Mesto
+            @if (sortColumn === 'mesto') {
+              <span class="sort-indicator">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+            }
+          </th>
           <th>Prosečna ocena</th>
         </tr>
       </thead>

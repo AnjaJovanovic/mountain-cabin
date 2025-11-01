@@ -30,6 +30,8 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
 
   searchNaziv: string = ''
   searchMesto: string = ''
+  sortColumn: string = ''
+  sortDirection: 'asc' | 'desc' = 'asc'
 
   // Rezervacija state (Step 1 -> Step 2)
   step: number = 1
@@ -81,16 +83,44 @@ export class TVikendicaComponent implements OnInit, AfterViewChecked{
     const naziv = this.searchNaziv.trim().toLowerCase()
     const mesto = this.searchMesto.trim().toLowerCase()
 
-    this.filteredVikendice = this.allVikendice.filter(v => {
+    // Prvo filtriraj
+    let filtered = this.allVikendice.filter(v => {
       const okNaziv = naziv ? v.naziv.toLowerCase().includes(naziv) : true
       const okMesto = mesto ? v.mesto.toLowerCase().includes(mesto) : true
       return okNaziv && okMesto
     })
+
+    // Zatim primeni sortiranje ako je aktivno
+    if (this.sortColumn) {
+      filtered = filtered.sort((a, b) => {
+        const column = this.sortColumn as keyof Vikendica
+        const valueA = a[column]?.toString().toLowerCase() || ''
+        const valueB = b[column]?.toString().toLowerCase() || ''
+
+        if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1
+        if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1
+        return 0
+      })
+    }
+
+    this.filteredVikendice = filtered
+  }
+
+  sort(column: 'naziv' | 'mesto') {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc'
+    } else {
+      this.sortColumn = column
+      this.sortDirection = 'asc'
+    }
+    this.applyFilter()
   }
 
   clearFilter(){
     this.searchNaziv = ''
     this.searchMesto = ''
+    this.sortColumn = ''
+    this.sortDirection = 'asc'
     this.filteredVikendice = [...this.allVikendice]
   }
 
